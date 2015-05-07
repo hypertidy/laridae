@@ -3,3 +3,4 @@
 .RData
 inst/vch2
 .Rbuildignore
+src/*.o

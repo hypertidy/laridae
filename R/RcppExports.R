@@ -5,15 +5,39 @@
 #'
 #' test CGAL
 #' @export
-cgaltest <- function() {
-    .Call('cgalgris_cgaltest', PACKAGE = 'cgalgris')
+ach <- function() {
+    .Call('cgalgris_ach', PACKAGE = 'cgalgris')
+}
+
+#' Conforming
+#'
+#' Conforming
+#' @export
+conforming <- function() {
+    .Call('cgalgris_conforming', PACKAGE = 'cgalgris')
 }
 
 #' CGAL test2
 #'
 #' test2 CGAL
 #' @export
-cgaltest2 <- function() {
-    .Call('cgalgris_cgaltest2', PACKAGE = 'cgalgris')
+pas <- function() {
+    .Call('cgalgris_pas', PACKAGE = 'cgalgris')
+}
+
+#' CGAL vertex index
+#'
+#' vertex index
+#' @export
+pvy <- function(x, y) {
+    .Call('cgalgris_pvy', PACKAGE = 'cgalgris', x, y)
+}
+
+#' CGAL vertex index
+#'
+#' vertex index
+#' @export
+vindex <- function(x, y) {
+    .Call('cgalgris_vindex', PACKAGE = 'cgalgris', x, y)
 }
 

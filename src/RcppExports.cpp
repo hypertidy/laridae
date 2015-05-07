@@ -5,23 +5,57 @@
 
 using namespace Rcpp;
 
-// cgaltest
-IntegerVector cgaltest();
-RcppExport SEXP cgalgris_cgaltest() {
+// ach
+IntegerVector ach();
+RcppExport SEXP cgalgris_ach() {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(cgaltest());
+    __result = Rcpp::wrap(ach());
     return __result;
 END_RCPP
 }
-// cgaltest2
-IntegerVector cgaltest2();
-RcppExport SEXP cgalgris_cgaltest2() {
+// conforming
+IntegerVector conforming();
+RcppExport SEXP cgalgris_conforming() {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(cgaltest2());
+    __result = Rcpp::wrap(conforming());
+    return __result;
+END_RCPP
+}
+// pas
+IntegerVector pas();
+RcppExport SEXP cgalgris_pas() {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    __result = Rcpp::wrap(pas());
+    return __result;
+END_RCPP
+}
+// pvy
+IntegerVector pvy(NumericVector x, NumericVector y);
+RcppExport SEXP cgalgris_pvy(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    __result = Rcpp::wrap(pvy(x, y));
+    return __result;
+END_RCPP
+}
+// vindex
+IntegerVector vindex(NumericVector x, NumericVector y);
+RcppExport SEXP cgalgris_vindex(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    __result = Rcpp::wrap(vindex(x, y));
     return __result;
 END_RCPP
 }
