@@ -15,16 +15,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// conforming
-IntegerVector conforming();
-RcppExport SEXP cgalgris_conforming() {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(conforming());
-    return __result;
-END_RCPP
-}
 // pas
 IntegerVector pas();
 RcppExport SEXP cgalgris_pas() {
@@ -35,27 +25,27 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// pvy
-IntegerVector pvy(NumericVector x, NumericVector y);
-RcppExport SEXP cgalgris_pvy(SEXP xSEXP, SEXP ySEXP) {
+// tri_xy
+IntegerVector tri_xy(NumericVector x, NumericVector y);
+RcppExport SEXP cgalgris_tri_xy(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    __result = Rcpp::wrap(pvy(x, y));
+    __result = Rcpp::wrap(tri_xy(x, y));
     return __result;
 END_RCPP
 }
-// vindex
-IntegerVector vindex(NumericVector x, NumericVector y);
-RcppExport SEXP cgalgris_vindex(SEXP xSEXP, SEXP ySEXP) {
+// ctri_xy
+IntegerVector ctri_xy(NumericVector x, NumericVector y);
+RcppExport SEXP cgalgris_ctri_xy(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    __result = Rcpp::wrap(vindex(x, y));
+    __result = Rcpp::wrap(ctri_xy(x, y));
     return __result;
 END_RCPP
 }

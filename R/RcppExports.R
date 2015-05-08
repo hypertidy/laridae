@@ -9,14 +9,6 @@ ach <- function() {
     .Call('cgalgris_ach', PACKAGE = 'cgalgris')
 }
 
-#' Conforming
-#'
-#' Conforming
-#' @export
-conforming <- function() {
-    .Call('cgalgris_conforming', PACKAGE = 'cgalgris')
-}
-
 #' CGAL test2
 #'
 #' test2 CGAL
@@ -29,15 +21,15 @@ pas <- function() {
 #'
 #' vertex index
 #' @export
-pvy <- function(x, y) {
-    .Call('cgalgris_pvy', PACKAGE = 'cgalgris', x, y)
+tri_xy <- function(x, y) {
+    .Call('cgalgris_tri_xy', PACKAGE = 'cgalgris', x, y)
 }
 
 #' CGAL vertex index
 #'
 #' vertex index
 #' @export
-vindex <- function(x, y) {
-    .Call('cgalgris_vindex', PACKAGE = 'cgalgris', x, y)
+ctri_xy <- function(x, y) {
+    .Call('cgalgris_ctri_xy', PACKAGE = 'cgalgris', x, y)
 }
 
