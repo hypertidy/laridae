@@ -1,9 +1,22 @@
 ---
 title: "Examples for gris"
 author: "Michael Sumner"
-date: "2015-05-19"
-output: html_document
+date: 2015-06-08
+output:
+  md_document:
+    variant: markdown_github
 ---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
 
 ```{r,echo=FALSE}
 suppressMessages({library(gris)
