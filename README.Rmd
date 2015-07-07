@@ -32,6 +32,11 @@ The **gris** package provides a relational geometry/topology model for spatial d
 * provide a flexible basis for conversion between other formats. 
 * provide a raster model that avoids conflating grid dimension with cell attributes (not yet illustrated)
 
+Related work
+
+* rglgris has the latest visualization examples, showing the need for quad and tri meshes in R and texture mapping 
+* rcdd has some related facilities, not explored yet
+
 ### Build objects from other packages
 
 Here we load a commonly used layer of country polygons and convert to the gris format of tables with vertices/branches/objects. 
