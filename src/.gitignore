@@ -1,0 +1,5 @@
+*.o
+*.so
+*.dll
+RcppExports.o
+cgalgris.so

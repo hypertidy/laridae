@@ -10,3 +10,4 @@ LinkingTo: Rcpp
 Imports: Rcpp
 License: LGPL-3
 LazyData: TRUE
+Remotes: mdsumner/gris
