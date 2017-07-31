@@ -11,3 +11,5 @@ Imports: Rcpp
 License: LGPL-3
 LazyData: TRUE
 Remotes: mdsumner/gris
+RoxygenNote: 6.0.1
+RcppModules: Shape

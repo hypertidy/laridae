@@ -15,6 +15,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// apoint
+int apoint(Rcpp::NumericVector x, Rcpp::NumericVector y);
+RcppExport SEXP _cgalgris_apoint(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(apoint(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pas
 IntegerVector pas();
 RcppExport SEXP _cgalgris_pas() {

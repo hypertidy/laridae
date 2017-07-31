@@ -24,5 +24,5 @@
 #' Maintainer: Michael D. Sumner \email{mdsumner@@gmail.com} \cr
 #' @references \url{https://github.com/mdsumner}, \url{http://www.cgal.org/}
 #' @keywords package
-#' @import Rcpp
+#' @importFrom Rcpp sourceCpp
 NULL

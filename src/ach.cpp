@@ -29,9 +29,27 @@ IntegerVector ach()
   return xnumber;
 }
 
-/*** R
-cgaltest()
-*/
+//' CGAL1
+//'
+//' 1
+//' @export
+// [[Rcpp::export]]
+int apoint(Rcpp::NumericVector x, Rcpp::NumericVector y)
+{
+  int nn = x.size();
+//printf("%i\n", nn);
+  Point_2 points[nn];
+  for (int i = 0; i < nn; i++) {
+    points[i] = Point_2(x[i], y[i]);
+  }
+  IntegerVector out;
+  out = nn;
+  Point_2 result[nn];
+  Point_2 *ptr = CGAL::convex_hull_2( points, points+5, result );
+
+  return nn;
+}
+
 
 
 

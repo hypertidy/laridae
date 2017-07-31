@@ -9,6 +9,14 @@ ach <- function() {
     .Call('_cgalgris_ach', PACKAGE = 'cgalgris')
 }
 
+#' CGAL1
+#'
+#' 1
+#' @export
+apoint <- function(x, y) {
+    .Call('_cgalgris_apoint', PACKAGE = 'cgalgris', x, y)
+}
+
 #' CGAL test2
 #'
 #' test2 CGAL
