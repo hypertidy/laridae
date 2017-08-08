@@ -31,16 +31,17 @@ typedef Face::Vertex_handle Fvertex_handle;
 // [[Rcpp::export]]
 IntegerVector tri_xy(NumericVector x, NumericVector y) {
   std::vector< std::pair<Point,int> > points (x.length());
-  IntegerVector a(1);
+  //IntegerVector a(1);
   for (int idouble = 0; idouble < x.length(); idouble++){
-    a[0] = idouble;
-    points.push_back( std::make_pair( Point(x[idouble], y[idouble]), a[0]) );
+    //a[0] = idouble;
+    points.push_back( std::make_pair( Point(x[idouble], y[idouble]), idouble) );
   }
 
   Delaunay triangulation;
   triangulation.insert(points.begin(),points.end());
+  printf("number of vertices: %i\n", triangulation.number_of_vertices());
+  printf("number of faces: %i\n", triangulation.number_of_faces());
   IntegerVector vi(triangulation.number_of_faces() * 3);
-
   int cnt = 0;
   for(Delaunay::Finite_faces_iterator fit = triangulation.finite_faces_begin();
       fit != triangulation.finite_faces_end(); ++fit) {
@@ -114,18 +115,18 @@ IntegerVector tri_xy2(NumericVector x, NumericVector y)
   Delaunay tr_reduced;
   int count = 0;
   bool is_finite;
-  while (itf != beyondf) 
+  while (itf != beyondf)
   {
       face = *(itf++);
       is_finite = true;
       for (int i=0; i<3; i++) {
           fvertex = face.vertex (i);
-          if (triangulation.is_infinite (fvertex)) 
+          if (triangulation.is_infinite (fvertex))
               is_finite = false;
       }
       if (is_finite)
       {
-          for (int i=0; i<3; i++) 
+          for (int i=0; i<3; i++)
           {
               //fvertex = face.vertex (i);
               v = *(face.vertex (i));
