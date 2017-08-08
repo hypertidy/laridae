@@ -29,6 +29,7 @@ IntegerVector ach()
   return xnumber;
 }
 
+/*
 //' CGAL1
 //'
 //' 1
@@ -49,6 +50,7 @@ int apoint(Rcpp::NumericVector x, Rcpp::NumericVector y)
 
   return nn;
 }
+*/
 
 
 
