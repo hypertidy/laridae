@@ -9,14 +9,6 @@ ach <- function() {
     .Call('_cgalgris_ach', PACKAGE = 'cgalgris')
 }
 
-#' CGAL1
-#'
-#' 1
-#' @export
-apoint <- function(x, y) {
-    .Call('_cgalgris_apoint', PACKAGE = 'cgalgris', x, y)
-}
-
 #' CGAL test2
 #'
 #' test2 CGAL
@@ -27,10 +19,35 @@ pas <- function() {
 
 #' CGAL vertex index
 #'
+#' First method uses uses a faces iterator to extract the vertex->info for
+#' each face. A Delaunay triangulation has both finite and infinite faces
+#' (see CGAL documentation). The infinite faces join to an external, infinite
+#' vertex, so the finite_faces_iterator just includes the internal faces.
+#'
 #' vertex index
 #' @export
 tri_xy <- function(x, y) {
     .Call('_cgalgris_tri_xy', PACKAGE = 'cgalgris', x, y)
+}
+
+#' CGAL vertex index MP version#2
+#'
+#' This method uses a vertex iterator instead of a faces iterator.
+#'
+#' @export
+tri_xy1 <- function(x, y) {
+    .Call('_cgalgris_tri_xy1', PACKAGE = 'cgalgris', x, y)
+}
+
+#' CGAL vertex index MP version#3
+#'
+#' This is the long-hand way, using an iteration over all faces, checking
+#' whether they are finite or not, and accessing the face.vertex info by
+#' dereferencing pointers to each vertex of the face.
+#'
+#' @export
+tri_xy2 <- function(x, y) {
+    .Call('_cgalgris_tri_xy2', PACKAGE = 'cgalgris', x, y)
 }
 
 #' CGAL vertex index
