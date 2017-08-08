@@ -1,11 +1,12 @@
 Package: cgalgris
 Type: Package
-Title: CGAL for gris
-Version: 0.0.1
-Date: 2015-05-04
-Author: Michael D. Sumner
-Maintainer: Michael D. Sumner<mdsumner@gmail.com>
-Description: More about what it does (maybe more than one line)
+Title: CGAL Experiments in Topology
+Version: 0.0.1.9001
+Authors@R: c(    
+    person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
+    person("Mark", "Padgham", role=c("ctb")))
+Description: Experimental wrapper for CGAL to explore constrained triangulations and
+   general edge-decomposition structures for shapes. 
 LinkingTo: Rcpp
 Imports: Rcpp
 License: LGPL-3
@@ -13,3 +14,7 @@ LazyData: TRUE
 Remotes: mdsumner/gris
 RoxygenNote: 6.0.1
 RcppModules: Shape
+Roxygen: list(markdown = TRUE)
+ByteCompile: true
+URL: https://github.com/r-gris/cgalgris
+BugReports: https://github.com/r-gris/cgalgris/issues

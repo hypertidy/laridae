@@ -24,10 +24,13 @@ xy <- cbind(x, y)
 system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
+length(ind_t)
+
 ps <- RTriangle::pslg(P = xy)
 system.time({
   ind_T <- c(t(RTriangle::triangulate(ps)$T))
 })
+length(ind_T)
 
 par(mfrow = c(2, 1), mar = rep(0, 4))
 poly_index(xy, ind_t, pch = ".")
