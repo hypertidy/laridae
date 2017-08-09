@@ -55,7 +55,7 @@ system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.003
+#>   0.001   0.000   0.002
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
@@ -80,7 +80,7 @@ system.time({
   ind_T <- c(t(RTriangle::triangulate(ps)$T))
 })
 #>    user  system elapsed 
-#>   0.003   0.000   0.002
+#>   0.002   0.000   0.002
 length(ind_T)
 #> [1] 5961
 
@@ -98,23 +98,65 @@ poly_index(xy, ind_T, pch = ".")
 par(p)
 
 
+## other comparisons
+library(deldir)
+#> deldir 0.1-14
+system.time(dl <- deldir::deldir(x, y))
+#> 
+#>      PLEASE NOTE:  The components "delsgs" and "summary" of the
+#>  object returned by deldir() are now DATA FRAMES rather than
+#>  matrices (as they were prior to release 0.0-18).
+#>  See help("deldir").
+#>  
+#>      PLEASE NOTE: The process that deldir() uses for determining
+#>  duplicated points has changed from that used in version
+#>  0.0-9 of this package (and previously). See help("deldir").
+#>    user  system elapsed 
+#>   0.053   0.004   0.058
+plot(dl)
+```
+
+![](README-unnamed-chunk-2-2.png)
+
+``` r
+library(geometry)
+#> Loading required package: magic
+#> Loading required package: abind
+system.time(gm <- geometry::delaunayn(xy))
+#> 
+#>      PLEASE NOTE:  As of version 0.3-5, no degenerate (zero area) 
+#>      regions are returned with the "Qt" option since the R 
+#>      code removes them from the triangulation. 
+#>      See help("delaunayn").
+#>    user  system elapsed 
+#>   0.007   0.004   0.011
+poly_index(xy, c(t(gm)))
+
 ## sf comparison
 library(dplyr)
 library(sf)
 #> Linking to GEOS 3.5.1, GDAL 2.2.1, proj.4 4.9.3
+```
+
+![](README-unnamed-chunk-2-3.png)
+
+``` r
 d <- st_as_sf(tibble::as_tibble(xy) %>% mutate(a = row_number()), coords = c("x", "y"))
 ## timing is unfair as sf must be decomposed and recomposed
 ## and every triangle has four coordinates, no sharing allowed
 ## and probably sfdct is slow ..
 library(sfdct)
+## this doesn't do anything, same as rgl::triangulate must
+## have edge inputs
+##system.time(sfd <- st_triangulate(d))
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.345   0.012   0.356
+#>   0.391   0.043   0.435
 plot(dt, col = "transparent", border = "black")
 ```
 
-![](README-unnamed-chunk-2-2.png)
+![](README-unnamed-chunk-2-4.png)
 
 Setup
 -----

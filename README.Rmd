@@ -91,6 +91,14 @@ poly_index(xy, ind_T, pch = ".")
 par(p)
 
 
+## other comparisons
+library(deldir)
+system.time(dl <- deldir::deldir(x, y))
+plot(dl)
+library(geometry)
+system.time(gm <- geometry::delaunayn(xy))
+poly_index(xy, c(t(gm)))
+
 ## sf comparison
 library(dplyr)
 library(sf)
@@ -99,6 +107,9 @@ d <- st_as_sf(tibble::as_tibble(xy) %>% mutate(a = row_number()), coords = c("x"
 ## and every triangle has four coordinates, no sharing allowed
 ## and probably sfdct is slow ..
 library(sfdct)
+## this doesn't do anything, same as rgl::triangulate must
+## have edge inputs
+##system.time(sfd <- st_triangulate(d))
 system.time(dt <- ct_triangulate(d))
 plot(dt, col = "transparent", border = "black")
 ```
