@@ -38,8 +38,8 @@ IntegerVector tri_xy(NumericVector x, NumericVector y) {
   Delaunay triangulation;
 
   triangulation.insert(points.begin(),points.end());
-  printf("number of vertices: %i\n", triangulation.number_of_vertices());
-  printf("number of faces: %i\n", triangulation.number_of_faces());
+  //printf("number of vertices: %i\n", triangulation.number_of_vertices());
+  //printf("number of faces: %i\n", triangulation.number_of_faces());
   IntegerVector vi(triangulation.number_of_faces() * 3);
   int cnt = 0;
   for(Delaunay::Finite_faces_iterator fit = triangulation.finite_faces_begin();
@@ -63,7 +63,7 @@ IntegerVector tri_xy(NumericVector x, NumericVector y) {
 // [[Rcpp::export]]
 IntegerVector tri_xy1(NumericVector x, NumericVector y)
 {
-  std::vector< std::pair<Point, int> > points (x.length());
+  std::vector< std::pair<Point, int> > points;
   unsigned int a = 0;
   for (unsigned int i = 0; i < x.length(); i++)
     points.push_back( std::make_pair( Point(x[i], y[i]), a++));
@@ -95,7 +95,7 @@ IntegerVector tri_xy1(NumericVector x, NumericVector y)
 // [[Rcpp::export]]
 IntegerVector tri_xy2(NumericVector x, NumericVector y)
 {
-  std::vector< std::pair<Point, int> > points (x.length());
+  std::vector< std::pair<Point, int> > points;
   unsigned int a = 0;
   for (unsigned int i = 0; i < x.length(); i++)
     points.push_back( std::make_pair( Point(x[i], y[i]), a++));

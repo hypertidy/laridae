@@ -2,8 +2,10 @@
 #y    <- c(2.3,3.0,2.0,5.0,8.0,9.0)
 
 set.seed(90)
-x <- rnorm(80, sd = 4)
-y <- rnorm(80, sd = 2)
+x <- rnorm(1e5, sd = 4)
+y <- rnorm(1e5, sd = 2)
+#x <- c(0, 0, 1, 1)
+#y <- c(0, 1, 1, 0)
 library(cgalgris)
 #' plot a matrix xy as points
 #' and add the triangulation indexed
@@ -24,7 +26,17 @@ xy <- cbind(x, y)
 system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
+system.time({
+  ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
+})
+system.time({
+  ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
+})
+
 length(ind_t)
+length(ind_t1)
+length(ind_t2)
+
 
 ps <- RTriangle::pslg(P = xy)
 system.time({
@@ -33,6 +45,7 @@ system.time({
 length(ind_T)
 
 par(mfrow = c(2, 1), mar = rep(0, 4))
-poly_index(xy, ind_t, pch = ".")
+poly_index(xy, ind_t2, pch = ".")
+#poly_index(xy, ind_t1, pch = ".")  ## can't work as order is not aligned in method 2
 poly_index(xy, ind_T, pch = ".")
 
