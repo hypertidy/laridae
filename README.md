@@ -26,6 +26,7 @@ y <- rnorm(1e3, sd = 2)
 #x <- c(0, 0, 1, 1)
 #y <- c(0, 1, 1, 0)
 library(cgalgris)
+
 #' plot a matrix xy as points
 #' and add the triangulation indexed
 #' by structural triplet row-identifiers
@@ -59,12 +60,12 @@ system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.001
+#>   0.001   0.000   0.002
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.001
+#>   0.001   0.000   0.002
 
 length(ind_t)
 #> [1] 5961
@@ -79,20 +80,41 @@ system.time({
   ind_T <- c(t(RTriangle::triangulate(ps)$T))
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.003
+#>   0.003   0.000   0.002
 length(ind_T)
 #> [1] 5961
 
-par(mfrow = c(2, 2), mar = rep(0, 4))
+p <- par(mfrow = c(2, 2), mar = rep(0, 4))
 poly_index(xy, ind_t, pch = ".")
 ## can't work as order is not aligned, but still fun
 poly_index(xy, ind_t1, pch = ".")  
 poly_index(xy, ind_t2, pch = ".")
-
 poly_index(xy, ind_T, pch = ".")
 ```
 
 ![](README-unnamed-chunk-2-1.png)
+
+``` r
+par(p)
+
+
+## sf comparison
+library(dplyr)
+library(sf)
+#> Linking to GEOS 3.5.1, GDAL 2.2.1, proj.4 4.9.3
+d <- st_as_sf(tibble::as_tibble(xy) %>% mutate(a = row_number()), coords = c("x", "y"))
+## timing is unfair as sf must be decomposed and recomposed
+## and every triangle has four coordinates, no sharing allowed
+## and probably sfdct is slow ..
+library(sfdct)
+system.time(dt <- ct_triangulate(d))
+#> all POINT, returning one feature triangulated
+#>    user  system elapsed 
+#>   0.345   0.012   0.356
+plot(dt, col = "transparent", border = "black")
+```
+
+![](README-unnamed-chunk-2-2.png)
 
 Setup
 -----
