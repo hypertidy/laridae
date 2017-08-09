@@ -30,14 +30,13 @@ typedef Face::Vertex_handle Fvertex_handle;
 //' @export
 // [[Rcpp::export]]
 IntegerVector tri_xy(NumericVector x, NumericVector y) {
-  std::vector< std::pair<Point,int> > points (x.length());
-  //IntegerVector a(1);
+  std::vector< std::pair<Point,int> > points;
   for (int idouble = 0; idouble < x.length(); idouble++){
-    //a[0] = idouble;
     points.push_back( std::make_pair( Point(x[idouble], y[idouble]), idouble) );
   }
 
   Delaunay triangulation;
+
   triangulation.insert(points.begin(),points.end());
   printf("number of vertices: %i\n", triangulation.number_of_vertices());
   printf("number of faces: %i\n", triangulation.number_of_faces());
