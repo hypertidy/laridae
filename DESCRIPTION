@@ -18,3 +18,4 @@ Roxygen: list(markdown = TRUE)
 ByteCompile: true
 URL: https://github.com/r-gris/cgalgris
 BugReports: https://github.com/r-gris/cgalgris/issues
+Suggests: testthat

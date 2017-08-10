@@ -14,11 +14,7 @@ typedef CGAL::Exact_predicates_tag                               Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
 typedef CDT::Point          Point;
 
-//' CGAL vertex index
-//'
-//' vertex index
-//' @export
-// [[Rcpp::export]]
+
 IntegerVector ctri_xy(NumericVector x, NumericVector y) {
 
   CDT cdt;

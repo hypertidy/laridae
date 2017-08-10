@@ -5,26 +5,6 @@
 
 using namespace Rcpp;
 
-// ach
-IntegerVector ach();
-RcppExport SEXP _cgalgris_ach() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(ach());
-    return rcpp_result_gen;
-END_RCPP
-}
-// pas
-IntegerVector pas();
-RcppExport SEXP _cgalgris_pas() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(pas());
-    return rcpp_result_gen;
-END_RCPP
-}
 // tri_xy
 IntegerVector tri_xy(NumericVector x, NumericVector y);
 RcppExport SEXP _cgalgris_tri_xy(SEXP xSEXP, SEXP ySEXP) {
@@ -58,18 +38,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(tri_xy2(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ctri_xy
-IntegerVector ctri_xy(NumericVector x, NumericVector y);
-RcppExport SEXP _cgalgris_ctri_xy(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(ctri_xy(x, y));
     return rcpp_result_gen;
 END_RCPP
 }

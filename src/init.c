@@ -8,17 +8,11 @@
 */
 
 /* .Call calls */
-extern SEXP _cgalgris_ach();
-extern SEXP _cgalgris_ctri_xy(SEXP, SEXP);
-extern SEXP _cgalgris_pas();
 extern SEXP _cgalgris_tri_xy(SEXP, SEXP);
 extern SEXP _cgalgris_tri_xy1(SEXP, SEXP);
 extern SEXP _cgalgris_tri_xy2(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cgalgris_ach",     (DL_FUNC) &_cgalgris_ach,     0},
-    {"_cgalgris_ctri_xy", (DL_FUNC) &_cgalgris_ctri_xy, 2},
-    {"_cgalgris_pas",     (DL_FUNC) &_cgalgris_pas,     0},
     {"_cgalgris_tri_xy",  (DL_FUNC) &_cgalgris_tri_xy,  2},
     {"_cgalgris_tri_xy1", (DL_FUNC) &_cgalgris_tri_xy1, 2},
     {"_cgalgris_tri_xy2", (DL_FUNC) &_cgalgris_tri_xy2, 2},
