@@ -55,17 +55,17 @@ system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.002
+#>   0.002   0.000   0.003
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.002
+#>   0.001   0.000   0.001
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.001
+#>   0.002   0.000   0.001
 
 length(ind_t)
 #> [1] 5961
@@ -112,7 +112,7 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.055   0.004   0.060
+#>   0.058   0.004   0.063
 plot(dl)
 ```
 
@@ -129,7 +129,7 @@ system.time(gm <- geometry::delaunayn(xy))
 #>      code removes them from the triangulation. 
 #>      See help("delaunayn").
 #>    user  system elapsed 
-#>   0.009   0.000   0.010
+#>    0.01    0.00    0.01
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
@@ -152,7 +152,7 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.338   0.036   0.374
+#>   0.359   0.035   0.395
 plot(dt, col = "transparent", border = "black")
 ```
 
