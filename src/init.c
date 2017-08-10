@@ -8,14 +8,16 @@
 */
 
 /* .Call calls */
+extern SEXP _cgalgris_optimal_convex_partition_2();
 extern SEXP _cgalgris_tri_xy(SEXP, SEXP);
 extern SEXP _cgalgris_tri_xy1(SEXP, SEXP);
 extern SEXP _cgalgris_tri_xy2(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cgalgris_tri_xy",  (DL_FUNC) &_cgalgris_tri_xy,  2},
-    {"_cgalgris_tri_xy1", (DL_FUNC) &_cgalgris_tri_xy1, 2},
-    {"_cgalgris_tri_xy2", (DL_FUNC) &_cgalgris_tri_xy2, 2},
+    {"_cgalgris_optimal_convex_partition_2", (DL_FUNC) &_cgalgris_optimal_convex_partition_2, 0},
+    {"_cgalgris_tri_xy",                     (DL_FUNC) &_cgalgris_tri_xy,                     2},
+    {"_cgalgris_tri_xy1",                    (DL_FUNC) &_cgalgris_tri_xy1,                    2},
+    {"_cgalgris_tri_xy2",                    (DL_FUNC) &_cgalgris_tri_xy2,                    2},
     {NULL, NULL, 0}
 };
 

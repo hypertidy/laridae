@@ -5,6 +5,16 @@
 
 using namespace Rcpp;
 
+// optimal_convex_partition_2
+int optimal_convex_partition_2();
+RcppExport SEXP _cgalgris_optimal_convex_partition_2() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(optimal_convex_partition_2());
+    return rcpp_result_gen;
+END_RCPP
+}
 // tri_xy
 IntegerVector tri_xy(NumericVector x, NumericVector y);
 RcppExport SEXP _cgalgris_tri_xy(SEXP xSEXP, SEXP ySEXP) {
