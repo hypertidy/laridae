@@ -144,3 +144,4 @@ IntegerVector tri_xy2(NumericVector x, NumericVector y)
 
   return vi;
 }
+

@@ -5,13 +5,38 @@
 
 using namespace Rcpp;
 
-// optimal_convex_partition_2
-int optimal_convex_partition_2();
-RcppExport SEXP _cgalgris_optimal_convex_partition_2() {
+// poly_triangulation0
+IntegerVector poly_triangulation0();
+RcppExport SEXP _cgalgris_poly_triangulation0() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(optimal_convex_partition_2());
+    rcpp_result_gen = Rcpp::wrap(poly_triangulation0());
+    return rcpp_result_gen;
+END_RCPP
+}
+// poly_triangulation_xy
+IntegerVector poly_triangulation_xy(NumericVector x, NumericVector y);
+RcppExport SEXP _cgalgris_poly_triangulation_xy(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(poly_triangulation_xy(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// poly_triangulation_xylist
+IntegerVector poly_triangulation_xylist(List xx, List yy, LogicalVector mark);
+RcppExport SEXP _cgalgris_poly_triangulation_xylist(SEXP xxSEXP, SEXP yySEXP, SEXP markSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type xx(xxSEXP);
+    Rcpp::traits::input_parameter< List >::type yy(yySEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type mark(markSEXP);
+    rcpp_result_gen = Rcpp::wrap(poly_triangulation_xylist(xx, yy, mark));
     return rcpp_result_gen;
 END_RCPP
 }
