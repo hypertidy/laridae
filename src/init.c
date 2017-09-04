@@ -8,6 +8,7 @@
 */
 
 /* .Call calls */
+extern SEXP _cgalgris_insert_constraint(SEXP, SEXP, SEXP);
 extern SEXP _cgalgris_poly_triangulation_xy(SEXP, SEXP);
 extern SEXP _cgalgris_poly_triangulation_xylist(SEXP, SEXP, SEXP);
 extern SEXP _cgalgris_poly_triangulation0();
@@ -16,6 +17,7 @@ extern SEXP _cgalgris_tri_xy1(SEXP, SEXP);
 extern SEXP _cgalgris_tri_xy2(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cgalgris_insert_constraint",         (DL_FUNC) &_cgalgris_insert_constraint,         3},
     {"_cgalgris_poly_triangulation_xy",     (DL_FUNC) &_cgalgris_poly_triangulation_xy,     2},
     {"_cgalgris_poly_triangulation_xylist", (DL_FUNC) &_cgalgris_poly_triangulation_xylist, 3},
     {"_cgalgris_poly_triangulation0",       (DL_FUNC) &_cgalgris_poly_triangulation0,       0},

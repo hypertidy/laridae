@@ -5,6 +5,19 @@
 
 using namespace Rcpp;
 
+// insert_constraint
+IntegerVector insert_constraint(NumericVector x, NumericVector y, List segment);
+RcppExport SEXP _cgalgris_insert_constraint(SEXP xSEXP, SEXP ySEXP, SEXP segmentSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< List >::type segment(segmentSEXP);
+    rcpp_result_gen = Rcpp::wrap(insert_constraint(x, y, segment));
+    return rcpp_result_gen;
+END_RCPP
+}
 // poly_triangulation0
 IntegerVector poly_triangulation0();
 RcppExport SEXP _cgalgris_poly_triangulation0() {
