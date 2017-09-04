@@ -2,17 +2,17 @@
 # Copyright Michael D. Sumner
 #
 
-#' @useDynLib seagull
+#' @useDynLib laridae
 
-#' @name seagull-package
-#' @aliases seagull-package, seagull
+#' @name laridae-package
+#' @aliases laridae-package, laridae
 #' @docType package
 #' @title CGAL for topology in R
 #' @description
 #' CGAL functionality.
 #' @details
 #' \tabular{ll}{
-#' Package: \tab seagull\cr
+#' Package: \tab laridae\cr
 #' Type: \tab Package\cr
 #' Version: \tab 0.0.1\cr
 #' Date: \tab 2015-05-05\cr

@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // insert_constraint
 IntegerVector insert_constraint(NumericVector x, NumericVector y, List segment);
-RcppExport SEXP _seagull_insert_constraint(SEXP xSEXP, SEXP ySEXP, SEXP segmentSEXP) {
+RcppExport SEXP _laridae_insert_constraint(SEXP xSEXP, SEXP ySEXP, SEXP segmentSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // poly_triangulation0
 IntegerVector poly_triangulation0();
-RcppExport SEXP _seagull_poly_triangulation0() {
+RcppExport SEXP _laridae_poly_triangulation0() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // poly_triangulation_xy
 IntegerVector poly_triangulation_xy(NumericVector x, NumericVector y);
-RcppExport SEXP _seagull_poly_triangulation_xy(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _laridae_poly_triangulation_xy(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // poly_triangulation_xylist
 IntegerVector poly_triangulation_xylist(List xx, List yy, LogicalVector mark);
-RcppExport SEXP _seagull_poly_triangulation_xylist(SEXP xxSEXP, SEXP yySEXP, SEXP markSEXP) {
+RcppExport SEXP _laridae_poly_triangulation_xylist(SEXP xxSEXP, SEXP yySEXP, SEXP markSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -55,7 +55,7 @@ END_RCPP
 }
 // tri_xy
 IntegerVector tri_xy(NumericVector x, NumericVector y);
-RcppExport SEXP _seagull_tri_xy(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _laridae_tri_xy(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -67,7 +67,7 @@ END_RCPP
 }
 // tri_xy1
 IntegerVector tri_xy1(NumericVector x, NumericVector y);
-RcppExport SEXP _seagull_tri_xy1(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _laridae_tri_xy1(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,7 +79,7 @@ END_RCPP
 }
 // tri_xy2
 IntegerVector tri_xy2(NumericVector x, NumericVector y);
-RcppExport SEXP _seagull_tri_xy2(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _laridae_tri_xy2(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,20 +88,4 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(tri_xy2(x, y));
     return rcpp_result_gen;
 END_RCPP
-}
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_seagull_insert_constraint", (DL_FUNC) &_seagull_insert_constraint, 3},
-    {"_seagull_poly_triangulation0", (DL_FUNC) &_seagull_poly_triangulation0, 0},
-    {"_seagull_poly_triangulation_xy", (DL_FUNC) &_seagull_poly_triangulation_xy, 2},
-    {"_seagull_poly_triangulation_xylist", (DL_FUNC) &_seagull_poly_triangulation_xylist, 3},
-    {"_seagull_tri_xy", (DL_FUNC) &_seagull_tri_xy, 2},
-    {"_seagull_tri_xy1", (DL_FUNC) &_seagull_tri_xy1, 2},
-    {"_seagull_tri_xy2", (DL_FUNC) &_seagull_tri_xy2, 2},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_seagull(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
 }

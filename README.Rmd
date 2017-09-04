@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`seagull` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package. 
+`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package. 
 
 Today (August 2017) this is just to explore the CGAL API from R, particularly for 
 feeding it vertex pools and constraints from `sc`-like decompositions. It's not clear how path/edge models are best translated, but maybe we can figure that out here. 
@@ -27,7 +27,7 @@ https://github.com/r-spatial/discuss/issues/6
 ### Triangulation
 
 
-Triangulate with CGAL via [seagull](https://github.com/hypertidy/seagull).  The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL). 
+Triangulate with CGAL via [laridae](https://github.com/hypertidy/laridae).  The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL). 
 
 Some timings, to show we aren't wildly off-base and that CGAL wins for raw unconstrained Delaunay triangulation. 
 
@@ -40,7 +40,7 @@ x <- rnorm(1e3, sd = 4)
 y <- rnorm(1e3, sd = 2)
 #x <- c(0, 0, 1, 1)
 #y <- c(0, 1, 1, 0)
-library(seagull)
+library(laridae)
 
 #' plot a matrix xy as points
 #' and add the triangulation indexed
@@ -115,7 +115,7 @@ plot(dt, col = "transparent", border = "black")
 
 There are various ways to do this, but the lowest overhead to start with is to pass in unique vertices and segments pairs in a list. 
 ```{r}
-library(seagull)
+library(laridae)
 library(scsf)
 library(sc)
 
@@ -150,7 +150,7 @@ system.time(psf <- prepare_sf_ct(dat))
 ## Setup
 
 ```R
-tools::package_native_routine_registration_skeleton("../seagull", "src/init.c",character_only = FALSE)
+tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
 ```
 
 ## History

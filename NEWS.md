@@ -1,6 +1,6 @@
-#  seagull dev
+#  laridae dev
 
-* renamed to seagull
+* renamed to laridae
 
 * new triangulation options and explanatory documentation thanks to @mpadge
 

@@ -1,8 +1,6 @@
 
-[![Travis-CI Build Status](https://travis-ci.org/r-gris/cgalgris.svg?branch=master)](https://travis-ci.org/r-gris/cgalgris) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/r-gris/cgalgris?branch=master&svg=true)](https://ci.appveyor.com/project/r-gris/cgalgris) [![Coverage Status](https://img.shields.io/codecov/c/github/r-gris/cgalgris/master.svg)](https://codecov.io/github/r-gris/cgalgris?branch=master)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-`cgalgris` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package.
+`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package.
 
 Today (August 2017) this is just to explore the CGAL API from R, particularly for feeding it vertex pools and constraints from `sc`-like decompositions. It's not clear how path/edge models are best translated, but maybe we can figure that out here.
 
@@ -12,7 +10,7 @@ The interest in constrained triangulations is discussed here along with the over
 
 ### Triangulation
 
-Triangulate with CGAL via [cgalgris](https://github.com/mdsumner/cgalgris). The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL).
+Triangulate with CGAL via [laridae](https://github.com/hypertidy/laridae). The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL).
 
 Some timings, to show we aren't wildly off-base and that CGAL wins for raw unconstrained Delaunay triangulation.
 
@@ -25,7 +23,7 @@ x <- rnorm(1e3, sd = 4)
 y <- rnorm(1e3, sd = 2)
 #x <- c(0, 0, 1, 1)
 #y <- c(0, 1, 1, 0)
-library(cgalgris)
+library(laridae)
 
 #' plot a matrix xy as points
 #' and add the triangulation indexed
@@ -55,17 +53,17 @@ system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.003
+#>   0.002   0.000   0.002
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.001
+#>   0.001   0.000   0.002
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.001
+#>   0.001   0.000   0.002
 
 length(ind_t)
 #> [1] 5961
@@ -112,7 +110,7 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.058   0.004   0.063
+#>   0.062   0.000   0.061
 plot(dl)
 ```
 
@@ -129,7 +127,7 @@ system.time(gm <- geometry::delaunayn(xy))
 #>      code removes them from the triangulation. 
 #>      See help("delaunayn").
 #>    user  system elapsed 
-#>    0.01    0.00    0.01
+#>   0.007   0.004   0.010
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
@@ -152,15 +150,62 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.359   0.035   0.395
+#>   0.471   0.000   0.471
 plot(dt, col = "transparent", border = "black")
 ```
 
 ![](README-unnamed-chunk-2-4.png)
 
+Constrained triangulation
+-------------------------
+
+There are various ways to do this, but the lowest overhead to start with is to pass in unique vertices and segments pairs in a list.
+
+``` r
+library(laridae)
+library(scsf)
+#> Loading required package: sc
+library(sc)
+
+library(dplyr)
+prepare_sf_ct <- function(x) {
+  tabs <- PRIMITIVE(x)
+
+  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(tabs$segment %>% dplyr::select(.vertex0, .vertex1))))) %>%
+  inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
+  segs <- split(segment$vertex, segment$segment)
+
+  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = segs)
+}
+```
+
+Some timings.
+
+``` r
+library(sfdct)
+data("minimal_mesh", package = "scsf")
+dat <- minimal_mesh
+library(rnaturalearth)
+#rnaturalearth::ne_countries(returnclass = "sf")
+data("wrld_simpl", package = "maptools")
+
+#dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
+dat <- sf::st_as_sf(wrld_simpl[14, ])
+system.time(psf <- prepare_sf_ct(dat))
+#> Joining, by = "vertex_"
+#>    user  system elapsed 
+#>   0.309   0.020   0.329
+#system.time(insert_constraint(psf$x, psf$y, psf$segs))
+```
+
 Setup
 -----
 
 ``` r
-tools::package_native_routine_registration_skeleton("../cgalgris", "src/init.c",character_only = FALSE)
+tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
 ```
+
+History
+-------
+
+Was originally called `cgalgris`.

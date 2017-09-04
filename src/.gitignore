@@ -2,4 +2,4 @@
 *.so
 *.dll
 RcppExports.o
-seagull.so
+laridae.so

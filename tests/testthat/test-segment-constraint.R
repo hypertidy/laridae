@@ -10,7 +10,7 @@ prepare_sf_ct <- function(x) {
   list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = segs)
 }
 
-library(seagull)
+library(laridae)
 library(scsf)
 library(sc)
 library(rnaturalearth)
