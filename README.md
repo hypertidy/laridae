@@ -1,4 +1,6 @@
 
+[![Travis-CI Build Status](https://travis-ci.org/hypertidy/laridae.svg?branch=master)](https://travis-ci.org/hypertidy/laridae) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/hypertidy/laridae?branch=master&svg=true)](https://ci.appveyor.com/project/hypertidy/laridae)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 `laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package.
 
@@ -53,7 +55,7 @@ system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.002
+#>   0.002   0.000   0.003
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
@@ -78,7 +80,7 @@ system.time({
   ind_T <- c(t(RTriangle::triangulate(ps)$T))
 })
 #>    user  system elapsed 
-#>   0.003   0.000   0.002
+#>   0.002   0.000   0.003
 length(ind_T)
 #> [1] 5961
 
@@ -110,7 +112,7 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.062   0.000   0.061
+#>   0.052   0.004   0.056
 plot(dl)
 ```
 
@@ -127,7 +129,7 @@ system.time(gm <- geometry::delaunayn(xy))
 #>      code removes them from the triangulation. 
 #>      See help("delaunayn").
 #>    user  system elapsed 
-#>   0.007   0.004   0.010
+#>   0.009   0.000   0.009
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
@@ -150,7 +152,7 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.471   0.000   0.471
+#>   0.469   0.000   0.472
 plot(dt, col = "transparent", border = "black")
 ```
 
@@ -194,7 +196,7 @@ dat <- sf::st_as_sf(wrld_simpl[14, ])
 system.time(psf <- prepare_sf_ct(dat))
 #> Joining, by = "vertex_"
 #>    user  system elapsed 
-#>   0.309   0.020   0.329
+#>   0.270   0.024   0.294
 #system.time(insert_constraint(psf$x, psf$y, psf$segs))
 ```
 
