@@ -8,28 +8,28 @@
 #' @param segment list of segment pairs (index into x,y)
 #' @export
 insert_constraint <- function(x, y, segment) {
-    .Call('_cgalgris_insert_constraint', PACKAGE = 'cgalgris', x, y, segment)
+    .Call('_seagull_insert_constraint', PACKAGE = 'seagull', x, y, segment)
 }
 
 #' Polygon triangulation
 #'
 #' @export
 poly_triangulation0 <- function() {
-    .Call('_cgalgris_poly_triangulation0', PACKAGE = 'cgalgris')
+    .Call('_seagull_poly_triangulation0', PACKAGE = 'seagull')
 }
 
 #' Polygon triangulation
 #'
 #' @export
 poly_triangulation_xy <- function(x, y) {
-    .Call('_cgalgris_poly_triangulation_xy', PACKAGE = 'cgalgris', x, y)
+    .Call('_seagull_poly_triangulation_xy', PACKAGE = 'seagull', x, y)
 }
 
 #' Polygon triangulation
 #'
 #' @export
 poly_triangulation_xylist <- function(xx, yy, mark = 1L) {
-    .Call('_cgalgris_poly_triangulation_xylist', PACKAGE = 'cgalgris', xx, yy, mark)
+    .Call('_seagull_poly_triangulation_xylist', PACKAGE = 'seagull', xx, yy, mark)
 }
 
 #' CGAL point triangulation (unconstrained)
@@ -48,7 +48,7 @@ poly_triangulation_xylist <- function(xx, yy, mark = 1L) {
 #' @name tri_xy
 #' @export
 tri_xy <- function(x, y) {
-    .Call('_cgalgris_tri_xy', PACKAGE = 'cgalgris', x, y)
+    .Call('_seagull_tri_xy', PACKAGE = 'seagull', x, y)
 }
 
 #' `tri_xy1` CGAL vertex index MP version#2
@@ -58,7 +58,7 @@ tri_xy <- function(x, y) {
 #' @export
 #' @name tri_xy
 tri_xy1 <- function(x, y) {
-    .Call('_cgalgris_tri_xy1', PACKAGE = 'cgalgris', x, y)
+    .Call('_seagull_tri_xy1', PACKAGE = 'seagull', x, y)
 }
 
 #' `tri_xy2` CGAL vertex index MP version#3
@@ -70,6 +70,6 @@ tri_xy1 <- function(x, y) {
 #' @export
 #' @name tri_xy
 tri_xy2 <- function(x, y) {
-    .Call('_cgalgris_tri_xy2', PACKAGE = 'cgalgris', x, y)
+    .Call('_seagull_tri_xy2', PACKAGE = 'seagull', x, y)
 }
 

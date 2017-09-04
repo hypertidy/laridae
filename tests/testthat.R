@@ -1,4 +1,4 @@
 library(testthat)
-library(cgalgris)
+library(seagull)
 
-test_check("cgalgris")
+test_check("seagull")

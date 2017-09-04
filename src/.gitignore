@@ -2,4 +2,4 @@
 *.so
 *.dll
 RcppExports.o
-cgalgris.so
+seagull.so

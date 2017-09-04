@@ -1,4 +1,6 @@
-# cgalgris dev
+#  seagull dev
+
+* renamed to seagull
 
 * new triangulation options and explanatory documentation thanks to @mpadge
 

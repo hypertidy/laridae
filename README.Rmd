@@ -3,7 +3,6 @@ output: github_document
 ---
 
 
-[![Travis-CI Build Status](https://travis-ci.org/r-gris/cgalgris.svg?branch=master)](https://travis-ci.org/r-gris/cgalgris) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/r-gris/cgalgris?branch=master&svg=true)](https://ci.appveyor.com/project/r-gris/cgalgris) [![Coverage Status](https://img.shields.io/codecov/c/github/r-gris/cgalgris/master.svg)](https://codecov.io/github/r-gris/cgalgris?branch=master)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -15,9 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-
-
-`cgalgris` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package. 
+`seagull` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package. 
 
 Today (August 2017) this is just to explore the CGAL API from R, particularly for 
 feeding it vertex pools and constraints from `sc`-like decompositions. It's not clear how path/edge models are best translated, but maybe we can figure that out here. 
@@ -30,7 +27,7 @@ https://github.com/r-spatial/discuss/issues/6
 ### Triangulation
 
 
-Triangulate with CGAL via [cgalgris](https://github.com/mdsumner/cgalgris).  The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL). 
+Triangulate with CGAL via [seagull](https://github.com/hypertidy/seagull).  The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL). 
 
 Some timings, to show we aren't wildly off-base and that CGAL wins for raw unconstrained Delaunay triangulation. 
 
@@ -43,7 +40,7 @@ x <- rnorm(1e3, sd = 4)
 y <- rnorm(1e3, sd = 2)
 #x <- c(0, 0, 1, 1)
 #y <- c(0, 1, 1, 0)
-library(cgalgris)
+library(seagull)
 
 #' plot a matrix xy as points
 #' and add the triangulation indexed
@@ -114,9 +111,48 @@ system.time(dt <- ct_triangulate(d))
 plot(dt, col = "transparent", border = "black")
 ```
 
+## Constrained triangulation
+
+There are various ways to do this, but the lowest overhead to start with is to pass in unique vertices and segments pairs in a list. 
+```{r}
+library(seagull)
+library(scsf)
+library(sc)
+
+library(dplyr)
+prepare_sf_ct <- function(x) {
+  tabs <- PRIMITIVE(x)
+
+  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(tabs$segment %>% dplyr::select(.vertex0, .vertex1))))) %>%
+  inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
+  segs <- split(segment$vertex, segment$segment)
+
+  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = segs)
+}
+
+```
+Some timings. 
+
+```{r}
+library(sfdct)
+data("minimal_mesh", package = "scsf")
+dat <- minimal_mesh
+library(rnaturalearth)
+#rnaturalearth::ne_countries(returnclass = "sf")
+data("wrld_simpl", package = "maptools")
+
+#dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
+dat <- sf::st_as_sf(wrld_simpl[14, ])
+system.time(psf <- prepare_sf_ct(dat))
+#system.time(insert_constraint(psf$x, psf$y, psf$segs))
+
+```
 ## Setup
 
 ```R
-tools::package_native_routine_registration_skeleton("../cgalgris", "src/init.c",character_only = FALSE)
+tools::package_native_routine_registration_skeleton("../seagull", "src/init.c",character_only = FALSE)
 ```
 
+## History
+
+Was originally called `cgalgris`. 

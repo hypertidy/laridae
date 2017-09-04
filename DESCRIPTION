@@ -1,4 +1,4 @@
-Package: cgalgris
+Package: seagull
 Type: Package
 Title: CGAL Experiments in Topology
 Version: 0.0.1.9001
@@ -16,6 +16,6 @@ RoxygenNote: 6.0.1
 RcppModules: Shape
 Roxygen: list(markdown = TRUE)
 ByteCompile: true
-URL: https://github.com/r-gris/cgalgris
-BugReports: https://github.com/r-gris/cgalgris/issues
+URL: https://github.com/hypertidy/seagull
+BugReports: https://github.com/hypertidy/seagull/issues
 Suggests: testthat
