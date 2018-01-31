@@ -10,7 +10,37 @@ The interest in constrained triangulations is discussed here along with the over
 
 <https://github.com/r-spatial/discuss/issues/6>
 
-### Triangulation
+Installation
+------------
+
+Dev-only for now
+
+### Linux
+
+Ubuntu/Debian
+
+``` bash
+apt install libcgal-dev
+apt install libcgal-demo
+apt install cmake g++
+```
+
+Other OS ...
+------------
+
+And then
+--------
+
+Make sure to run this when your defs change, also when the system has been updated ?
+
+``` r
+tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
+```
+
+WIP
+
+Triangulation
+-------------
 
 Triangulate with CGAL via [laridae](https://github.com/hypertidy/laridae). The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL).
 
@@ -60,7 +90,7 @@ system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.002
+#>   0.001   0.000   0.001
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
@@ -80,7 +110,7 @@ system.time({
   ind_T <- c(t(RTriangle::triangulate(ps)$T))
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.003
+#>   0.003   0.000   0.003
 length(ind_T)
 #> [1] 5961
 
@@ -112,7 +142,7 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.052   0.004   0.056
+#>   0.058   0.000   0.058
 plot(dl)
 ```
 
@@ -129,13 +159,13 @@ system.time(gm <- geometry::delaunayn(xy))
 #>      code removes them from the triangulation. 
 #>      See help("delaunayn").
 #>    user  system elapsed 
-#>   0.009   0.000   0.009
+#>   0.009   0.000   0.010
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
 library(dplyr)
 library(sf)
-#> Linking to GEOS 3.5.1, GDAL 2.2.1, proj.4 4.9.3
+#> Linking to GEOS 3.6.2, GDAL 2.2.3, proj.4 4.9.3
 ```
 
 ![](README-unnamed-chunk-2-3.png)
@@ -152,7 +182,7 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.469   0.000   0.472
+#>   0.510   0.028   0.538
 plot(dt, col = "transparent", border = "black")
 ```
 
@@ -165,46 +195,79 @@ There are various ways to do this, but the lowest overhead to start with is to p
 
 ``` r
 library(laridae)
-library(scsf)
-#> Loading required package: sc
-library(sc)
+library(silicate)
+
 
 library(dplyr)
 prepare_sf_ct <- function(x) {
-  tabs <- PRIMITIVE(x)
-
-  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(tabs$segment %>% dplyr::select(.vertex0, .vertex1))))) %>%
+  ##tabs <- sc::PRIMITIVE(x)
+  tabs <- silicate::SC(x)
+  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_segment(x) %>% dplyr::select(.vertex0, .vertex1))))) %>%
   inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
   segs <- split(segment$vertex, segment$segment)
 
-  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = segs)
+  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = distinct_uord_segments(segs))
 }
+
+distinct_uord_segments <- function(segs) {
+  x <- dplyr::distinct(tibble::as_tibble(do.call(rbind, segs)))
+  usort <- do.call(rbind, lapply(segs, sort))
+  bad <- duplicated(usort)
+  x <- x[!bad, ]
+  lapply(split(x, seq_len(nrow(x))), unlist)
+}
+
+st_line_from_segment <- function(segs, coords) {
+  sf::st_sfc(lapply(segs, function(a) sf::st_linestring(coords[a + 1, ])))
+}
+
+#sline <- st_line_from_segment(psf$segs, cbind(psf$x, psf$y))
 ```
 
 Some timings.
 
 ``` r
+
 library(sfdct)
-data("minimal_mesh", package = "scsf")
+data("minimal_mesh", package = "silicate")
 dat <- minimal_mesh
 library(rnaturalearth)
 #rnaturalearth::ne_countries(returnclass = "sf")
 data("wrld_simpl", package = "maptools")
 
 #dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
-dat <- sf::st_as_sf(wrld_simpl[14, ])
-system.time(psf <- prepare_sf_ct(dat))
+dat <- sf::st_as_sf(wrld_simpl)
+dat <- sf::st_buffer(dat, dist = 0)
+#> Warning in st_buffer.sfc(st_geometry(x), dist, nQuadSegs): st_buffer does
+#> not correctly buffer longitude/latitude data
+#> dist is assumed to be in decimal degrees (arc_degrees).
+system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
 #> Joining, by = "vertex_"
 #>    user  system elapsed 
-#>   0.270   0.024   0.294
-#system.time(insert_constraint(psf$x, psf$y, psf$segs))
-```
+#>   0.815   0.004   0.821
 
-Setup
------
+library(raster)
+#> Loading required package: sp
+#> 
+#> Attaching package: 'raster'
+#> The following object is masked from 'package:magic':
+#> 
+#>     shift
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     select
+#psf <- prepare_sf_ct(spex::polygonize(raster::raster(volcano)))
+#psf <- prepare_sf_ct(spex::polygonize(disaggregate(raster::raster(volcano), fact = 3)))
 
-``` r
-tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
+ system.time(segment_constraint(psf$x, psf$y, psf$segs))
+#>    user  system elapsed 
+#>   0.000   0.000   0.001
+# 
+# for (i in seq_len(24)) {
+# psf <- prepare_sf_ct(dat[i, ])
+# segment_constraint(psf$x, psf$y, psf$segs)
+# scan("", 1)
+# }
 ```
 
 History

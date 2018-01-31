@@ -26,8 +26,33 @@ The interest in constrained triangulations is discussed here along with the over
 
 https://github.com/r-spatial/discuss/issues/6
 
+## Installation
 
-### Triangulation
+Dev-only for now
+
+### Linux
+
+Ubuntu/Debian
+
+```bash
+apt install libcgal-dev
+apt install libcgal-demo
+apt install cmake g++
+```
+
+## Other OS ...
+
+## And then
+
+Make sure to run this when your defs change, also  when the system has been updated ? 
+
+```R
+tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
+```
+WIP
+
+
+## Triangulation
 
 
 Triangulate with CGAL via [laridae](https://github.com/hypertidy/laridae).  The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL). 
@@ -117,44 +142,67 @@ plot(dt, col = "transparent", border = "black")
 ## Constrained triangulation
 
 There are various ways to do this, but the lowest overhead to start with is to pass in unique vertices and segments pairs in a list. 
+
+
 ```{r}
 library(laridae)
-library(scsf)
-library(sc)
+library(silicate)
+
 
 library(dplyr)
 prepare_sf_ct <- function(x) {
-  tabs <- PRIMITIVE(x)
-
-  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(tabs$segment %>% dplyr::select(.vertex0, .vertex1))))) %>%
+  ##tabs <- sc::PRIMITIVE(x)
+  tabs <- silicate::SC(x)
+  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_segment(x) %>% dplyr::select(.vertex0, .vertex1))))) %>%
   inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
   segs <- split(segment$vertex, segment$segment)
 
-  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = segs)
+  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = distinct_uord_segments(segs))
 }
 
+distinct_uord_segments <- function(segs) {
+  x <- dplyr::distinct(tibble::as_tibble(do.call(rbind, segs)))
+  usort <- do.call(rbind, lapply(segs, sort))
+  bad <- duplicated(usort)
+  x <- x[!bad, ]
+  lapply(split(x, seq_len(nrow(x))), unlist)
+}
+
+st_line_from_segment <- function(segs, coords) {
+  sf::st_sfc(lapply(segs, function(a) sf::st_linestring(coords[a + 1, ])))
+}
+
+#sline <- st_line_from_segment(psf$segs, cbind(psf$x, psf$y))
 ```
 Some timings. 
 
 ```{r}
+
 library(sfdct)
-data("minimal_mesh", package = "scsf")
+data("minimal_mesh", package = "silicate")
 dat <- minimal_mesh
 library(rnaturalearth)
 #rnaturalearth::ne_countries(returnclass = "sf")
 data("wrld_simpl", package = "maptools")
 
 #dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
-dat <- sf::st_as_sf(wrld_simpl[14, ])
-system.time(psf <- prepare_sf_ct(dat))
-#system.time(insert_constraint(psf$x, psf$y, psf$segs))
+dat <- sf::st_as_sf(wrld_simpl)
+dat <- sf::st_buffer(dat, dist = 0)
+system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
 
-```
-## Setup
+library(raster)
+#psf <- prepare_sf_ct(spex::polygonize(raster::raster(volcano)))
+#psf <- prepare_sf_ct(spex::polygonize(disaggregate(raster::raster(volcano), fact = 3)))
 
-```R
-tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
+ system.time(segment_constraint(psf$x, psf$y, psf$segs))
+# 
+# for (i in seq_len(24)) {
+# psf <- prepare_sf_ct(dat[i, ])
+# segment_constraint(psf$x, psf$y, psf$segs)
+# scan("", 1)
+# }
 ```
+
 
 ## History
 
