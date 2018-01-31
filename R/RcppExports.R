@@ -7,8 +7,8 @@
 #' @param y y coordinate
 #' @param segment list of segment pairs (index into x,y)
 #' @export
-insert_constraint <- function(x, y, segment) {
-    .Call('_laridae_insert_constraint', PACKAGE = 'laridae', x, y, segment)
+segment_constraint <- function(x, y, segment) {
+    .Call('_laridae_segment_constraint', PACKAGE = 'laridae', x, y, segment)
 }
 
 #' Polygon triangulation

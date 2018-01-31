@@ -1,5 +1,7 @@
 #  laridae dev
 
+* rename `insert_constraint` to `segment_constraint`
+
 * renamed to laridae
 
 * new triangulation options and explanatory documentation thanks to @mpadge
