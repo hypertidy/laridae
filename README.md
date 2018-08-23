@@ -57,9 +57,9 @@ y <- rnorm(1e3, sd = 2)
 #y <- c(0, 1, 1, 0)
 library(laridae)
 
-#' plot a matrix xy as points
-#' and add the triangulation indexed
-#' by structural triplet row-identifiers
+# plot a matrix xy as points
+# and add the triangulation indexed
+# by structural triplet row-identifiers
 poly_index <- function(xy, index, ...) {
   plot(xy, ...)
   ## assume index is 0,1,2,0,1,2,0,1,...
@@ -85,17 +85,17 @@ system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.003
+#>   0.002   0.000   0.002
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.001
+#>   0.001   0.000   0.002
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.002
+#>   0.002   0.000   0.002
 
 length(ind_t)
 #> [1] 5961
@@ -110,7 +110,7 @@ system.time({
   ind_T <- c(t(RTriangle::triangulate(ps)$T))
 })
 #>    user  system elapsed 
-#>   0.003   0.000   0.003
+#>   0.002   0.000   0.003
 length(ind_T)
 #> [1] 5961
 
@@ -142,7 +142,7 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.058   0.000   0.058
+#>   0.050   0.004   0.054
 plot(dl)
 ```
 
@@ -159,7 +159,7 @@ system.time(gm <- geometry::delaunayn(xy))
 #>      code removes them from the triangulation. 
 #>      See help("delaunayn").
 #>    user  system elapsed 
-#>   0.009   0.000   0.010
+#>   0.009   0.000   0.009
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
@@ -182,7 +182,7 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.510   0.028   0.538
+#>   0.510   0.016   0.528
 plot(dt, col = "transparent", border = "black")
 ```
 
@@ -244,7 +244,7 @@ dat <- sf::st_buffer(dat, dist = 0)
 system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
 #> Joining, by = "vertex_"
 #>    user  system elapsed 
-#>   0.815   0.004   0.821
+#>   0.805   0.010   0.816
 
 library(raster)
 #> Loading required package: sp
@@ -261,7 +261,7 @@ library(raster)
 
  system.time(segment_constraint(psf$x, psf$y, psf$segs))
 #>    user  system elapsed 
-#>   0.000   0.000   0.001
+#>       0       0       0
 # 
 # for (i in seq_len(24)) {
 # psf <- prepare_sf_ct(dat[i, ])

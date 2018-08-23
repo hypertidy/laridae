@@ -17,10 +17,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package. 
+`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `hypertidy/silicate` package. 
 
-Today (August 2017) this is just to explore the CGAL API from R, particularly for 
-feeding it vertex pools and constraints from `sc`-like decompositions. It's not clear how path/edge models are best translated, but maybe we can figure that out here. 
+RTriangle is really fast, but it's not as fast as CGAL. CGAL can also be used to update a triangulation, which means (I think) that we could build an unconstrained triangulation from all the coordinates, and then add in any segments, even unclosed linear paths. At any rate, being able to update a mesh has a lot of applications, especially for neighbouring shapes, and for on-demand (extent or zoom dependent level of detail) tasks. 
 
 The interest in constrained triangulations is discussed here along with the overall landscape in R. 
 
@@ -70,9 +69,9 @@ y <- rnorm(1e3, sd = 2)
 #y <- c(0, 1, 1, 0)
 library(laridae)
 
-#' plot a matrix xy as points
-#' and add the triangulation indexed
-#' by structural triplet row-identifiers
+# plot a matrix xy as points
+# and add the triangulation indexed
+# by structural triplet row-identifiers
 poly_index <- function(xy, index, ...) {
   plot(xy, ...)
   ## assume index is 0,1,2,0,1,2,0,1,...
@@ -84,7 +83,7 @@ poly_index <- function(xy, index, ...) {
 
 library(dplyr)
 library(tibble)
-#xy <- cbind(x, y)  %>% as_tibble() %>% arrange(x, desc(y)) %>% as.matrix()
+
 xy <- cbind(x, y)
 system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
@@ -151,7 +150,6 @@ library(silicate)
 
 library(dplyr)
 prepare_sf_ct <- function(x) {
-  ##tabs <- sc::PRIMITIVE(x)
   tabs <- silicate::SC(x)
   segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_segment(x) %>% dplyr::select(.vertex0, .vertex1))))) %>%
   inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
