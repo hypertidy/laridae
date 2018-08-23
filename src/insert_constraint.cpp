@@ -37,9 +37,9 @@ IntegerVector segment_constraint(NumericVector x, NumericVector y, List segment)
 std::cout << "Number of vertices before: "
             << cdt.number_of_vertices() << std::endl;
   // make it conforming Delaunay
-//  CGAL::make_conforming_Delaunay_2(cdt);
-//  std::cout << "Number of vertices after make_conforming_Delaunay_2: "
- //           << cdt.number_of_vertices() << std::endl;
+ // CGAL::make_conforming_Delaunay_2(cdt);
+  //std::cout << "Number of vertices after make_conforming_Delaunay_2: "
+  //          << cdt.number_of_vertices() << std::endl;
   // then make it conforming Gabriel
 //  CGAL::make_conforming_Gabriel_2(cdt);
 //  std::cout << "Number of vertices after make_conforming_Gabriel_2: "
