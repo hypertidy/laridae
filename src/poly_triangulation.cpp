@@ -76,7 +76,6 @@ void
 
 //' Polygon triangulation
 //'
-//' @export
 // [[Rcpp::export]]
 IntegerVector poly_triangulation0( )
 {
@@ -114,7 +113,6 @@ IntegerVector poly_triangulation0( )
 
 //' Polygon triangulation
 //'
-//' @export
 // [[Rcpp::export]]
 IntegerVector poly_triangulation_xy(NumericVector x, NumericVector y )
 {
@@ -147,7 +145,6 @@ cdt.insert_constraint(polygon1.vertices_begin(), polygon1.vertices_end(), true);
 
 //' Polygon triangulation
 //'
-//' @export
 // [[Rcpp::export]]
 IntegerVector poly_triangulation_xylist(List xx, List yy, LogicalVector mark = 1)
 {

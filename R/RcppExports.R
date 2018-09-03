@@ -6,28 +6,24 @@
 #' @param x x coordinate
 #' @param y y coordinate
 #' @param segment list of segment pairs (index into x,y)
-#' @export
 segment_constraint <- function(x, y, segment) {
     .Call('_laridae_segment_constraint', PACKAGE = 'laridae', x, y, segment)
 }
 
 #' Polygon triangulation
 #'
-#' @export
 poly_triangulation0 <- function() {
     .Call('_laridae_poly_triangulation0', PACKAGE = 'laridae')
 }
 
 #' Polygon triangulation
 #'
-#' @export
 poly_triangulation_xy <- function(x, y) {
     .Call('_laridae_poly_triangulation_xy', PACKAGE = 'laridae', x, y)
 }
 
 #' Polygon triangulation
 #'
-#' @export
 poly_triangulation_xylist <- function(xx, yy, mark = 1L) {
     .Call('_laridae_poly_triangulation_xylist', PACKAGE = 'laridae', xx, yy, mark)
 }

@@ -15,7 +15,6 @@ typedef CDT::Vertex_handle Vertex_handle;
 //' @param x x coordinate
 //' @param y y coordinate
 //' @param segment list of segment pairs (index into x,y)
-//' @export
 // [[Rcpp::export]]
 IntegerVector segment_constraint(NumericVector x, NumericVector y, List segment)
 {

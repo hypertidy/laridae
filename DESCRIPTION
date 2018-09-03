@@ -12,7 +12,7 @@ Imports: Rcpp
 License: LGPL-3
 LazyData: TRUE
 Remotes: mdsumner/gris
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 RcppModules: Shape
 Roxygen: list(markdown = TRUE)
 ByteCompile: true

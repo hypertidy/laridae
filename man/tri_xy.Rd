@@ -2,9 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{tri_xy}
 \alias{tri_xy}
-\alias{tri_xy}
 \alias{tri_xy1}
-\alias{tri_xy}
 \alias{tri_xy2}
 \title{CGAL point triangulation (unconstrained)}
 \usage{
