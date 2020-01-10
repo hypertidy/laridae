@@ -1,5 +1,7 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -151,7 +153,7 @@ library(silicate)
 library(dplyr)
 prepare_sf_ct <- function(x) {
   tabs <- silicate::SC(x)
-  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_segment(x) %>% dplyr::select(.vertex0, .vertex1))))) %>%
+  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_edge(tabs) %>% dplyr::select(.vx0, .vx1))))) %>%
   inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
   segs <- split(segment$vertex, segment$segment)
 
@@ -172,7 +174,8 @@ st_line_from_segment <- function(segs, coords) {
 
 #sline <- st_line_from_segment(psf$segs, cbind(psf$x, psf$y))
 ```
-Some timings. 
+
+(This is very early, just to prove we run the meshing and succeed). 
 
 ```{r}
 
@@ -184,21 +187,17 @@ library(rnaturalearth)
 data("wrld_simpl", package = "maptools")
 
 #dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
-dat <- sf::st_as_sf(wrld_simpl)
-dat <- sf::st_buffer(dat, dist = 0)
+#dat <- sf::st_as_sf(wrld_simpl)
+#dat <- sf::st_buffer(dat, dist = 0)
+dat <- minimal_mesh
 system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
 
 library(raster)
 #psf <- prepare_sf_ct(spex::polygonize(raster::raster(volcano)))
 #psf <- prepare_sf_ct(spex::polygonize(disaggregate(raster::raster(volcano), fact = 3)))
 
- system.time(segment_constraint(psf$x, psf$y, psf$segs))
-# 
-# for (i in seq_len(24)) {
-# psf <- prepare_sf_ct(dat[i, ])
-# segment_constraint(psf$x, psf$y, psf$segs)
-# scan("", 1)
-# }
+
+laridae:::segment_constraint(psf$x, psf$y, psf$segs)
 ```
 
 

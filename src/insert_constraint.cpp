@@ -1,11 +1,11 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
 #include <iostream>
-typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
 typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
@@ -36,12 +36,12 @@ IntegerVector segment_constraint(NumericVector x, NumericVector y, List segment)
 std::cout << "Number of vertices before: "
             << cdt.number_of_vertices() << std::endl;
   // make it conforming Delaunay
- // CGAL::make_conforming_Delaunay_2(cdt);
-  //std::cout << "Number of vertices after make_conforming_Delaunay_2: "
-  //          << cdt.number_of_vertices() << std::endl;
+  CGAL::make_conforming_Delaunay_2(cdt);
+  std::cout << "Number of vertices after make_conforming_Delaunay_2: "
+            << cdt.number_of_vertices() << std::endl;
   // then make it conforming Gabriel
-//  CGAL::make_conforming_Gabriel_2(cdt);
-//  std::cout << "Number of vertices after make_conforming_Gabriel_2: "
-//            << cdt.number_of_vertices() << std::endl;
+  CGAL::make_conforming_Gabriel_2(cdt);
+  std::cout << "Number of vertices after make_conforming_Gabriel_2: "
+            << cdt.number_of_vertices() << std::endl;
   return 0;
 }

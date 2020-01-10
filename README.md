@@ -1,17 +1,30 @@
 
-[![Travis-CI Build Status](https://travis-ci.org/hypertidy/laridae.svg?branch=master)](https://travis-ci.org/hypertidy/laridae) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/hypertidy/laridae?branch=master&svg=true)](https://ci.appveyor.com/project/hypertidy/laridae)
+[![Travis-CI Build
+Status](https://travis-ci.org/hypertidy/laridae.svg?branch=master)](https://travis-ci.org/hypertidy/laridae)
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/hypertidy/laridae?branch=master&svg=true)](https://ci.appveyor.com/project/hypertidy/laridae)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `mdsumner/sc` package.
 
-Today (August 2017) this is just to explore the CGAL API from R, particularly for feeding it vertex pools and constraints from `sc`-like decompositions. It's not clear how path/edge models are best translated, but maybe we can figure that out here.
+`laridae` came out of a need for constrained triangulation for a
+topology-in-R project. That effort has moved on somewhat, proving the
+case by using `RTriangle` and then bedding down the normalization model
+in the `hypertidy/silicate` package.
 
-The interest in constrained triangulations is discussed here along with the overall landscape in R.
+RTriangle is really fast, but it’s not as fast as CGAL. CGAL can also be
+used to update a triangulation, which means (I think) that we could
+build an unconstrained triangulation from all the coordinates, and then
+add in any segments, even unclosed linear paths. At any rate, being able
+to update a mesh has a lot of applications, especially for neighbouring
+shapes, and for on-demand (extent or zoom dependent level of detail)
+tasks.
+
+The interest in constrained triangulations is discussed here along with
+the overall landscape in R.
 
 <https://github.com/r-spatial/discuss/issues/6>
 
-Installation
-------------
+## Installation
 
 Dev-only for now
 
@@ -25,13 +38,13 @@ apt install libcgal-demo
 apt install cmake g++
 ```
 
-Other OS ...
-------------
+## Other OS …
 
-And then
---------
+## And then
 
-Make sure to run this when your defs change, also when the system has been updated ?
+Make sure to run this when your defs change, also when the system has
+been updated
+?
 
 ``` r
 tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",character_only = FALSE)
@@ -39,12 +52,15 @@ tools::package_native_routine_registration_skeleton("../laridae", "src/init.c",c
 
 WIP
 
-Triangulation
--------------
+## Triangulation
 
-Triangulate with CGAL via [laridae](https://github.com/hypertidy/laridae). The function `tri_xy` performs an exact Delaunay triangulation on all vertices, returning a triplet-index for each triangle (zero-based in CGAL).
+Triangulate with CGAL via
+[laridae](https://github.com/hypertidy/laridae). The function `tri_xy`
+performs an exact Delaunay triangulation on all vertices, returning a
+triplet-index for each triangle (zero-based in CGAL).
 
-Some timings, to show we aren't wildly off-base and that CGAL wins for raw unconstrained Delaunay triangulation.
+Some timings, to show we aren’t wildly off-base and that CGAL wins for
+raw unconstrained Delaunay triangulation.
 
 ``` r
 #x    <- c(2.3,3.0,7.0,1.0,3.0,8.0)
@@ -79,23 +95,23 @@ library(dplyr)
 #> 
 #>     intersect, setdiff, setequal, union
 library(tibble)
-#xy <- cbind(x, y)  %>% as_tibble() %>% arrange(x, desc(y)) %>% as.matrix()
+
 xy <- cbind(x, y)
 system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.002
+#>   0.027   0.003   0.030
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.002
+#>   0.027   0.000   0.028
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.002   0.000   0.002
+#>    0.03    0.00    0.03
 
 length(ind_t)
 #> [1] 5961
@@ -122,7 +138,7 @@ poly_index(xy, ind_t2, pch = ".")
 poly_index(xy, ind_T, pch = ".")
 ```
 
-![](README-unnamed-chunk-2-1.png)
+![](README-unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
 par(p)
@@ -130,7 +146,7 @@ par(p)
 
 ## other comparisons
 library(deldir)
-#> deldir 0.1-14
+#> deldir 0.1-23
 system.time(dl <- deldir::deldir(x, y))
 #> 
 #>      PLEASE NOTE:  The components "delsgs" and "summary" of the
@@ -142,33 +158,29 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.050   0.004   0.054
+#>   0.051   0.000   0.051
 plot(dl)
 ```
 
-![](README-unnamed-chunk-2-2.png)
+![](README-unnamed-chunk-2-2.png)<!-- -->
 
 ``` r
 library(geometry)
-#> Loading required package: magic
-#> Loading required package: abind
 system.time(gm <- geometry::delaunayn(xy))
-#> 
-#>      PLEASE NOTE:  As of version 0.3-5, no degenerate (zero area) 
-#>      regions are returned with the "Qt" option since the R 
-#>      code removes them from the triangulation. 
-#>      See help("delaunayn").
 #>    user  system elapsed 
-#>   0.009   0.000   0.009
+#>   0.005   0.004   0.043
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
 library(dplyr)
 library(sf)
-#> Linking to GEOS 3.6.2, GDAL 2.2.3, proj.4 4.9.3
+#> Linking to GEOS 3.8.0, GDAL 2.4.2, PROJ 5.2.0
+#> WARNING: different compile-time and runtime versions for GEOS found:
+#> Linked against: 3.8.0-CAPI-1.13.1  compiled against: 3.7.1-CAPI-1.11.1
+#> It is probably a good idea to reinstall sf, and maybe rgeos and rgdal too
 ```
 
-![](README-unnamed-chunk-2-3.png)
+![](README-unnamed-chunk-2-3.png)<!-- -->
 
 ``` r
 d <- st_as_sf(tibble::as_tibble(xy) %>% mutate(a = row_number()), coords = c("x", "y"))
@@ -182,27 +194,31 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.510   0.016   0.528
+#>   0.154   0.012   0.166
 plot(dt, col = "transparent", border = "black")
 ```
 
-![](README-unnamed-chunk-2-4.png)
+![](README-unnamed-chunk-2-4.png)<!-- -->
 
-Constrained triangulation
--------------------------
+## Constrained triangulation
 
-There are various ways to do this, but the lowest overhead to start with is to pass in unique vertices and segments pairs in a list.
+There are various ways to do this, but the lowest overhead to start with
+is to pass in unique vertices and segments pairs in a list.
 
 ``` r
 library(laridae)
 library(silicate)
+#> 
+#> Attaching package: 'silicate'
+#> The following object is masked from 'package:stats':
+#> 
+#>     filter
 
 
 library(dplyr)
 prepare_sf_ct <- function(x) {
-  ##tabs <- sc::PRIMITIVE(x)
   tabs <- silicate::SC(x)
-  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_segment(x) %>% dplyr::select(.vertex0, .vertex1))))) %>%
+  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_edge(tabs) %>% dplyr::select(.vx0, .vx1))))) %>%
   inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
   segs <- split(segment$vertex, segment$segment)
 
@@ -224,7 +240,7 @@ st_line_from_segment <- function(segs, coords) {
 #sline <- st_line_from_segment(psf$segs, cbind(psf$x, psf$y))
 ```
 
-Some timings.
+(This is very early, just to prove we run the meshing and succeed).
 
 ``` r
 
@@ -236,41 +252,32 @@ library(rnaturalearth)
 data("wrld_simpl", package = "maptools")
 
 #dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
-dat <- sf::st_as_sf(wrld_simpl)
-dat <- sf::st_buffer(dat, dist = 0)
-#> Warning in st_buffer.sfc(st_geometry(x), dist, nQuadSegs): st_buffer does
-#> not correctly buffer longitude/latitude data
-#> dist is assumed to be in decimal degrees (arc_degrees).
+#dat <- sf::st_as_sf(wrld_simpl)
+#dat <- sf::st_buffer(dat, dist = 0)
+dat <- minimal_mesh
 system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
 #> Joining, by = "vertex_"
+#> Warning: `as_tibble.matrix()` requires a matrix with column names or a `.name_repair` argument. Using compatibility `.name_repair`.
+#> This warning is displayed once per session.
 #>    user  system elapsed 
-#>   0.805   0.010   0.816
+#>   0.089   0.000   0.090
 
 library(raster)
 #> Loading required package: sp
 #> 
 #> Attaching package: 'raster'
-#> The following object is masked from 'package:magic':
 #> 
-#>     shift
 #> The following object is masked from 'package:dplyr':
 #> 
 #>     select
 #psf <- prepare_sf_ct(spex::polygonize(raster::raster(volcano)))
 #psf <- prepare_sf_ct(spex::polygonize(disaggregate(raster::raster(volcano), fact = 3)))
 
- system.time(segment_constraint(psf$x, psf$y, psf$segs))
-#>    user  system elapsed 
-#>       0       0       0
-# 
-# for (i in seq_len(24)) {
-# psf <- prepare_sf_ct(dat[i, ])
-# segment_constraint(psf$x, psf$y, psf$segs)
-# scan("", 1)
-# }
+
+laridae:::segment_constraint(psf$x, psf$y, psf$segs)
+#> integer(0)
 ```
 
-History
--------
+## History
 
 Was originally called `cgalgris`.
