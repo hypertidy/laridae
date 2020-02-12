@@ -5,16 +5,30 @@
 
 using namespace Rcpp;
 
-// segment_constraint
-IntegerVector segment_constraint(NumericVector x, NumericVector y, List segment);
-RcppExport SEXP _laridae_segment_constraint(SEXP xSEXP, SEXP ySEXP, SEXP segmentSEXP) {
+// segment_constraint_cpp
+IntegerVector segment_constraint_cpp(NumericVector x, NumericVector y, List segment);
+RcppExport SEXP _laridae_segment_constraint_cpp(SEXP xSEXP, SEXP ySEXP, SEXP segmentSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< List >::type segment(segmentSEXP);
-    rcpp_result_gen = Rcpp::wrap(segment_constraint(x, y, segment));
+    rcpp_result_gen = Rcpp::wrap(segment_constraint_cpp(x, y, segment));
+    return rcpp_result_gen;
+END_RCPP
+}
+// insert_constraint
+IntegerVector insert_constraint(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
+RcppExport SEXP _laridae_insert_constraint(SEXP xSEXP, SEXP ySEXP, SEXP v0SEXP, SEXP v1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v0(v0SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v1(v1SEXP);
+    rcpp_result_gen = Rcpp::wrap(insert_constraint(x, y, v0, v1));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -151,8 +151,21 @@ library(silicate)
 
 
 library(dplyr)
+prepare_sf_ct0 <- function(x) {
+  tabs <- silicate::SC0(x)
+  segs <- do.call(rbind, lapply(tabs$object$topology_, as.matrix))
+  segs1 <- cbind(.vx0 = pmin(segs[,1], segs[,2]), .vx1 = pmax(segs[,1], segs[,2]))
+  print(nrow(segs1))
+  
+  segs1 <- tibble::as_tibble(segs1) %>% distinct()
+  print(nrow(segs1))
+  
+    list(x = tabs$vertex$x_, y = tabs$vertex$y_, 
+         segs = split(t(as.matrix(segs1)), rep(seq_len(nrow(segs1)), each = 2L)))
+}
 prepare_sf_ct <- function(x) {
   tabs <- silicate::SC(x)
+  
   segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_edge(tabs) %>% dplyr::select(.vx0, .vx1))))) %>%
   inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
   segs <- split(segment$vertex, segment$segment)
@@ -181,26 +194,24 @@ st_line_from_segment <- function(segs, coords) {
 
 library(sfdct)
 data("minimal_mesh", package = "silicate")
+
+
 dat <- minimal_mesh
-library(rnaturalearth)
-#rnaturalearth::ne_countries(returnclass = "sf")
-data("wrld_simpl", package = "maptools")
-
-#dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
-#dat <- sf::st_as_sf(wrld_simpl)
-#dat <- sf::st_buffer(dat, dist = 0)
-dat <- minimal_mesh
-system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
-
-library(raster)
-#psf <- prepare_sf_ct(spex::polygonize(raster::raster(volcano)))
-#psf <- prepare_sf_ct(spex::polygonize(disaggregate(raster::raster(volcano), fact = 3)))
-
+system.time(psf <- prepare_sf_ct(dat))
 
 laridae:::segment_constraint(psf$x, psf$y, psf$segs)
+
+
+
 ```
 
 
 ## History
 
 Was originally called `cgalgris`. 
+
+
+
+## Code of Conduct
+  
+Please note that the laridae project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

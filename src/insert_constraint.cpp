@@ -6,29 +6,31 @@ using namespace Rcpp;
 #include <CGAL/Triangulation_conformer_2.h>
 #include <iostream>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
+typedef CGAL::Exact_predicates_tag                               Itag;
+//Need Itag to get intersecting segments
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, CGAL::Default, Itag> CDT;
 typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
 
+//NOTE: this example gives separated index vectors v0,v1, segment_constraint uses the
+// split list version  - both are slow!
 //' Insert segment constraint
 //'
 //' @param x x coordinate
 //' @param y y coordinate
 //' @param segment list of segment pairs (index into x,y)
 // [[Rcpp::export]]
-IntegerVector segment_constraint(NumericVector x, NumericVector y, List segment)
+IntegerVector insert_constraint(NumericVector x, NumericVector y,
+                                IntegerVector v0, IntegerVector v1)
 {
   CDT cdt;
-  int n = segment.size();
+//  int n = segment.size();
+  int n = v0.length();
   Vertex_handle vh0, vh1;
-  int first, second;
+
   for (int i = 0; i < n; i++) {
-    IntegerVector ind = segment[i];
-    first = ind[0];
-    second = ind[1];
-//printf("%i\n", i);
-    vh0 = cdt.insert(Point(x[first], y[first]));
-    vh1 = cdt.insert(Point(x[second], y[second]));
+    vh0 = cdt.insert(Point(x[v0[i]], y[v0[i]]));
+    vh1 = cdt.insert(Point(x[v1[i]], y[v1[i]]));
     cdt.insert_constraint(vh0,vh1);
   }
 
@@ -40,8 +42,8 @@ std::cout << "Number of vertices before: "
   std::cout << "Number of vertices after make_conforming_Delaunay_2: "
             << cdt.number_of_vertices() << std::endl;
   // then make it conforming Gabriel
-  CGAL::make_conforming_Gabriel_2(cdt);
-  std::cout << "Number of vertices after make_conforming_Gabriel_2: "
-            << cdt.number_of_vertices() << std::endl;
+  //CGAL::make_conforming_Gabriel_2(cdt);
+  //std::cout << "Number of vertices after make_conforming_Gabriel_2: "
+  //          << cdt.number_of_vertices() << std::endl;
   return 0;
 }
