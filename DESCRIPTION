@@ -1,7 +1,7 @@
 Package: laridae
 Type: Package
 Title: CGAL Experiments in Topology
-Version: 0.0.1.9001
+Version: 0.0.2
 Authors@R: c(    
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
     person("Mark", "Padgham", role=c("ctb")))

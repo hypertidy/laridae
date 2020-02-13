@@ -18,22 +18,8 @@ insert_constraint <- function(x, y, v0, v1) {
     .Call('_laridae_insert_constraint', PACKAGE = 'laridae', x, y, v0, v1)
 }
 
-#' Polygon triangulation
-#'
-poly_triangulation0 <- function() {
-    .Call('_laridae_poly_triangulation0', PACKAGE = 'laridae')
-}
-
-#' Polygon triangulation
-#'
-poly_triangulation_xy <- function(x, y) {
-    .Call('_laridae_poly_triangulation_xy', PACKAGE = 'laridae', x, y)
-}
-
-#' Polygon triangulation
-#'
-poly_triangulation_xylist <- function(xx, yy, mark = 1L) {
-    .Call('_laridae_poly_triangulation_xylist', PACKAGE = 'laridae', xx, yy, mark)
+insert_mesh <- function(X, Y, I0, I1) {
+    .Call('_laridae_insert_mesh', PACKAGE = 'laridae', X, Y, I0, I1)
 }
 
 #' CGAL point triangulation (unconstrained)

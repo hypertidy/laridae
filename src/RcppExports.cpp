@@ -32,38 +32,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// poly_triangulation0
-IntegerVector poly_triangulation0();
-RcppExport SEXP _laridae_poly_triangulation0() {
+// insert_mesh
+IntegerVector insert_mesh(NumericVector X, NumericVector Y, IntegerVector I0, IntegerVector I1);
+RcppExport SEXP _laridae_insert_mesh(SEXP XSEXP, SEXP YSEXP, SEXP I0SEXP, SEXP I1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(poly_triangulation0());
-    return rcpp_result_gen;
-END_RCPP
-}
-// poly_triangulation_xy
-IntegerVector poly_triangulation_xy(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_poly_triangulation_xy(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(poly_triangulation_xy(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// poly_triangulation_xylist
-IntegerVector poly_triangulation_xylist(List xx, List yy, LogicalVector mark);
-RcppExport SEXP _laridae_poly_triangulation_xylist(SEXP xxSEXP, SEXP yySEXP, SEXP markSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type xx(xxSEXP);
-    Rcpp::traits::input_parameter< List >::type yy(yySEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type mark(markSEXP);
-    rcpp_result_gen = Rcpp::wrap(poly_triangulation_xylist(xx, yy, mark));
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type I0(I0SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type I1(I1SEXP);
+    rcpp_result_gen = Rcpp::wrap(insert_mesh(X, Y, I0, I1));
     return rcpp_result_gen;
 END_RCPP
 }

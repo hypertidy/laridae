@@ -1,4 +1,6 @@
-#  laridae dev
+#  laridae 0.0.2
+
+* Finally succeeded batch input of vertices and constraints in `insert_mesh()`. 
 
 * rename `insert_constraint` to `segment_constraint`
 

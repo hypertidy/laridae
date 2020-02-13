@@ -101,17 +101,17 @@ system.time({
   ind_t <- tri_xy(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.027   0.003   0.030
+#>   0.002   0.000   0.001
 system.time({
   ind_t1 <- tri_xy1(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>   0.027   0.000   0.028
+#>   0.002   0.000   0.002
 system.time({
   ind_t2 <- tri_xy2(xy[,1], xy[,2]) + 1
 })
 #>    user  system elapsed 
-#>    0.03    0.00    0.03
+#>   0.001   0.000   0.001
 
 length(ind_t)
 #> [1] 5961
@@ -146,7 +146,7 @@ par(p)
 
 ## other comparisons
 library(deldir)
-#> deldir 0.1-23
+#> deldir 0.1-25
 system.time(dl <- deldir::deldir(x, y))
 #> 
 #>      PLEASE NOTE:  The components "delsgs" and "summary" of the
@@ -158,7 +158,7 @@ system.time(dl <- deldir::deldir(x, y))
 #>  duplicated points has changed from that used in version
 #>  0.0-9 of this package (and previously). See help("deldir").
 #>    user  system elapsed 
-#>   0.051   0.000   0.051
+#>   0.057   0.000   0.057
 plot(dl)
 ```
 
@@ -168,16 +168,13 @@ plot(dl)
 library(geometry)
 system.time(gm <- geometry::delaunayn(xy))
 #>    user  system elapsed 
-#>   0.005   0.004   0.043
+#>   0.008   0.000   0.042
 poly_index(xy, c(t(gm)))
 
 ## sf comparison
 library(dplyr)
 library(sf)
-#> Linking to GEOS 3.8.0, GDAL 2.4.2, PROJ 5.2.0
-#> WARNING: different compile-time and runtime versions for GEOS found:
-#> Linked against: 3.8.0-CAPI-1.13.1  compiled against: 3.7.1-CAPI-1.11.1
-#> It is probably a good idea to reinstall sf, and maybe rgeos and rgdal too
+#> Linking to GEOS 3.8.0, GDAL 3.0.2, PROJ 6.2.1
 ```
 
 ![](README-unnamed-chunk-2-3.png)<!-- -->
@@ -194,7 +191,7 @@ library(sfdct)
 system.time(dt <- ct_triangulate(d))
 #> all POINT, returning one feature triangulated
 #>    user  system elapsed 
-#>   0.154   0.012   0.166
+#>   0.151   0.020   0.172
 plot(dt, col = "transparent", border = "black")
 ```
 
@@ -202,82 +199,66 @@ plot(dt, col = "transparent", border = "black")
 
 ## Constrained triangulation
 
-There are various ways to do this, but the lowest overhead to start with
-is to pass in unique vertices and segments pairs in a list.
+There are various ways to do this WIP
 
 ``` r
-library(laridae)
-library(silicate)
-#> 
-#> Attaching package: 'silicate'
-#> The following object is masked from 'package:stats':
-#> 
-#>     filter
+sc <- silicate::SC(silicate::inlandwaters)
+#data("wrld_simpl", package = "maptools")
+#sc <- silicate::SC(wrld_simpl)
+X <- sc$vertex$x_
+Y <- sc$vertex$y_
+i0 <- match(sc$edge$.vx0, sc$vertex$vertex_)
+i1 <- match(sc$edge$.vx1, sc$vertex$vertex_)
 
 
-library(dplyr)
-prepare_sf_ct <- function(x) {
-  tabs <- silicate::SC(x)
-  segment <-  tibble::tibble(vertex_ = c(t(as.matrix(sc_edge(tabs) %>% dplyr::select(.vx0, .vx1))))) %>%
-  inner_join(tabs$vertex %>% mutate(vertex = row_number() - 1)) %>% mutate(segment = (row_number() + 1) %/% 2)
-  segs <- split(segment$vertex, segment$segment)
+system.time(laridae:::insert_mesh(X, Y, i0 - 1, i1 -1))
+#> Number of vertices before: 30835
+#> Number of vertices after: 31079
+#>    user  system elapsed 
+#>   0.638   0.000   0.637
 
-  list(x = tabs$vertex$x_, y = tabs$vertex$y_, segs = distinct_uord_segments(segs))
-}
 
-distinct_uord_segments <- function(segs) {
-  x <- dplyr::distinct(tibble::as_tibble(do.call(rbind, segs)))
-  usort <- do.call(rbind, lapply(segs, sort))
-  bad <- duplicated(usort)
-  x <- x[!bad, ]
-  lapply(split(x, seq_len(nrow(x))), unlist)
-}
+## compare RTriangle
+system.time({
+  ps <- RTriangle::pslg(cbind(X, Y), S = cbind(i0, i1))
+  tr <- RTriangle::triangulate(ps, D = TRUE)
+})
+#>    user  system elapsed 
+#>   0.212   0.004   0.215
 
-st_line_from_segment <- function(segs, coords) {
-  sf::st_sfc(lapply(segs, function(a) sf::st_linestring(coords[a + 1, ])))
-}
-
-#sline <- st_line_from_segment(psf$segs, cbind(psf$x, psf$y))
+plot(tr$P, pch= ".")
+segments(tr$P[tr$E[,1],1], tr$P[tr$E[,1],2], 
+         tr$P[tr$E[,2],1], tr$P[tr$E[,2],2])
 ```
 
-(This is very early, just to prove we run the meshing and succeed).
+![](README-mesh-input-1.png)<!-- -->
 
 ``` r
 
-library(sfdct)
-data("minimal_mesh", package = "silicate")
-dat <- minimal_mesh
-library(rnaturalearth)
-#rnaturalearth::ne_countries(returnclass = "sf")
-data("wrld_simpl", package = "maptools")
-
-#dat <- sf::st_as_sf(disaggregate(wrld_simpl[1:9, ]))
-#dat <- sf::st_as_sf(wrld_simpl)
-#dat <- sf::st_buffer(dat, dist = 0)
-dat <- minimal_mesh
-system.time(psf <- prepare_sf_ct(sf::st_cast(dat[1:24, ])))
-#> Joining, by = "vertex_"
-#> Warning: `as_tibble.matrix()` requires a matrix with column names or a `.name_repair` argument. Using compatibility `.name_repair`.
-#> This warning is displayed once per session.
-#>    user  system elapsed 
-#>   0.089   0.000   0.090
-
-library(raster)
-#> Loading required package: sp
-#> 
-#> Attaching package: 'raster'
-#> 
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     select
-#psf <- prepare_sf_ct(spex::polygonize(raster::raster(volcano)))
-#psf <- prepare_sf_ct(spex::polygonize(disaggregate(raster::raster(volcano), fact = 3)))
-
-
-laridae:::segment_constraint(psf$x, psf$y, psf$segs)
-#> integer(0)
+str(tr)
+#> List of 12
+#>  $ P : num [1:31778, 1:2] -681074 -680885 -680821 -680474 -680376 ...
+#>  $ PB: int [1:31778, 1] 1 1 1 1 1 1 1 1 1 1 ...
+#>  $ PA: num[1:31778, 0 ] 
+#>  $ T : int [1:43051, 1:3] 4455 4455 4510 4542 4510 4410 4376 4380 4397 4390 ...
+#>  $ S : int [1:31786, 1:2] 24305 24316 24328 24328 24326 24321 24343 24354 24349 24349 ...
+#>  $ SB: int [1:31786, 1] 0 0 0 0 0 0 0 0 0 0 ...
+#>  $ E : int [1:74679, 1:2] 4455 4456 4492 4492 4542 4510 4492 4542 4562 4492 ...
+#>  $ EB: int [1:74679, 1] 1 1 0 0 0 1 0 1 0 1 ...
+#>  $ VP: num [1:43051, 1:2] 51155 52903 52733 54473 52163 ...
+#>  $ VE: int [1:74679, 1:2] 1 1 1 2 2 3 3 4 4 5 ...
+#>  $ VN: num [1:43051, 1:2] -2148 -124 0 0 0 ...
+#>  $ VA: num[1:43051, 0 ] 
+#>  - attr(*, "class")= chr "triangulation"
 ```
 
 ## History
 
 Was originally called `cgalgris`.
+
+## Code of Conduct
+
+Please note that the laridae project is released with a [Contributor
+Code of
+Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
