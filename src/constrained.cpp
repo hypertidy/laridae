@@ -37,8 +37,8 @@ IntegerVector segment_constraint_cpp(NumericVector x, NumericVector y, List segm
        ++eit) {
     if (cdt.is_constrained(*eit)) ++count;
   }
-  std::cout << "The number of resulting constrained edges is  ";
-  std::cout <<  count << std::endl;
+
+  Rprintf("The number of resulting constrained edges is: %i\n", count);
   IntegerVector xout = IntegerVector::create(NA_INTEGER);
   return xout;
 }

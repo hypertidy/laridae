@@ -11,7 +11,9 @@ insert_constraint(x, y, v0, v1)
 
 \item{y}{y coordinate}
 
-\item{segment}{list of segment pairs (index into x,y)}
+\item{v0}{segment start index (0-based)}
+
+\item{v1}{segment end index (0-based)}
 }
 \description{
 Insert segment constraint

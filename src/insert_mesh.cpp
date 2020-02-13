@@ -21,33 +21,16 @@ IntegerVector insert_mesh(NumericVector X,
 
   int np = X.length();
   int n = I0.length();
-  double *x_ = new double[np];
-  double *y_ = new double[np];
-  int *i0 = new int[n];
-  int *i1 = new int[n];
-  for (int i = 0; i < np; i++) {
-   x_[i] = X[i];
-   y_[i] = Y[i];
-  }
-  for (int i = 0; i < n; i++) {
-    i0[i] = I0[i];
-    i1[i] = I1[i];
-  }
 
-  Vertex_handle vh0, vh1;
   std::vector<Point> points;
   std::vector<std::pair<int, int>> ii;
-   for (int i = 0; i < np; i++) {
-      points.push_back(Point(x_[i], y_[i]));
+   for (int ip = 0; ip < np; ip++) {
+      points.push_back(Point(X[ip], Y[ip]));
   }
   //  https://doc.cgal.org/4.14.2/Triangulation_2/classCGAL_1_1Constrained__Delaunay__triangulation__2.html#a3707074708b073b8526d5d7d0f03fbb4
-  for (int i = 0; i < n; i++) {
-    ii.push_back(std::pair<int, int>(i0[i], i1[i]));
+  for (int il = 0; il < n; il++) {
+    ii.push_back(std::pair<int, int>(I0[il], I1[il]));
   }
-  delete x_;
-  delete y_;
-  delete i0;
-  delete i1;
 
   // insert segment constraints in one go (takes about 10 times longer otherwise for 30000 points)
   cdt.insert_constraints(points.begin(), points.end(),

@@ -18,7 +18,8 @@ typedef CDT::Vertex_handle Vertex_handle;
 //'
 //' @param x x coordinate
 //' @param y y coordinate
-//' @param segment list of segment pairs (index into x,y)
+//' @param v0 segment start index (0-based)
+//' @param v1 segment end index (0-based)
 // [[Rcpp::export]]
 IntegerVector insert_constraint(NumericVector x, NumericVector y,
                                 IntegerVector v0, IntegerVector v1)
@@ -35,15 +36,9 @@ IntegerVector insert_constraint(NumericVector x, NumericVector y,
   }
 
   // http://doc.cgal.org/latest/Mesh_2/index.html
-std::cout << "Number of vertices before: "
-            << cdt.number_of_vertices() << std::endl;
+  Rprintf("Number of vertices before: %i\n", cdt.number_of_vertices());
   // make it conforming Delaunay
   CGAL::make_conforming_Delaunay_2(cdt);
-  std::cout << "Number of vertices after make_conforming_Delaunay_2: "
-            << cdt.number_of_vertices() << std::endl;
-  // then make it conforming Gabriel
-  //CGAL::make_conforming_Gabriel_2(cdt);
-  //std::cout << "Number of vertices after make_conforming_Gabriel_2: "
-  //          << cdt.number_of_vertices() << std::endl;
+  Rprintf("Number of vertices after: %i\n", cdt.number_of_vertices());
   return 0;
 }

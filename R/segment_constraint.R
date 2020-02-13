@@ -5,7 +5,7 @@
 #'
 #' @return nothing useful, dummy NA
 #' @export
-#'
+#' @import silicate
 #' @examples
 #' segment_constraint(silicate::minimal_mesh)
 segment_constraint <- function(x, ...) {

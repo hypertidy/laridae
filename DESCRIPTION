@@ -8,7 +8,9 @@ Authors@R: c(
 Description: Experimental wrapper for CGAL to explore constrained triangulations and
    general edge-decomposition structures for shapes. 
 LinkingTo: Rcpp
-Imports: Rcpp
+Imports: 
+    Rcpp,
+    silicate
 License: LGPL-3
 LazyData: TRUE
 Remotes: mdsumner/gris

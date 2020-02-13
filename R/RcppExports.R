@@ -13,7 +13,8 @@ segment_constraint_cpp <- function(x, y, segment) {
 #'
 #' @param x x coordinate
 #' @param y y coordinate
-#' @param segment list of segment pairs (index into x,y)
+#' @param v0 segment start index (0-based)
+#' @param v1 segment end index (0-based)
 insert_constraint <- function(x, y, v0, v1) {
     .Call('_laridae_insert_constraint', PACKAGE = 'laridae', x, y, v0, v1)
 }
