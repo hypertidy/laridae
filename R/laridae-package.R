@@ -3,7 +3,7 @@
 #
 
 #' @useDynLib laridae
-
+#' @useDynLib laridae, insert_mesh
 #' @name laridae-package
 #' @aliases laridae-package, laridae
 #' @docType package
