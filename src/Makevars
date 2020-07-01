@@ -1,5 +1,7 @@
 
-CGAL_LIBS   = -L/usr/lib -lmpfr -lgmp -lCGAL -lboost_thread -lboost_system -lpthread -lCGAL -lboost_thread -lboost_system -lpthread
+CGAL_LIBS   = -L/usr/lib -lmpfr -lgmp -lboost_thread -lboost_system -lpthread -lboost_thread -lboost_system -lpthread
 
 # combine with standard arguments for R
 PKG_LIBS = $(CGAL_LIBS) $(RCPP_LDFLAGS)
+
+PKG_CXXFLAGS = -DCGAL_HEADER_ONLY=1
