@@ -2,19 +2,21 @@ Package: laridae
 Type: Package
 Title: CGAL Experiments in Topology
 Version: 0.0.2
-Authors@R: c(    
+Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
     person("Mark", "Padgham", role=c("ctb")))
 Description: Experimental wrapper for CGAL to explore constrained triangulations and
-   general edge-decomposition structures for shapes. 
-LinkingTo: Rcpp
-Imports: 
+   general edge-decomposition structures for shapes.
+LinkingTo:
+    Rcpp,
+    cgal4h
+Imports:
     Rcpp,
     silicate
 License: LGPL-3
 LazyData: TRUE
 Remotes: mdsumner/gris
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 RcppModules: Shape
 Roxygen: list(markdown = TRUE)
 ByteCompile: true
