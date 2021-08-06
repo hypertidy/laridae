@@ -19,8 +19,12 @@ to update a mesh has a lot of applications, especially for neighbouring
 shapes, and for on-demand (extent or zoom dependent level of detail)
 tasks.
 
-The interest in constrained triangulations is discussed here along with
-the overall landscape in R.
+We can now hit this more easily thanks to
+[cgal4h](https://CRAN.R-project.org/package=cgal4h) thanks to Ahmadou
+Dicko.
+
+The interest (which is miniscule …) in constrained triangulations is
+discussed here along with the overall landscape in R.
 
 <https://github.com/r-spatial/discuss/issues/6>
 
@@ -95,15 +99,15 @@ microbenchmark::microbenchmark(
 )
 #> Unit: microseconds
 #>                              expr      min       lq     mean   median       uq
-#>             ind_t <- tri_xy(x, y)  975.482 1144.680 1181.812 1202.424 1249.999
-#>           ind_t1 <- tri_xy1(x, y)  955.613 1128.420 1175.676 1195.845 1234.148
-#>           ind_t2 <- tri_xy2(x, y)  968.282 1173.378 1196.648 1203.808 1242.891
-#>  RT <- RTriangle::triangulate(ps) 1586.462 1883.151 1999.267 2022.814 2110.343
+#>             ind_t <- tri_xy(x, y) 1003.037 1180.282 1210.524 1224.940 1259.092
+#>           ind_t1 <- tri_xy1(x, y)  957.943 1181.241 1204.754 1225.726 1251.130
+#>           ind_t2 <- tri_xy2(x, y)  980.168 1191.784 1219.096 1222.641 1260.760
+#>  RT <- RTriangle::triangulate(ps) 1653.278 1959.215 2072.064 2080.628 2167.966
 #>       max neval cld
-#>  1377.836   100  a 
-#>  1348.109   100  a 
-#>  1358.163   100  a 
-#>  2433.358   100   b
+#>  1395.601   100  a 
+#>  1350.535   100  a 
+#>  1422.179   100  a 
+#>  2314.977   100   b
 length(ind_t)
 #> [1] 5961
 length(ind_t1)
@@ -152,17 +156,17 @@ system.time(insert_constraint(X, Y, i0 , i1))
 #> Number of vertices before: 30835
 #> Number of vertices after: 31079
 #>    user  system elapsed 
-#>   0.365   0.000   0.364
+#>   0.369   0.000   0.369
 system.time(segment_constraint(sc))
 #> The number of resulting constrained edges is: 30843
 #>    user  system elapsed 
-#>   0.392   0.000   0.391
+#>   0.393   0.000   0.393
 
 system.time(insert_mesh(X, Y, i0 , i1))
 #> Number of vertices before: 30835
 #> Number of vertices after: 31079
 #>    user  system elapsed 
-#>   0.075   0.000   0.075
+#>   0.083   0.000   0.083
 
 ## compare RTriangle, it's fast if we don't include pslg() time
 ps <- RTriangle::pslg(cbind(X, Y), S = cbind(i0, i1))
@@ -170,7 +174,7 @@ system.time({
   tr <- RTriangle::triangulate(ps, D = TRUE)
 })
 #>    user  system elapsed 
-#>   0.075   0.000   0.075
+#>   0.078   0.000   0.078
 
 
 plot(tr$P, pch= ".")
