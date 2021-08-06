@@ -12,16 +12,8 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K, CGAL::Default, Itag> CDT;
 typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
 
-//NOTE: this example gives separated index vectors v0,v1, segment_constraint uses the
-// split list version  - both are slow!
-//' Insert segment constraint
-//'
-//' @param x x coordinate
-//' @param y y coordinate
-//' @param v0 segment start index (0-based)
-//' @param v1 segment end index (0-based)
 // [[Rcpp::export]]
-IntegerVector insert_constraint(NumericVector x, NumericVector y,
+IntegerVector insert_constraint_cpp(NumericVector x, NumericVector y,
                                 IntegerVector v0, IntegerVector v1)
 {
   CDT cdt;

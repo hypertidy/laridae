@@ -1,7 +1,7 @@
 Package: laridae
 Type: Package
-Title: CGAL Experiments in Topology
-Version: 0.0.2
+Title: CGAL Triangulation and Constrained Triangulation
+Version: 0.0.2.9001
 Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
     person("Mark", "Padgham", role=c("ctb")))
@@ -13,13 +13,10 @@ LinkingTo:
 Imports:
     Rcpp,
     silicate
+Suggests: testthat
 License: LGPL-3
-LazyData: TRUE
-Remotes: mdsumner/gris
 RoxygenNote: 7.1.1
-RcppModules: Shape
 Roxygen: list(markdown = TRUE)
 ByteCompile: true
 URL: https://github.com/hypertidy/laridae
 BugReports: https://github.com/hypertidy/laridae/issues
-Suggests: testthat

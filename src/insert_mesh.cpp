@@ -12,24 +12,24 @@ typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
 
 // [[Rcpp::export]]
-IntegerVector insert_mesh(NumericVector X,
-                          NumericVector Y,
-                          IntegerVector I0,
-                          IntegerVector I1)
+IntegerVector insert_mesh_cpp(NumericVector x,
+                          NumericVector y,
+                          IntegerVector v0,
+                          IntegerVector v1)
 {
   CDT cdt;
 
-  int np = X.length();
-  int n = I0.length();
+  int np = x.length();
+  int n = v0.length();
 
   std::vector<Point> points;
   std::vector<std::pair<int, int>> ii;
    for (int ip = 0; ip < np; ip++) {
-      points.push_back(Point(X[ip], Y[ip]));
+      points.push_back(Point(x[ip], y[ip]));
   }
   //  https://doc.cgal.org/4.14.2/Triangulation_2/classCGAL_1_1Constrained__Delaunay__triangulation__2.html#a3707074708b073b8526d5d7d0f03fbb4
   for (int il = 0; il < n; il++) {
-    ii.push_back(std::pair<int, int>(I0[il], I1[il]));
+    ii.push_back(std::pair<int, int>(v0[il], v1[il]));
   }
 
   // insert segment constraints in one go (takes about 10 times longer otherwise for 30000 points)

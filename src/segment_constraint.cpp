@@ -12,11 +12,6 @@ typedef CDT::Point          Point;
 
 
 // FROM example 8.3: https://doc.cgal.org/4.11.3/Triangulation_2/index.html
-
-//' Lines
-//' @param x x coordinate
-//' @param y y coordinate
-//' @param segment list of segment pairs (index into x,y)
 // [[Rcpp::export]]
 IntegerVector segment_constraint_cpp(NumericVector x, NumericVector y, List segment)
 {

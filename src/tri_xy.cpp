@@ -19,23 +19,8 @@ typedef Tds::Face_iterator Face_iterator;
 typedef Face::Face_handle Face_handle;
 typedef Face::Vertex_handle Fvertex_handle;
 
-//' CGAL point triangulation (unconstrained)
-//'
-//' `tri_xy` CGAL vertex index
-//'
-//' First method uses uses a faces iterator to extract the vertex->info for
-//' each face. A Delaunay triangulation has both finite and infinite faces
-//' (see CGAL documentation). The infinite faces join to an external, infinite
-//' vertex, so the finite_faces_iterator just includes the internal faces.
-//'
-//' vertex index
-//' @param x coordinate vector
-//' @param y coordinate vector
-//' @export
-//' @name tri_xy
-//' @export
 // [[Rcpp::export]]
-IntegerVector tri_xy(NumericVector x, NumericVector y) {
+IntegerVector tri_xy_cpp(NumericVector x, NumericVector y) {
   std::vector< std::pair<Point,int> > points;
   for (int ipoint = 0; ipoint < x.length(); ipoint++){
     points.push_back( std::make_pair( Point(x[ipoint], y[ipoint]), ipoint) );
@@ -60,15 +45,9 @@ IntegerVector tri_xy(NumericVector x, NumericVector y) {
 
   return vi;
 }
-
-//' `tri_xy1` CGAL vertex index MP version#2
-//'
-//' This method uses a vertex iterator instead of a faces iterator.
-//'
-//' @export
-//' @name tri_xy
 // [[Rcpp::export]]
-IntegerVector tri_xy1(NumericVector x, NumericVector y)
+
+IntegerVector tri_xy1_cpp(NumericVector x, NumericVector y)
 {
   std::vector< std::pair<Point,int> > points;
   for (int ipoint = 0; ipoint < x.length(); ipoint++){
@@ -92,16 +71,8 @@ IntegerVector tri_xy1(NumericVector x, NumericVector y)
   return vi;
 }
 
-//' `tri_xy2` CGAL vertex index MP version#3
-//'
-//' This is the long-hand way, using an iteration over all faces, checking
-//' whether they are finite or not, and accessing the face.vertex info by
-//' dereferencing pointers to each vertex of the face.
-//'
-//' @export
-//' @name tri_xy
 // [[Rcpp::export]]
-IntegerVector tri_xy2(NumericVector x, NumericVector y)
+IntegerVector tri_xy2_cpp(NumericVector x, NumericVector y)
 {
   std::vector< std::pair<Point,int> > points;
   for (int ipoint = 0; ipoint < x.length(); ipoint++){

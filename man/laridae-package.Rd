@@ -2,26 +2,36 @@
 % Please edit documentation in R/laridae-package.R
 \docType{package}
 \name{laridae-package}
-\alias{laridae-package}
-\alias{laridae-package,}
 \alias{laridae}
-\title{CGAL for topology in R}
+\alias{laridae-package}
+\title{laridae: CGAL Triangulation and Constrained Triangulation}
 \description{
+Experimental wrapper for CGAL to explore constrained triangulations and
+   general edge-decomposition structures for shapes.
+
 CGAL functionality.
 }
-\details{
-\tabular{ll}{
-Package: \tab laridae\cr
-Type: \tab Package\cr
-Version: \tab 0.0.1\cr
-Date: \tab 2015-05-05\cr
-License: \tab  \cr
-}
-}
 \references{
-\url{https://github.com/mdsumner}, \url{http://www.cgal.org/}
+\url{http://www.cgal.org/}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/hypertidy/laridae}
+  \item Report bugs at \url{https://github.com/hypertidy/laridae/issues}
+}
+
 }
 \author{
-Maintainer: Michael D. Sumner \email{mdsumner@gmail.com} \cr
+\strong{Maintainer}: Michael D. Sumner \email{mdsumner@gmail.com}
+
+Other contributors:
+\itemize{
+  \item Mark Padgham [contributor]
 }
+
+
+
+}
+\keyword{internal}
 \keyword{package}

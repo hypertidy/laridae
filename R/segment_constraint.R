@@ -21,3 +21,26 @@ segment_constraint <- function(x, ...) {
  ## dummy return value for now
   segment_constraint_cpp(X, Y, split(l, rep(seq_len(ncol(l)), each = 2)))
 }
+
+
+#' Insert segment constraint
+#'
+#' @param x x coordinate
+#' @param y y coordinate
+#' @param v0 segment start index (1-based)
+#' @param v1 segment end index (1-based)
+#' @export
+insert_constraint <- function(x, y, v0, v1) {
+  insert_constraint_cpp(x, y, v0 - 1, v1 - 1)
+}
+#' Insert segment constraint
+#'
+#' @param x x coordinate
+#' @param y y coordinate
+#' @param v0 segment start index (1-based)
+#' @param v1 segment end index (1-based)
+#' @export
+insert_mesh <- function(x, y, v0, v1) {
+  insert_mesh_cpp(x =  x, y = y, v0 = v0 - 1, v1 = v1 - 1)
+}
+

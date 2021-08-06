@@ -10,9 +10,9 @@ prim3_index <-
 vert_index <- c(2, 3, 1, 4, 1, 1)
 
 test_that("simple triangulation works", {
-  expect_equal(tri_xy(x, y) + 1, prim3_index)
-  expect_equal(tri_xy2(x, y) + 1, prim3_index)
+  expect_equal(tri_xy(x, y), prim3_index)
+  expect_equal(tri_xy2(x, y), prim3_index)
 
-  expect_equal(tri_xy1(x, y) + 1, vert_index)
+  expect_equal(tri_xy1(x, y), vert_index)
 
 })

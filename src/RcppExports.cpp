@@ -5,6 +5,39 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
+// insert_constraint_cpp
+IntegerVector insert_constraint_cpp(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
+RcppExport SEXP _laridae_insert_constraint_cpp(SEXP xSEXP, SEXP ySEXP, SEXP v0SEXP, SEXP v1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v0(v0SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v1(v1SEXP);
+    rcpp_result_gen = Rcpp::wrap(insert_constraint_cpp(x, y, v0, v1));
+    return rcpp_result_gen;
+END_RCPP
+}
+// insert_mesh_cpp
+IntegerVector insert_mesh_cpp(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
+RcppExport SEXP _laridae_insert_mesh_cpp(SEXP xSEXP, SEXP ySEXP, SEXP v0SEXP, SEXP v1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v0(v0SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v1(v1SEXP);
+    rcpp_result_gen = Rcpp::wrap(insert_mesh_cpp(x, y, v0, v1));
+    return rcpp_result_gen;
+END_RCPP
+}
 // segment_constraint_cpp
 IntegerVector segment_constraint_cpp(NumericVector x, NumericVector y, List segment);
 RcppExport SEXP _laridae_segment_constraint_cpp(SEXP xSEXP, SEXP ySEXP, SEXP segmentSEXP) {
@@ -18,67 +51,54 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// insert_constraint
-IntegerVector insert_constraint(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
-RcppExport SEXP _laridae_insert_constraint(SEXP xSEXP, SEXP ySEXP, SEXP v0SEXP, SEXP v1SEXP) {
+// tri_xy_cpp
+IntegerVector tri_xy_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xy_cpp(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type v0(v0SEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type v1(v1SEXP);
-    rcpp_result_gen = Rcpp::wrap(insert_constraint(x, y, v0, v1));
+    rcpp_result_gen = Rcpp::wrap(tri_xy_cpp(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
-// insert_mesh
-IntegerVector insert_mesh(NumericVector X, NumericVector Y, IntegerVector I0, IntegerVector I1);
-RcppExport SEXP _laridae_insert_mesh(SEXP XSEXP, SEXP YSEXP, SEXP I0SEXP, SEXP I1SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type I0(I0SEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type I1(I1SEXP);
-    rcpp_result_gen = Rcpp::wrap(insert_mesh(X, Y, I0, I1));
-    return rcpp_result_gen;
-END_RCPP
-}
-// tri_xy
-IntegerVector tri_xy(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_tri_xy(SEXP xSEXP, SEXP ySEXP) {
+// tri_xy1_cpp
+IntegerVector tri_xy1_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xy1_cpp(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(tri_xy(x, y));
+    rcpp_result_gen = Rcpp::wrap(tri_xy1_cpp(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
-// tri_xy1
-IntegerVector tri_xy1(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_tri_xy1(SEXP xSEXP, SEXP ySEXP) {
+// tri_xy2_cpp
+IntegerVector tri_xy2_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xy2_cpp(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(tri_xy1(x, y));
+    rcpp_result_gen = Rcpp::wrap(tri_xy2_cpp(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
-// tri_xy2
-IntegerVector tri_xy2(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_tri_xy2(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(tri_xy2(x, y));
-    return rcpp_result_gen;
-END_RCPP
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_laridae_insert_constraint_cpp", (DL_FUNC) &_laridae_insert_constraint_cpp, 4},
+    {"_laridae_insert_mesh_cpp", (DL_FUNC) &_laridae_insert_mesh_cpp, 4},
+    {"_laridae_segment_constraint_cpp", (DL_FUNC) &_laridae_segment_constraint_cpp, 3},
+    {"_laridae_tri_xy_cpp", (DL_FUNC) &_laridae_tri_xy_cpp, 2},
+    {"_laridae_tri_xy1_cpp", (DL_FUNC) &_laridae_tri_xy1_cpp, 2},
+    {"_laridae_tri_xy2_cpp", (DL_FUNC) &_laridae_tri_xy2_cpp, 2},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_laridae(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }
