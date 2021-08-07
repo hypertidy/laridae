@@ -20,20 +20,39 @@ knitr::opts_chunk$set(
 )
 ```
 
-`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `hypertidy/silicate` package. 
+Work in progress to get constrained and conforming Delaunay triangulation for shapes in R with CGAL. We have
 
-RTriangle is really fast, but it's not as fast as CGAL. CGAL can also be used to update a triangulation, which means (I think) that we could build an unconstrained triangulation from all the coordinates, and then add in any segments, even unclosed linear paths. At any rate, being able to update a mesh has a lot of applications, especially for neighbouring shapes, and for on-demand (extent or zoom dependent level of detail) tasks. 
+* point-only triangulation in `tri_xy()` - it's fast
+* segment-input constraints in `insert_mesh()` - only returns the vertices, which might include new points
+* constrained and conformal triangulations in-progress ...
+
+We need: 
+
+* export of new vertex pool and its edge- or triangle-based indices
+* proper inputs of nested polygon shapes
+* robust dealing with segment and polygon soups, so that numeric insertions are robust (and c.)
 
 We can now hit this more easily thanks to [cgal4h](https://CRAN.R-project.org/package=cgal4h) thanks 
 to Ahmadou Dicko. 
 
-The interest (which is miniscule ...) in constrained triangulations is discussed here along with the overall landscape in R. 
+`laridae` came out of a need for constrained triangulation for a topology-in-R project. That effort has moved on somewhat, proving the case by using `RTriangle` and then bedding down the normalization model in the `hypertidy/silicate` package. 
+
+R now has [cgal4h](https://cran.r-project.org/package=cgal4h) providing the library infrastructure for CGAL and [euclid](https:://github.com/thomasp85/euclid) providing numerically robust geometric primitives (it's unclear if laridae or whatever it becomes will use euclid). 
+
+RTriangle is really fast, but it's not as fast as CGAL. CGAL can also be used to update a triangulation, which means (I think) that we could build an unconstrained triangulation from all the coordinates, and then add in any segments, even unclosed linear paths. At any rate, being able to update a mesh has a lot of applications, especially for neighbouring shapes, and for on-demand (extent or zoom dependent level of detail) tasks. 
+
+
+The interest (which seems miniscule ...) in constrained triangulations is discussed here along with the overall landscape in R. 
 
 https://github.com/r-spatial/discuss/issues/6
 
 ## Installation
 
-
+```R
+remotes::install_github("hypertidy/laridae")
+## not universe ready yet
+#install.packages("laridae", repos = "https://hypertidy.r-universe.dev")
+```
 
 ## Triangulation
 
@@ -110,7 +129,7 @@ par(p)
 
 ## Constrained triangulation
 
-Currently laridae only has "reporting" of the result. I can't yet see how to 
+Currently laridae only has vertex-output and "reporting" of the result. I can't yet see how to 
 
 * get the vertex pool (it may have expanded given mesh properties, overlapping segments, etc.)
 * get the triangle index
@@ -129,8 +148,9 @@ i1 <- match(sc$edge$.vx1, sc$vertex$vertex_)
 system.time(insert_constraint(X, Y, i0 , i1))
 system.time(segment_constraint(sc))
 
-system.time(insert_mesh(X, Y, i0 , i1))
-
+## insert_mesh actually returns the vertices (which might include new ones)
+system.time(xy_out <- insert_mesh(X, Y, i0 , i1))
+plot(xy_out, pch = ".")
 ## compare RTriangle, it's fast if we don't include pslg() time
 ps <- RTriangle::pslg(cbind(X, Y), S = cbind(i0, i1))
 system.time({

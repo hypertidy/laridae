@@ -25,7 +25,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // insert_mesh_cpp
-IntegerVector insert_mesh_cpp(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
+List insert_mesh_cpp(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
 RcppExport SEXP _laridae_insert_mesh_cpp(SEXP xSEXP, SEXP ySEXP, SEXP v0SEXP, SEXP v1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

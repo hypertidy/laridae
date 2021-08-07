@@ -12,7 +12,7 @@ typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
 
 // [[Rcpp::export]]
-IntegerVector insert_mesh_cpp(NumericVector x,
+List insert_mesh_cpp(NumericVector x,
                           NumericVector y,
                           IntegerVector v0,
                           IntegerVector v1)
@@ -39,6 +39,19 @@ IntegerVector insert_mesh_cpp(NumericVector x,
   Rprintf("Number of vertices before: %i\n", cdt.number_of_vertices());
   // make it conforming Delaunay
   CGAL::make_conforming_Delaunay_2(cdt);
+
+  NumericVector xi = NumericVector(cdt.number_of_vertices());
+  NumericVector yi = NumericVector(cdt.number_of_vertices());
+
+  int i = 0;
+  for (auto itr = cdt.finite_vertices_begin(); itr != cdt.finite_vertices_end(); ++itr) {
+    //Rprintf("%f , %f\n", itr->point().x(), itr->point().y());
+    xi[i] = itr->point().x();
+    yi[i] = itr->point().y();
+    i++;
+  }
+
+
   Rprintf("Number of vertices after: %i\n", cdt.number_of_vertices());
-  return Rcpp::IntegerVector::create(NA_INTEGER);
+  return Rcpp::List::create(Named("x") = xi , _["y"] = yi);
 }

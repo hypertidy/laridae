@@ -6,10 +6,35 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+Work in progress to get constrained and conforming Delaunay
+triangulation for shapes in R with CGAL. We have
+
+-   point-only triangulation in `tri_xy()` - it’s fast
+-   segment-input constraints in `insert_mesh()` - only returns the
+    vertices, which might include new points
+-   constrained and conformal triangulations in-progress …
+
+We need:
+
+-   export of new vertex pool and its edge- or triangle-based indices
+-   proper inputs of nested polygon shapes
+-   robust dealing with segment and polygon soups, so that numeric
+    insertions are robust (and c.)
+
+We can now hit this more easily thanks to
+[cgal4h](https://CRAN.R-project.org/package=cgal4h) thanks to Ahmadou
+Dicko.
+
 `laridae` came out of a need for constrained triangulation for a
 topology-in-R project. That effort has moved on somewhat, proving the
 case by using `RTriangle` and then bedding down the normalization model
 in the `hypertidy/silicate` package.
+
+R now has [cgal4h](https://cran.r-project.org/package=cgal4h) providing
+the library infrastructure for CGAL and
+[euclid](https:://github.com/thomasp85/euclid) providing numerically
+robust geometric primitives (it’s unclear if laridae or whatever it
+becomes will use euclid).
 
 RTriangle is really fast, but it’s not as fast as CGAL. CGAL can also be
 used to update a triangulation, which means (I think) that we could
@@ -19,16 +44,18 @@ to update a mesh has a lot of applications, especially for neighbouring
 shapes, and for on-demand (extent or zoom dependent level of detail)
 tasks.
 
-We can now hit this more easily thanks to
-[cgal4h](https://CRAN.R-project.org/package=cgal4h) thanks to Ahmadou
-Dicko.
-
-The interest (which is miniscule …) in constrained triangulations is
+The interest (which seems miniscule …) in constrained triangulations is
 discussed here along with the overall landscape in R.
 
 <https://github.com/r-spatial/discuss/issues/6>
 
 ## Installation
+
+``` r
+remotes::install_github("hypertidy/laridae")
+## not universe ready yet
+#install.packages("laridae", repos = "https://hypertidy.r-universe.dev")
+```
 
 ## Triangulation
 
@@ -99,15 +126,15 @@ microbenchmark::microbenchmark(
 )
 #> Unit: microseconds
 #>                              expr      min       lq     mean   median       uq
-#>             ind_t <- tri_xy(x, y) 1003.037 1180.282 1210.524 1224.940 1259.092
-#>           ind_t1 <- tri_xy1(x, y)  957.943 1181.241 1204.754 1225.726 1251.130
-#>           ind_t2 <- tri_xy2(x, y)  980.168 1191.784 1219.096 1222.641 1260.760
-#>  RT <- RTriangle::triangulate(ps) 1653.278 1959.215 2072.064 2080.628 2167.966
+#>             ind_t <- tri_xy(x, y)  958.795 1127.766 1184.248 1202.551 1244.693
+#>           ind_t1 <- tri_xy1(x, y)  964.334 1111.205 1180.227 1187.096 1239.847
+#>           ind_t2 <- tri_xy2(x, y)  968.167 1116.894 1177.740 1199.422 1242.877
+#>  RT <- RTriangle::triangulate(ps) 1677.312 1972.573 2076.233 2078.806 2194.787
 #>       max neval cld
-#>  1395.601   100  a 
-#>  1350.535   100  a 
-#>  1422.179   100  a 
-#>  2314.977   100   b
+#>  1412.635   100  a 
+#>  1489.043   100  a 
+#>  1408.256   100  a 
+#>  2371.038   100   b
 length(ind_t)
 #> [1] 5961
 length(ind_t1)
@@ -134,8 +161,8 @@ par(p)
 
 ## Constrained triangulation
 
-Currently laridae only has “reporting” of the result. I can’t yet see
-how to
+Currently laridae only has vertex-output and “reporting” of the result.
+I can’t yet see how to
 
 -   get the vertex pool (it may have expanded given mesh properties,
     overlapping segments, etc.)
@@ -156,25 +183,31 @@ system.time(insert_constraint(X, Y, i0 , i1))
 #> Number of vertices before: 30835
 #> Number of vertices after: 31079
 #>    user  system elapsed 
-#>   0.369   0.000   0.369
+#>   0.368   0.000   0.367
 system.time(segment_constraint(sc))
 #> The number of resulting constrained edges is: 30843
 #>    user  system elapsed 
-#>   0.393   0.000   0.393
+#>   0.392   0.000   0.393
 
-system.time(insert_mesh(X, Y, i0 , i1))
+## insert_mesh actually returns the vertices (which might include new ones)
+system.time(xy_out <- insert_mesh(X, Y, i0 , i1))
 #> Number of vertices before: 30835
 #> Number of vertices after: 31079
 #>    user  system elapsed 
-#>   0.083   0.000   0.083
+#>   0.075   0.000   0.075
+plot(xy_out, pch = ".")
+```
 
+<img src="man/figures/README-mesh-input-1.png" width="100%" />
+
+``` r
 ## compare RTriangle, it's fast if we don't include pslg() time
 ps <- RTriangle::pslg(cbind(X, Y), S = cbind(i0, i1))
 system.time({
   tr <- RTriangle::triangulate(ps, D = TRUE)
 })
 #>    user  system elapsed 
-#>   0.078   0.000   0.078
+#>   0.079   0.000   0.079
 
 
 plot(tr$P, pch= ".")
@@ -182,7 +215,7 @@ segments(tr$P[tr$E[,1],1], tr$P[tr$E[,1],2],
          tr$P[tr$E[,2],1], tr$P[tr$E[,2],2])
 ```
 
-<img src="man/figures/README-mesh-input-1.png" width="100%" />
+<img src="man/figures/README-mesh-input-2.png" width="100%" />
 
 ``` r
 str(tr)

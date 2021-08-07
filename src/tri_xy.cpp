@@ -22,8 +22,8 @@ typedef Face::Vertex_handle Fvertex_handle;
 // [[Rcpp::export]]
 IntegerVector tri_xy_cpp(NumericVector x, NumericVector y) {
   std::vector< std::pair<Point,int> > points;
-  for (int ipoint = 0; ipoint < x.length(); ipoint++){
-    points.push_back( std::make_pair( Point(x[ipoint], y[ipoint]), ipoint) );
+  for (int ip = 0; ip < x.length(); ip++){
+    points.push_back( std::make_pair( Point(x[ip], y[ip]), ip) );
   }
 
   Delaunay triangulation;
@@ -45,6 +45,7 @@ IntegerVector tri_xy_cpp(NumericVector x, NumericVector y) {
 
   return vi;
 }
+
 // [[Rcpp::export]]
 
 IntegerVector tri_xy1_cpp(NumericVector x, NumericVector y)
