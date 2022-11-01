@@ -15,9 +15,12 @@ Imports:
     silicate
 Suggests: testthat
 License: LGPL-3
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 ByteCompile: true
 URL: https://github.com/hypertidy/laridae
 BugReports: https://github.com/hypertidy/laridae/issues
 Remotes: gitlab::dickoa/cgalh
+Depends: 
+    R (>= 2.10)
+LazyData: true

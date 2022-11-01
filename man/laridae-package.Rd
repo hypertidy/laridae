@@ -6,8 +6,7 @@
 \alias{laridae-package}
 \title{laridae: CGAL Triangulation and Constrained Triangulation}
 \description{
-Experimental wrapper for CGAL to explore constrained triangulations and
-   general edge-decomposition structures for shapes.
+Experimental wrapper for CGAL to explore constrained triangulations and general edge-decomposition structures for shapes.
 
 CGAL functionality.
 }
@@ -29,8 +28,6 @@ Other contributors:
 \itemize{
   \item Mark Padgham [contributor]
 }
-
-
 
 }
 \keyword{internal}

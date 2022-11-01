@@ -4,7 +4,7 @@
 \alias{insert_constraint}
 \title{Insert segment constraint}
 \usage{
-insert_constraint(x, y, v0, v1)
+insert_constraint(x)
 }
 \arguments{
 \item{x}{x coordinate}

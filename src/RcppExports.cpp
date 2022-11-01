@@ -10,6 +10,54 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// tri_xy_cpp
+IntegerVector tri_xy_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xy_cpp(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(tri_xy_cpp(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// tri_xy1_cpp
+IntegerVector tri_xy1_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xy1_cpp(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(tri_xy1_cpp(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// tri_xy2_cpp
+IntegerVector tri_xy2_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xy2_cpp(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(tri_xy2_cpp(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// tri_xyrev_cpp
+List tri_xyrev_cpp(NumericVector x, NumericVector y);
+RcppExport SEXP _laridae_tri_xyrev_cpp(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(tri_xyrev_cpp(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // insert_constraint_cpp
 IntegerVector insert_constraint_cpp(NumericVector x, NumericVector y, IntegerVector v0, IntegerVector v1);
 RcppExport SEXP _laridae_insert_constraint_cpp(SEXP xSEXP, SEXP ySEXP, SEXP v0SEXP, SEXP v1SEXP) {
@@ -51,50 +99,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// tri_xy_cpp
-IntegerVector tri_xy_cpp(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_tri_xy_cpp(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(tri_xy_cpp(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// tri_xy1_cpp
-IntegerVector tri_xy1_cpp(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_tri_xy1_cpp(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(tri_xy1_cpp(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// tri_xy2_cpp
-IntegerVector tri_xy2_cpp(NumericVector x, NumericVector y);
-RcppExport SEXP _laridae_tri_xy2_cpp(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(tri_xy2_cpp(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_laridae_insert_constraint_cpp", (DL_FUNC) &_laridae_insert_constraint_cpp, 4},
-    {"_laridae_insert_mesh_cpp", (DL_FUNC) &_laridae_insert_mesh_cpp, 4},
-    {"_laridae_segment_constraint_cpp", (DL_FUNC) &_laridae_segment_constraint_cpp, 3},
     {"_laridae_tri_xy_cpp", (DL_FUNC) &_laridae_tri_xy_cpp, 2},
     {"_laridae_tri_xy1_cpp", (DL_FUNC) &_laridae_tri_xy1_cpp, 2},
     {"_laridae_tri_xy2_cpp", (DL_FUNC) &_laridae_tri_xy2_cpp, 2},
+    {"_laridae_tri_xyrev_cpp", (DL_FUNC) &_laridae_tri_xyrev_cpp, 2},
+    {"_laridae_insert_constraint_cpp", (DL_FUNC) &_laridae_insert_constraint_cpp, 4},
+    {"_laridae_insert_mesh_cpp", (DL_FUNC) &_laridae_insert_mesh_cpp, 4},
+    {"_laridae_segment_constraint_cpp", (DL_FUNC) &_laridae_segment_constraint_cpp, 3},
     {NULL, NULL, 0}
 };
 

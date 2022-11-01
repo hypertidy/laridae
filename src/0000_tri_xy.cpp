@@ -119,3 +119,38 @@ IntegerVector tri_xy2_cpp(NumericVector x, NumericVector y)
   return vi;
 }
 
+
+// [[Rcpp::export]]
+List tri_xyrev_cpp(NumericVector x, NumericVector y)
+{
+  std::vector< std::pair<Point,int> > points;
+  for (int ipoint = 0; ipoint < x.length(); ipoint++){
+    points.push_back( std::make_pair( Point(x[ipoint], y[ipoint]), ipoint) );
+  }
+
+  Delaunay tr;
+  tr.insert (points.begin (), points.end ());
+
+  Vertex v;
+  Vertex_iterator it = tr.vertices_begin (),
+    beyond = tr.vertices_end ();
+  NumericVector xi(tr.number_of_faces() * 3);
+  NumericVector yi(tr.number_of_faces() * 3);
+
+  int inc = 0;
+  for(Vertex_iterator
+        vit = tr.finite_vertices_begin(),
+          end = tr.finite_vertices_end();
+      vit != end; ++vit)
+  {
+    Point p = tr.point(vit);
+    xi[inc] = CGAL::to_double(p.x());
+    yi[inc] = CGAL::to_double(p.y());
+    inc++;
+
+  }
+  List out(2);
+  out[0] = xi;
+  out[1] = yi;
+  return out;
+}

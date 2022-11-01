@@ -30,8 +30,16 @@ segment_constraint <- function(x, ...) {
 #' @param v0 segment start index (1-based)
 #' @param v1 segment end index (1-based)
 #' @export
-insert_constraint <- function(x, y, v0, v1) {
-  insert_constraint_cpp(x, y, v0 - 1, v1 - 1)
+insert_constraint <- function(x) {
+  if (!inherits(x, "SC")) {
+    x <- silicate::SC(x)
+  }
+  X <- x$vertex$x_
+  Y <- x$vertex$y_
+  ## internal 0-based C++ index
+  e0 <- match(x$edge$.vx0, x$vertex$vertex_) - 1
+  e1 <- match(x$edge$.vx1, x$vertex$vertex_) - 1
+  insert_constraint_cpp(X, Y, e0, e1)
 }
 #' Insert segment constraint
 #'
