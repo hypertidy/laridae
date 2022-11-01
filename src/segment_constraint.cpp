@@ -1,3 +1,4 @@
+// [[Rcpp::depends(cgalh)]]
 #include <Rcpp.h>
 using namespace Rcpp;
 

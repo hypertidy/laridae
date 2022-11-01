@@ -1,7 +1,7 @@
 Package: laridae
 Type: Package
 Title: CGAL Triangulation and Constrained Triangulation
-Version: 0.0.2.9002
+Version: 0.0.2.9003
 Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
     person("Mark", "Padgham", role=c("ctb")))
@@ -9,7 +9,7 @@ Description: Experimental wrapper for CGAL to explore constrained triangulations
    general edge-decomposition structures for shapes.
 LinkingTo:
     Rcpp,
-    cgal4h
+    cgalh
 Imports:
     Rcpp,
     silicate
@@ -20,3 +20,4 @@ Roxygen: list(markdown = TRUE)
 ByteCompile: true
 URL: https://github.com/hypertidy/laridae
 BugReports: https://github.com/hypertidy/laridae/issues
+Remotes: gitlab::dickoa/cgalh

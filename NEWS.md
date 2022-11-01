@@ -1,5 +1,7 @@
 # laridae dev
 
+* Now use cgalh. 
+
 * Indexing and argument names now more consistent. Indexing is always 0-based on the C side, 
  1-based on the R side. 
  
