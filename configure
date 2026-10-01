@@ -1,0 +1,79 @@
+#!/bin/sh
+# Find CGAL (>= 6.0) and Boost headers and write src/Makevars.
+#
+# Search order for CGAL: $CGAL_INCLUDE_DIR, the compiler's default include
+# path (system libcgal-dev or brew cgal), then the RcppCGAL package if it is
+# installed. Boost: $BOOST_INCLUDE_DIR, the default include path, then BH.
+
+: ${R_HOME=`R RHOME`}
+CXX=`"${R_HOME}/bin/R" CMD config CXX17`
+CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXX17FLAGS`
+RSCRIPT="${R_HOME}/bin/Rscript"
+
+CGAL_CPPFLAGS=""
+BOOST_CPPFLAGS=""
+
+try_cgal() {
+  cat > conftest.cpp <<EOT
+#include <CGAL/version.h>
+#if CGAL_VERSION_NR < 1060000000
+#error CGAL is older than 6.0
+#endif
+int main() { return 0; }
+EOT
+  ${CXX} ${CXXFLAGS} $1 -c conftest.cpp -o conftest.o >/dev/null 2>&1
+  status=$?
+  rm -f conftest.cpp conftest.o
+  return $status
+}
+
+try_boost() {
+  cat > conftest.cpp <<EOT
+#include <boost/version.hpp>
+int main() { return 0; }
+EOT
+  ${CXX} ${CXXFLAGS} $1 -c conftest.cpp -o conftest.o >/dev/null 2>&1
+  status=$?
+  rm -f conftest.cpp conftest.o
+  return $status
+}
+
+if [ -n "${CGAL_INCLUDE_DIR}" ] && try_cgal "-I${CGAL_INCLUDE_DIR}"; then
+  CGAL_CPPFLAGS="-I${CGAL_INCLUDE_DIR}"
+elif try_cgal ""; then
+  CGAL_CPPFLAGS=""
+elif try_cgal "-I/opt/homebrew/include"; then
+  CGAL_CPPFLAGS="-I/opt/homebrew/include"
+else
+  RCPPCGAL=`"${RSCRIPT}" -e 'cat(system.file("include", package = "RcppCGAL"))' 2>/dev/null`
+  if [ -n "${RCPPCGAL}" ] && try_cgal "-I${RCPPCGAL}"; then
+    CGAL_CPPFLAGS="-I${RCPPCGAL}"
+  else
+    echo "------------------------------------------------------------------"
+    echo "laridae needs the CGAL (>= 6.0) headers. Install one of:"
+    echo "  * system CGAL: apt install libcgal-dev (if >= 6.0), brew install cgal"
+    echo "  * the CGAL release tarball, then set CGAL_INCLUDE_DIR to its include/"
+    echo "  * install.packages('RcppCGAL')"
+    echo "------------------------------------------------------------------"
+    exit 1
+  fi
+fi
+
+if [ -n "${BOOST_INCLUDE_DIR}" ] && try_boost "-I${BOOST_INCLUDE_DIR}"; then
+  BOOST_CPPFLAGS="-I${BOOST_INCLUDE_DIR}"
+elif try_boost "${CGAL_CPPFLAGS}"; then
+  BOOST_CPPFLAGS=""
+else
+  BH=`"${RSCRIPT}" -e 'cat(system.file("include", package = "BH"))' 2>/dev/null`
+  if [ -n "${BH}" ] && try_boost "-I${BH}"; then
+    BOOST_CPPFLAGS="-I${BH}"
+  else
+    echo "laridae needs the Boost headers: apt install libboost-dev, brew install boost, or install.packages('BH')"
+    exit 1
+  fi
+fi
+
+echo "laridae: CGAL flags '${CGAL_CPPFLAGS}', Boost flags '${BOOST_CPPFLAGS}'"
+sed -e "s|@CGAL_CPPFLAGS@|${CGAL_CPPFLAGS}|" -e "s|@BOOST_CPPFLAGS@|${BOOST_CPPFLAGS}|" \
+  src/Makevars.in > src/Makevars
+exit 0

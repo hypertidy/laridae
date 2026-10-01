@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.github$
+^dev$
+^README\.Rmd$
+^LICENSE\.md$
+^src/Makevars$
+^config\.log$
+^cleanup$

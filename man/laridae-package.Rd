@@ -4,15 +4,11 @@
 \name{laridae-package}
 \alias{laridae}
 \alias{laridae-package}
-\title{laridae: CGAL Triangulation and Constrained Triangulation}
+\title{laridae: constrained triangulation and meshing with CGAL}
 \description{
-Experimental wrapper for CGAL to explore constrained triangulations and
-   general edge-decomposition structures for shapes.
-
-CGAL functionality.
-}
-\references{
-\url{http://www.cgal.org/}
+A persistent constrained Delaunay triangulation handle backed by CGAL.
+See \code{\link[=lari_new]{lari_new()}} for the handle API and \code{\link[=lari_triangulate]{lari_triangulate()}} for the
+one-shot form.
 }
 \seealso{
 Useful links:
@@ -30,8 +26,5 @@ Other contributors:
   \item Mark Padgham [contributor]
 }
 
-
-
 }
 \keyword{internal}
-\keyword{package}

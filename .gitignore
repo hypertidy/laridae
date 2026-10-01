@@ -1,6 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
-inst/vch2
-.Rbuildignore
 src/*.o
+src/*.so
+src/*.dll
+src/Makevars
+config.log

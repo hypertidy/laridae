@@ -1,23 +1,28 @@
 Package: laridae
 Type: Package
-Title: CGAL Triangulation and Constrained Triangulation
-Version: 0.0.2.9003
+Title: Constrained Triangulation and Meshing with CGAL
+Version: 0.1.0.9000
 Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
-    person("Mark", "Padgham", role=c("ctb")))
-Description: Experimental wrapper for CGAL to explore constrained triangulations and
-   general edge-decomposition structures for shapes.
-LinkingTo:
-    Rcpp,
-    cgalh
-Imports:
-    Rcpp,
-    silicate
-Suggests: testthat
-License: LGPL-3
-RoxygenNote: 7.1.1
+    person("Mark", "Padgham", role = "ctb"))
+Description: A persistent constrained Delaunay triangulation handle backed by
+    CGAL's 'Constrained_triangulation_plus_2' and 'Delaunay_mesher_2'. Points
+    and constraint segments can be inserted and removed at any time, crossing
+    constraints are resolved by inserting the crossing, and the mesh can be
+    refined by minimum angle, maximum area, or a sizing field that varies
+    with position. Input and output follow the vertices / segments /
+    triangles contract shared with 'cdtr', including per-triangle constraint
+    depth.
+License: GPL (>= 3)
+Encoding: UTF-8
+LinkingTo: cpp11
+SystemRequirements: CGAL (>= 6.0) headers, Boost headers, C++17
+Suggests:
+    bench,
+    sf,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
-ByteCompile: true
+RoxygenNote: 7.3.1
 URL: https://github.com/hypertidy/laridae
 BugReports: https://github.com/hypertidy/laridae/issues
-Remotes: gitlab::dickoa/cgalh
