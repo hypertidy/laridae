@@ -101,15 +101,19 @@ along: crossings and Steiner points get linearly interpolated values.
 
 ## Benchmarks
 
-`inst/benchmarks/` runs laridae against cdtr (and RTriangle when installed) on
-sf's North Carolina counties and anglr's Tasmanian contours and cadastre. On
-one Linux core (CGAL 6.1, R 4.3), nc at max_area = A/5000 with min_angle = 20:
+`inst/benchmarks/` runs laridae against cdtr and RTriangle on sf's North
+Carolina counties and anglr's Tasmanian contours and cadastre
+(`results.txt` holds the last full run). On one Linux core (CGAL 6.1,
+R 4.3), nc at max_area = A/5000 with min_angle = 20:
 
 | | median |
 |---|---|
-| Triangle (reference, from cdtr's benchmarks) | 5 ms |
-| laridae | 16 ms |
-| cdtr | 17 ms |
+| RTriangle (Triangle) | 5.8 ms |
+| laridae | 15 ms |
+| cdtr | 19 ms |
+
+Constrained-only output (no refinement) is identical across the three on
+all cases.
 
 After a small edit (a short new constraint) a second refine of the refined
 nc mesh takes 3 ms and inserts 6 vertices, against 16 ms for a rebuild.

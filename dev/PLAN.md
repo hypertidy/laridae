@@ -55,5 +55,5 @@ Steps 1-8 are done.
 * A second refine after a small edit is local with CGAL: on nc refined at
   A/5000, q = 20, adding a short constraint and refining again inserts 6
   vertices in 3 ms against 16 ms for a full rebuild (`dynamic.R`).
-* Speed: nc A/5000 q = 20 is 16 ms (laridae) vs 17 ms (cdtr) on this
-  machine; the brief's Triangle reference is 5 ms.
+* Speed: nc A/5000 q = 20 is 15 ms (laridae), 19 ms (cdtr), 5.8 ms
+  (RTriangle), measured together; see inst/benchmarks/results.txt.
