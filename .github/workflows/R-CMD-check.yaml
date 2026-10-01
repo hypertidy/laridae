@@ -1,0 +1,52 @@
+# laridae is off-CRAN: the check is for correctness, with CGAL >= 6 headers
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: macos-latest, r: 'release'}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      CGAL_VERSION: "6.1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: CGAL headers (Linux, release tarball)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update && sudo apt-get install -y libboost-dev
+          curl -sSL -o cgal.tar.xz https://github.com/CGAL/cgal/releases/download/v${CGAL_VERSION}/CGAL-${CGAL_VERSION}-library.tar.xz
+          tar xf cgal.tar.xz -C $HOME
+          echo "CGAL_INCLUDE_DIR=$HOME/CGAL-${CGAL_VERSION}/include" >> $GITHUB_ENV
+
+      - name: CGAL headers (macOS, brew)
+        if: runner.os == 'macOS'
+        run: brew install cgal boost
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          error-on: '"error"'
