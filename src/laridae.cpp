@@ -18,6 +18,9 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Mesh_2/Face_badness.h>
+#include <CGAL/property_map.h>
+#include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
 
 #include <cmath>
 #include <functional>
@@ -607,15 +610,30 @@ integers lari_add_points_cpp(SEXP xp, doubles x, doubles y, doubles_matrix<> PA)
   const R_xlen_t n = x.size();
   const int nc = m->ncol();
   if (nc > 0 && (PA.nrow() != n || PA.ncol() != nc)) cpp11::stop("PA must have one row per point and %d columns", nc);
-  Snapshot s;
-  take_snapshot(*m, s);
-  writable::integers ids(n);
-  Vertex_handle hint;
+  // insert in spatial sort order (each locate walk is then short), but give
+  // ids in input order so new points keep their row order
+  std::vector<std::size_t> order(n);
+  std::vector<Point> pts;
+  pts.reserve(n);
   for (R_xlen_t i = 0; i < n; ++i) {
     if (ISNAN(x[i]) || ISNAN(y[i])) cpp11::stop("missing coordinates are not allowed");
-    Point p(x[i], y[i]);
-    Vertex_handle v = hint == Vertex_handle() ? m->cdt.insert(p) : m->cdt.insert(p, hint->face());
+    pts.push_back(Point(x[i], y[i]));
+    order[i] = (std::size_t)i;
+  }
+  typedef CGAL::Pointer_property_map<Point>::type Pmap;
+  typedef CGAL::Spatial_sort_traits_adapter_2<K, Pmap> Sort_traits;
+  CGAL::spatial_sort(order.begin(), order.end(), Sort_traits(CGAL::make_property_map(pts)));
+  std::vector<Vertex_handle> vs(n);
+  Vertex_handle hint;
+  for (std::size_t j = 0; j < order.size(); ++j) {
+    const std::size_t i = order[j];
+    Vertex_handle v = hint == Vertex_handle() ? m->cdt.insert(pts[i]) : m->cdt.insert(pts[i], hint->face());
     hint = v;
+    vs[i] = v;
+  }
+  writable::integers ids(n);
+  for (R_xlen_t i = 0; i < n; ++i) {
+    Vertex_handle v = vs[i];
     if (v->info() == 0) {
       const int id = new_id(*m, v, ORIGIN_INPUT);
       for (int k = 0; k < nc; ++k) m->attr[k][id - 1] = PA(i, k);
@@ -624,6 +642,7 @@ integers lari_add_points_cpp(SEXP xp, doubles x, doubles y, doubles_matrix<> PA)
   }
   // a point landing on a constraint splits it but adds no other vertex;
   // anything else new (none expected) is adopted for safety
+  Snapshot s;
   adopt_new_vertices(*m, s, ORIGIN_CROSSING);
   return ids;
 }

@@ -113,7 +113,9 @@ R 4.3), nc at max_area = A/5000 with min_angle = 20:
 | cdtr | 19 ms |
 
 Constrained-only output (no refinement) is identical across the three on
-all cases.
+all cases. For bare points (`points.R`) CGAL is the fastest: a million normal
+points triangulate in 1.9 s including table extraction, against 2.5 s for
+cdtr and 3.5 s for RTriangle.
 
 After a small edit (a short new constraint) a second refine of the refined
 nc mesh takes 3 ms and inserts 6 vertices, against 16 ms for a rebuild.
