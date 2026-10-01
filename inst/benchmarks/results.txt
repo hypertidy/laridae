@@ -1,5 +1,5 @@
 ## output of inst/benchmarks/bench.R, 2026-10-01: CGAL 6.1, R 4.3.3, one Linux core
-## laridae 0.1.0.9000, cdtr (cpp11 branch), RTriangle 1.6, anglr data
+## laridae 0.1.0.9000, cdtr (cpp11 branch), RTriangle 1.6.0.15, anglr data
 nc :  1255 vertices 1357 segments
 cont_tas :  3827 vertices 3772 segments
 cad_tas :  1029 vertices 1279 segments
