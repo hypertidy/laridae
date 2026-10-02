@@ -16,7 +16,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Delaunay_mesh_vertex_base_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesher_2.h>
+#include "lari_mesher_2.h"
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/property_map.h>
 #include <CGAL/spatial_sort.h>
@@ -26,6 +26,7 @@
 #include <functional>
 #include <limits>
 #include <map>
+#include <set>
 #include <memory>
 #include <queue>
 #include <string>
@@ -112,9 +113,46 @@ struct Sizing {
 // edge-length floor below which a face is never considered bad. The floor is
 // what stops Ruppert refinement cascading into sharp input corners.
 
+// Would refining this face need a constrained edge below the floor to be
+// split? Walk from the centroid toward the circumcentre (the point the mesher
+// will try to insert) and look at the constrained edges crossed. If one is
+// shorter than the floor the mesher may not split it, and inserting the
+// circumcentre behind it either lands on an existing vertex (no progress,
+// forever) or seeds points in the wrong region; such a face is left alone.
+bool blocked_by_floor(const CDTP& tr, const Face_handle& fh, double min_edge2) {
+  if (min_edge2 <= 0 || tr.dimension() < 2) return false;
+  const Point& a = fh->vertex(0)->point();
+  const Point& b = fh->vertex(1)->point();
+  const Point& c = fh->vertex(2)->point();
+  const Point cc = CGAL::circumcenter(a, b, c);
+  const Point c0((a.x() + b.x() + c.x()) / 3.0, (a.y() + b.y() + c.y()) / 3.0);
+  if (tr.triangle(fh).has_on_bounded_side(cc) || c0 == cc) return false;
+  CDTP::Line_face_circulator lfc = tr.line_walk(c0, cc, fh), done(lfc);
+  if (lfc == nullptr) return false;
+  Face_handle prev = lfc;
+  const int max_steps = 100000;
+  for (int k = 0; k < max_steps; ++k) {
+    ++lfc;
+    if (lfc == done) return false;
+    Face_handle f = lfc;
+    int j = -1;
+    for (int t = 0; t < 3; ++t) if (prev->neighbor(t) == f) j = t;
+    if (j >= 0 && prev->is_constrained(j)) {
+      const Point& p = prev->vertex(CDTP::cw(j))->point();
+      const Point& q = prev->vertex(CDTP::ccw(j))->point();
+      if (CGAL::squared_distance(p, q) < min_edge2) return true;
+    }
+    if (tr.is_infinite(f)) return false;
+    if (!tr.triangle(f).has_on_unbounded_side(cc)) return false;
+    prev = f;
+  }
+  return false;
+}
+
 struct Lari_criteria {
   double sine2_bound = 0;   // squared sine of the minimum angle, 0 for none
   double min_edge2 = 0;     // squared edge-length floor
+  const CDTP* tr = nullptr; // for the blocked-by-floor walk
   std::shared_ptr<Sizing> sizing = std::make_shared<Sizing>();
 
   // first: squared minimum sine; second: area / local bound (> 1 is too big)
@@ -166,9 +204,10 @@ struct Lari_criteria {
   class Is_bad {
     double sine2_bound, min_edge2;
     std::shared_ptr<Sizing> sizing;
+    const CDTP* tr;
   public:
     explicit Is_bad(const Lari_criteria& c)
-      : sine2_bound(c.sine2_bound), min_edge2(c.min_edge2), sizing(c.sizing) {}
+      : sine2_bound(c.sine2_bound), min_edge2(c.min_edge2), sizing(c.sizing), tr(c.tr) {}
     CGAL::Mesh_2::Face_badness operator()(const Quality q) const {
       if (q.size() > 1) return CGAL::Mesh_2::IMPERATIVELY_BAD;
       if (q.sine() < sine2_bound) return CGAL::Mesh_2::BAD;
@@ -183,14 +222,54 @@ struct Lari_criteria {
         q.first = 1; q.second = 0;
         return CGAL::Mesh_2::NOT_BAD;
       }
-      return (*this)(q);
+      const CGAL::Mesh_2::Face_badness bad = (*this)(q);
+      if (bad != CGAL::Mesh_2::NOT_BAD && tr != nullptr && blocked_by_floor(*tr, fh, min_edge2)) {
+        q.first = 1; q.second = 0;
+        return CGAL::Mesh_2::NOT_BAD;
+      }
+      return bad;
     }
   };
 
   Is_bad is_bad_object() const { return Is_bad(*this); }
 };
 
-typedef CGAL::Delaunay_mesher_2<CDTP, Lari_criteria> Mesher;
+// Edge conformity (Gabriel) with the same floor as the face criteria: a
+// constrained edge shorter than the floor is never split for encroachment.
+// Without this the edge level cascades into sharp input corners regardless of
+// the face criteria (thousands of near-coincident points on cont_tas). The
+// mesher default-constructs this test, so the floor is a file-level value set
+// before each mesher call.
+double conform_min_edge2 = 0;
+
+struct Lari_conform {
+  typedef CDTP Tr;
+  bool operator()(const Tr& tr, const Face_handle& fh, const int i) const {
+    const Vertex_handle& va = fh->vertex(Tr::cw(i));
+    const Vertex_handle& vb = fh->vertex(Tr::ccw(i));
+    const Vertex_handle& vi = fh->vertex(i);
+    const Vertex_handle& mvi = tr.tds().mirror_vertex(fh, i);
+    return (tr.is_infinite(vi) || (*this)(tr, va, vb, vi->point())) &&
+           (tr.is_infinite(mvi) || (*this)(tr, va, vb, mvi->point()));
+  }
+  bool operator()(const Tr& tr, const Vertex_handle& va, const Vertex_handle& vb) const {
+    Face_handle fh; int i;
+    tr.is_edge(va, vb, fh, i);
+    return (*this)(tr, fh, i);
+  }
+  bool operator()(const Tr& tr, const Face_handle& fh, const int i, const Point& p) const {
+    return (*this)(tr, fh->vertex(Tr::cw(i)), fh->vertex(Tr::ccw(i)), p);
+  }
+  bool operator()(const Tr& tr, const Vertex_handle& va, const Vertex_handle& vb, const Point& p) const {
+    const Point& a = va->point();
+    const Point& b = vb->point();
+    if (conform_min_edge2 > 0 && CGAL::squared_distance(a, b) < conform_min_edge2) return true;
+    // p outside the diametral circle of ab (acute angle at p): not encroaching
+    return tr.geom_traits().angle_2_object()(a, p, b) == CGAL::ACUTE;
+  }
+};
+
+typedef CGAL::Lari_mesher_2<CDTP, Lari_criteria, Lari_conform> Mesher;
 
 // ---------------------------------------------------------------------------
 
@@ -206,6 +285,7 @@ struct Unrefined {
   int bad = 0, short_edges = 0, sharp_fixed_corner = 0, circumcenter_outside = 0;
   int inserted = 0;
   bool budget_hit = false;
+  bool stalled = false;
 };
 
 struct Mesh {
@@ -218,6 +298,9 @@ struct Mesh {
   // segment id - 1 -> constraint; null is removed
   std::vector<Constraint_id> seg;
   std::map<Constraint_id, int> seg_of;
+  // hidden constraints on convex hull edges, added when the hull is meshed
+  // and kept: they bound the meshed region (see run_mesher)
+  std::set<Constraint_id> hidden;
 
   Lari_criteria criteria;
   Refine_settings settings;
@@ -319,7 +402,22 @@ Vertex_handle handle_of(const Mesh& m, int id) {
 // where crossing a constrained edge costs the number of input segments that
 // cover it (so coincident boundaries count once per segment, as CDT does).
 
-void compute_depth(CDTP& cdt) {
+// number of hidden (hull) constraints covering the edge va-vb
+int hidden_count(const Mesh& m, Vertex_handle va, Vertex_handle vb) {
+  if (m.hidden.empty()) return 0;
+  int n = 0;
+  for (auto ctx = m.cdt.contexts_begin(va, vb); ctx != m.cdt.contexts_end(va, vb); ++ctx) {
+    if (m.hidden.count(ctx->id())) ++n;
+  }
+  return n;
+}
+
+// Faces outside the hidden hull polyline get depth -1 and are never kept:
+// refinement splits hull edges at points that, with inexact constructions,
+// sit a hair inside the original hull edge, leaving flat triangles between
+// the polyline and the hull. Hidden constraints never add to depth.
+void compute_depth(Mesh& m) {
+  CDTP& cdt = m.cdt;
   const int inf = std::numeric_limits<int>::max();
   for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f) f->info() = inf;
   if (cdt.dimension() < 2) return;
@@ -338,16 +436,36 @@ void compute_depth(CDTP& cdt) {
       int w = 0;
       if (f->is_constrained(i)) {
         Vertex_handle va = f->vertex(CDTP::cw(i)), vb = f->vertex(CDTP::ccw(i));
-        w = (int)cdt.number_of_enclosing_constraints(va, vb);
-        if (w < 1) w = 1;
+        w = (int)cdt.number_of_enclosing_constraints(va, vb) - hidden_count(m, va, vb);
+        if (w < 0) w = 0;
       }
       const int d = top.first + w;
       if (d < n->info()) { n->info() = d; q.push(QE(d, n)); }
     }
   }
+  if (m.hidden.empty()) return;
+  // flood from the infinite faces without crossing a hidden constraint
+  std::vector<Face_handle> stack;
+  for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f) {
+    if (cdt.is_infinite(f)) stack.push_back(f);
+  }
+  std::set<Face_handle> seen(stack.begin(), stack.end());
+  while (!stack.empty()) {
+    Face_handle f = stack.back(); stack.pop_back();
+    for (int i = 0; i < 3; ++i) {
+      Face_handle n = f->neighbor(i);
+      if (seen.count(n)) continue;
+      if (f->is_constrained(i) &&
+          hidden_count(m, f->vertex(CDTP::cw(i)), f->vertex(CDTP::ccw(i))) > 0) continue;
+      seen.insert(n);
+      if (!cdt.is_infinite(n)) n->info() = -1;
+      stack.push_back(n);
+    }
+  }
 }
 
 bool keep_face(int depth, int domain) {
+  if (depth < 0) return false;
   if (domain == DOMAIN_HULL) return true;
   if (domain == DOMAIN_OUTER) return depth > 0;
   return depth % 2 == 1;
@@ -367,7 +485,7 @@ int effective_domain(const Mesh& m, int domain) {
 
 void mark_domain(Mesh& m) {
   CDTP& cdt = m.cdt;
-  compute_depth(cdt);
+  compute_depth(m);
   const int domain = effective_domain(m, m.settings.domain);
   for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f) {
     f->set_in_domain(!cdt.is_infinite(f) && keep_face(f->info(), domain));
@@ -375,6 +493,7 @@ void mark_domain(Mesh& m) {
 }
 
 void make_mesher(Mesh& m) {
+  m.criteria.tr = &m.cdt;
   m.mesher.reset(new Mesher(m.cdt, m.criteria));
   if (!m.settings.seeds.empty()) {
     // CGAL semantics: seeds mark regions (holes) that are not meshed
@@ -437,40 +556,50 @@ void report_unrefined(Mesh& m) {
 
 // run the mesher, at most `budget` new vertices (< 0 for no limit)
 int run_mesher(Mesh& m, long budget, bool step_only) {
+  conform_min_edge2 = m.criteria.min_edge2;
   Snapshot s;
   take_snapshot(m, s);
-  // Mesh_2 needs a constrained boundary: to mesh the convex hull, constrain
-  // its edges for the duration of this call (hidden from the tables)
-  std::vector<Constraint_id> hull;
+  // Mesh_2 needs a constrained boundary: to mesh the convex hull, its edges
+  // get hidden constraints (never in the tables, never adding to depth).
+  // They are kept afterwards so the flat triangles left between the split
+  // hull edges and the hull stay outside the output (see compute_depth).
   if (m.settings.seeds.empty() && effective_domain(m, m.settings.domain) == DOMAIN_HULL) {
     std::vector<std::pair<Vertex_handle, Vertex_handle> > he;
     CDTP::Face_circulator fc = m.cdt.incident_faces(m.cdt.infinite_vertex()), done(fc);
     do {
       const int i = fc->index(m.cdt.infinite_vertex());
-      he.push_back(std::make_pair(fc->vertex(CDTP::ccw(i)), fc->vertex(CDTP::cw(i))));
+      Vertex_handle a = fc->vertex(CDTP::ccw(i)), b = fc->vertex(CDTP::cw(i));
+      if (!(fc->is_constrained(i) && hidden_count(m, a, b) > 0)) he.push_back(std::make_pair(a, b));
     } while (++fc != done);
-    m.mesher.reset();
-    for (const auto& e : he) hull.push_back(m.cdt.insert_constraint(e.first, e.second));
+    if (!he.empty()) {
+      m.mesher.reset();
+      for (const auto& e : he) m.hidden.insert(m.cdt.insert_constraint(e.first, e.second));
+    }
   }
   if (!m.mesher) make_mesher(m);
   const std::size_t n0 = m.cdt.number_of_vertices();
   m.unrefined.budget_hit = false;
-  if (budget < 0 && !step_only) {
-    m.mesher->refine_mesh();
-  } else {
-    while ((long)(m.cdt.number_of_vertices() - n0) < budget) {
-      if (!m.mesher->step_by_step_refine_mesh()) break;
+  // step loop with a stall guard: an insertion that adds no vertex (the
+  // point already exists) must not spin forever
+  long stalled = 0;
+  bool more = true;
+  while (budget < 0 || (long)(m.cdt.number_of_vertices() - n0) < budget) {
+    const std::size_t before = m.cdt.number_of_vertices();
+    more = m.mesher->step_by_step_refine_mesh();
+    if (!more) break;
+    if (m.cdt.number_of_vertices() == before) {
+      if (++stalled > 1000) break;
+    } else {
+      stalled = 0;
     }
-    m.unrefined.budget_hit = !m.mesher->is_refinement_done();
   }
+  m.unrefined.stalled = stalled > 1000;
+  m.unrefined.budget_hit = more && !m.unrefined.stalled && !m.mesher->is_refinement_done();
+  (void)step_only;
   const int n = adopt_new_vertices(m, s, ORIGIN_STEINER);
   m.unrefined.inserted = n;
   report_unrefined(m);
   m.unrefined.set = true;
-  if (!hull.empty()) {
-    m.mesher.reset();
-    for (const auto& c : hull) m.cdt.remove_constraint(c);
-  }
   return n;
 }
 
@@ -538,7 +667,7 @@ writable::data_frame vertex_table(const Mesh& m, std::vector<int>& row_of) {
 
 writable::data_frame triangle_table(Mesh& m, const std::vector<int>& row_of, int domain) {
   CDTP& cdt = m.cdt;
-  compute_depth(cdt);
+  compute_depth(m);
   domain = effective_domain(m, domain);
   std::vector<int> v0, v1, v2, dep;
   if (cdt.dimension() == 2) {
@@ -565,10 +694,12 @@ writable::data_frame segment_table(const Mesh& m, const std::vector<int>& row_of
     if (va->info() > vb->info()) std::swap(va, vb);
     int lowest = std::numeric_limits<int>::max(), n = 0;
     for (auto ctx = cdt.contexts_begin(va, vb); ctx != cdt.contexts_end(va, vb); ++ctx) {
+      if (m.hidden.count(ctx->id())) continue;
       auto it = m.seg_of.find(ctx->id());
       if (it != m.seg_of.end() && it->second < lowest) lowest = it->second;
       ++n;
     }
+    if (n == 0) continue;  // only hidden hull constraints here
     v0.push_back(row_of[va->info()]);
     v1.push_back(row_of[vb->info()]);
     sid.push_back(lowest == std::numeric_limits<int>::max() ? NA_INTEGER : lowest);
@@ -776,6 +907,14 @@ int lari_remove_points_cpp(SEXP xp, integers ids) {
       Vertex_handle q = *std::prev(m->cdt.vertices_in_constraint_end(cid));
       if (p == v || q == v) remove_constraint_id(*m, k);
     }
+    // hidden hull constraints through or ending at this vertex go too
+    for (auto it = m->hidden.begin(); it != m->hidden.end();) {
+      bool on = false;
+      for (auto w = m->cdt.vertices_in_constraint_begin(*it); w != m->cdt.vertices_in_constraint_end(*it); ++w) {
+        if (*w == v) { on = true; break; }
+      }
+      if (on) { m->cdt.remove_constraint(*it); it = m->hidden.erase(it); } else ++it;
+    }
     if (m->cdt.are_there_incident_constraints(v)) {
       cpp11::stop("vertex %d lies inside a constraint; remove that segment first", id);
     }
@@ -807,8 +946,9 @@ list lari_counts_cpp(SEXP xp) {
   const int nsub = (int)m->cdt.number_of_subconstraints();
   const Unrefined& u = m->unrefined;
   writable::integers unref({u.bad, u.short_edges, u.sharp_fixed_corner, u.circumcenter_outside, u.inserted,
-                            (int)u.budget_hit});
-  unref.names() = {"bad", "shortEdges", "sharpFixedCorner", "circumcenterOutside", "inserted", "budgetHit"};
+                            (int)u.budget_hit, (int)u.stalled});
+  unref.names() = {"bad", "shortEdges", "sharpFixedCorner", "circumcenterOutside", "inserted", "budgetHit",
+                   "stalled"};
   return writable::list({
     "input"_nm = by_origin[0], "crossing"_nm = by_origin[1], "steiner"_nm = by_origin[2],
     "faces"_nm = (int)m->cdt.number_of_faces(), "segments"_nm = nseg, "edges"_nm = nsub,

@@ -17,5 +17,6 @@ Vertex counts by origin, face and segment counts, and the report from the
 last refinement: \code{bad} triangles still failing a criterion, and of those
 how many have a short edge (below the floor), touch a sharp constrained
 corner, or have their circumcentre outside the meshed domain; \code{inserted}
-vertices and whether the \code{max_steiner} budget stopped it.
+vertices, whether the \code{max_steiner} budget stopped it, and \code{stalled} (the
+mesher stopped making progress; should be 0).
 }

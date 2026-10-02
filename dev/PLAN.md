@@ -44,8 +44,17 @@ Steps 1-8 are done.
 * The floor never lets a triangle whose shortest edge is below it count as
   bad (both angle and area), matching cdtr's semantics.
 * Meshing the convex hull (no constraints, or `erase = "hull"`): Mesh_2 needs
-  a constrained boundary, so the hull edges are constrained for the duration
-  of the refine call and released after; they never appear in the tables.
+  a constrained boundary, so the hull edges get hidden constraints. They are
+  kept after the refine: split points on a hull edge sit a hair off the line
+  (inexact constructions), and the flat triangles between the split edge and
+  the hull lie outside the hidden polyline, so they are dropped. Hidden
+  constraints never appear in the segment table or add to depth.
+* The edge-length floor applies to CGAL's edge conformity (Gabriel) splits as
+  well as to face badness (`src/lari_mesher_2.h` is Delaunay_mesher_2 with the
+  conformity test as a parameter), and a face whose circumcentre lies behind a
+  constrained edge below the floor is not refined. Without these, refining
+  cont_tas over its hull cascaded into a sharp corner: 2650 near-zero-area
+  triangles, found by the trianglewins harness (2026-10-02).
 * The unrefined report counts triangles still failing a criterion, and of
   those how many are below the floor, touch a sharp constrained corner, or
   have their circumcentre outside the domain.

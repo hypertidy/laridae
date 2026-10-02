@@ -25,3 +25,18 @@ test_that("depth matches cdtr on identical input", {
   expect_equal(nrow(l$triangles), nrow(r$T))
   expect_equal(table(l$triangles$depth), table(r$depth), ignore_attr = TRUE)
 })
+
+test_that("refining the hull leaves no flat triangles along it", {
+  skip_if_not_installed("sf")
+  d <- nc_rings()
+  A <- diff(range(d$x)) * diff(range(d$y))
+  r <- lari_triangulate(d$x, d$y, d$s0, d$s1, max_area = A / 5000, erase = "hull")
+  a <- tri_area(r$vertices, r$triangles)
+  expect_true(all(a <= A / 5000 * (1 + 1e-9)))
+  expect_gt(min(a), 1e-6 * stats::median(a))
+  ## the output still covers the convex hull of the input
+  h <- chull(d$x, d$y)
+  hull_area <- abs(sum(d$x[h] * d$y[c(h[-1], h[1])] - d$x[c(h[-1], h[1])] * d$y[h])) / 2
+  expect_equal(sum(a), hull_area, tolerance = 1e-9)
+  expect_equal(r$unrefined$stalled, 0L)
+})

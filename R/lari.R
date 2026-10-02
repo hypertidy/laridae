@@ -323,7 +323,8 @@ lari_depth <- function(m, erase = c("outer", "holes", "hull")) lari_triangles(m,
 #' last refinement: `bad` triangles still failing a criterion, and of those
 #' how many have a short edge (below the floor), touch a sharp constrained
 #' corner, or have their circumcentre outside the meshed domain; `inserted`
-#' vertices and whether the `max_steiner` budget stopped it.
+#' vertices, whether the `max_steiner` budget stopped it, and `stalled` (the
+#' mesher stopped making progress; should be 0).
 #'
 #' @param m a mesh from [lari_new()]
 #' @return a list

@@ -31,3 +31,15 @@ test_that("refine needs a criterion", {
   m <- lari_new(c(0, 1, 0), c(0, 0, 1))
   expect_error(lari_refine(m), "at least one")
 })
+
+test_that("a sharp corner on the hull does not cascade", {
+  ## a 1 degree wedge whose long sides are hull edges, plus an open polyline
+  th <- 1 * pi / 180
+  x <- c(0, 10, 10 * cos(th), 2, 6); y <- c(0, 0, 10 * sin(th), 0.01, 0.08)
+  r <- lari_triangulate(x, y, c(1, 4), c(4, 5), max_area = 0.05, erase = "hull")
+  a <- tri_area(r$vertices, r$triangles)
+  expect_true(all(a <= 0.05 * (1 + 1e-9)))
+  expect_gt(min(a), 1e-9)
+  expect_lt(nrow(r$vertices), 2000L)
+  expect_equal(r$unrefined$stalled, 0L)
+})
