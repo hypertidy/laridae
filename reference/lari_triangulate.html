@@ -101,8 +101,10 @@ keeps it finite.</p></dd>
 
 <dt id="arg-min-edge-length">min_edge_length<a class="anchor" aria-label="anchor" href="#arg-min-edge-length"></a></dt>
 <dd><p>the edge-length floor; NULL chooses
-<code><a href="default_min_edge_length.html">default_min_edge_length()</a></code> from the current segments and <code>max_area</code>, 0
-never gives up</p></dd>
+<code><a href="default_min_edge_length.html">default_min_edge_length()</a></code> from the current segments and the area bound,
+taking the smaller of <code>max_area</code> and the finest area the sizing field
+asks for so a sizing field is honoured rather than capped; 0 never gives
+up</p></dd>
 
 
 <dt id="arg-erase">erase<a class="anchor" aria-label="anchor" href="#arg-erase"></a></dt>
