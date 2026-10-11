@@ -88,15 +88,17 @@ segments every triangle is returned.</p></dd>
 
 <ul><li><p>vertices: <code>x</code>, <code>y</code>, the attribute columns, <code>origin</code> ("input",
 "crossing", "steiner") and the stable vertex <code>id</code></p></li>
-<li><p>triangles: <code>v0</code>, <code>v1</code>, <code>v2</code> (1-based rows of the vertices table) and
-<code>depth</code></p></li>
+<li><p>triangles: <code>v0</code>, <code>v1</code>, <code>v2</code> (1-based rows of the vertices table),
+<code>depth</code> and <code>depth_distinct</code></p></li>
 <li><p>segments: constraint edges <code>v0</code>, <code>v1</code> (rows of the vertices table), the
 input <code>segment</code> id they came from (the lowest, when several coincide)
 and <code>count</code>, the number of input segments covering the edge</p></li>
 </ul><p><code>depth</code> is the constraint layer: the number of constraint crossings on the
 way in from outside the convex hull, counting an edge covered by k input
-segments k times. For nested rings odd is inside and even is a hole; for a
-coverage it orders regions by distance from the boundary.</p>
+segments k times. <code>depth_distinct</code> is the same count but a doubled boundary
+(an edge covered by several coincident segments) is crossed once, so it
+ignores the <code>count</code> weighting. For nested rings odd is inside and even is a
+hole; for a coverage it orders regions by distance from the boundary.</p>
 <p>Row indices are only valid for one snapshot of the tables: use <code>id</code> to
 follow vertices across edits.</p>
     </div>

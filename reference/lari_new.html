@@ -107,17 +107,17 @@ reloading an R session.</p>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.75</span>, <span class="fl">0.75</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">lari_new</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lari_tables.html">lari_triangles</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    v0 v1 v2 depth</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   4  1  5     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   4  5  8     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   7  4  8     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   5  6  8     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1  6     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   7  3  4     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7  6  2     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   7  8  6     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   7  2  3     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  6  1  2     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    v0 v1 v2 depth depth_distinct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   4  1  5     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   4  5  8     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   7  4  8     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   5  6  8     2              2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1  6     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   7  3  4     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7  6  2     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   7  8  6     2              2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   7  2  3     1              1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  6  1  2     1              1</span>
 <span class="r-in"><span><span class="fu"><a href="lari_refine.html">lari_refine</a></span><span class="op">(</span><span class="va">m</span>, max_area <span class="op">=</span> <span class="fl">0.01</span>, min_angle <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lari_counts.html">lari_counts</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $input</span>
