@@ -1,0 +1,57 @@
+# Build and deploy the pkgdown site. laridae needs CGAL (>= 6) + Boost headers
+# to install, so we fetch the CGAL release tarball before building.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+name: pkgdown
+
+permissions: read-all
+
+jobs:
+  pkgdown:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CGAL_VERSION: "6.1"
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: CGAL headers (release tarball)
+        run: |
+          sudo apt-get update && sudo apt-get install -y libboost-dev
+          curl -sSL -o cgal.tar.xz https://github.com/CGAL/cgal/releases/download/v${CGAL_VERSION}/CGAL-${CGAL_VERSION}-library.tar.xz
+          tar xf cgal.tar.xz -C $HOME
+          echo "CGAL_INCLUDE_DIR=$HOME/CGAL-${CGAL_VERSION}/include" >> $GITHUB_ENV
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown, local::.
+          needs: website
+
+      - name: Build site
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        shell: Rscript {0}
+
+      - name: Deploy to GitHub pages 🚀
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
+        with:
+          clean: false
+          branch: gh-pages
+          folder: docs
