@@ -123,6 +123,25 @@ test_that("attributes are carried onto Steiner vertices by linear interpolation"
   expect_equal(r0$vertices$z_, z)
 })
 
+test_that("hull-edge Steiner points get interpolated, not nearest, attributes", {
+  ## At map scale, Steiner points the mesher puts on convex-hull edges land
+  ## ~1e-10 outside the pre-refine hull, so locate() returns the infinite face.
+  ## The old nearest-vertex fallback snapped their attributes to one endpoint;
+  ## a linear field must instead be reproduced along the edge.
+  set.seed(4127)
+  n <- 60
+  x <- runif(n) * 1e5 + 3e5
+  y <- runif(n) * 1e5 + 5.2e6
+  z <- x + 2 * y
+  r <- lari_triangulate(x, y, PA = cbind(z_ = z),
+                        max_area = 4e7, min_angle = 25, erase = "hull")
+  V <- r$vertices
+  expect_gt(sum(V$origin == "steiner"), 0L)
+  ## relative error, since z ~ 1e7 carries ~1e-9 of absolute rounding
+  rel <- abs(V$z_ - (V$x + 2 * V$y)) / max(abs(z))
+  expect_lt(max(rel), 1e-12)
+})
+
 test_that("crossings get interpolated attributes", {
   x <- c(0, 1, 0, 1); y <- c(0, 1, 1, 0)
   ## consistent along both segments

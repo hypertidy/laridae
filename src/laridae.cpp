@@ -359,7 +359,46 @@ void interpolate_attr(Mesh& m, const Snapshot& s, const Point& p, int id) {
       return;
     }
   }
-  // outside the hull (or degenerate): nearest vertex
+  // On or just outside the convex hull: the mesher puts Steiner points on hull
+  // edges that, with inexact constructions, land ~1e-10 outside the pre-refine
+  // triangulation, so locate() returns the infinite face. Project onto the
+  // nearest hull edge and interpolate linearly along it, instead of snapping to
+  // a single nearest vertex (which was wrong by up to half the edge's delta).
+  if (tr.dimension() == 2) {
+    std::vector<CDT::Vertex_handle> hull;
+    CDT::Vertex_circulator vc = tr.incident_vertices(tr.infinite_vertex()), done(vc);
+    if (vc != nullptr) {
+      do { if (!tr.is_infinite(vc)) hull.push_back(vc); } while (++vc != done);
+    }
+    const size_t H = hull.size();
+    if (H >= 2) {
+      const double px = CGAL::to_double(p.x()), py = CGAL::to_double(p.y());
+      double best = std::numeric_limits<double>::infinity();
+      int ia = 0, ib = 0;
+      double bt = 0.0;
+      for (size_t i = 0; i < H; ++i) {
+        const Point& a = hull[i]->point();
+        const Point& b = hull[(i + 1) % H]->point();
+        const double ax = CGAL::to_double(a.x()), ay = CGAL::to_double(a.y());
+        const double dx = CGAL::to_double(b.x()) - ax, dy = CGAL::to_double(b.y()) - ay;
+        const double L2 = dx * dx + dy * dy;
+        double t = 0.0;
+        if (L2 > 0.0) {
+          t = ((px - ax) * dx + (py - ay) * dy) / L2;
+          if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
+        }
+        const double ex = px - (ax + t * dx), ey = py - (ay + t * dy);
+        const double d = ex * ex + ey * ey;
+        if (d < best) { best = d; ia = hull[i]->info(); ib = hull[(i + 1) % H]->info(); bt = t; }
+      }
+      if (ia > 0 && ib > 0) {
+        for (int k = 0; k < nc; ++k)
+          m.attr[k][id - 1] = (1.0 - bt) * m.attr[k][ia - 1] + bt * m.attr[k][ib - 1];
+        return;
+      }
+    }
+  }
+  // degenerate (dimension < 2) or no usable hull edge: nearest vertex
   double best = std::numeric_limits<double>::infinity();
   int src = 0;
   for (CDT::Finite_vertices_iterator v = tr.finite_vertices_begin(); v != tr.finite_vertices_end(); ++v) {
