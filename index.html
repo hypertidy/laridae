@@ -81,18 +81,11 @@
 <li>step-by-step refinement, and re-refinement after an edit that only touches the edited neighbourhood</li>
 <li>sizing fields: the local maximum triangle area as a function of position or a grid</li>
 </ul>
-<p>laridae uses CGAL’s <code>Delaunay_mesher_2</code> (GPL) and needs the CGAL (&gt;= 6.0) and Boost headers at build time, declared via <code>SystemRequirements</code>. A CRAN release is pending confirmation that CRAN’s build machines provide CGAL 6; until then install from GitHub (see Installation).</p>
+<p>laridae uses CGAL’s <code>Delaunay_mesher_2</code> (GPL). The CGAL (&gt;= 6.0) and Boost headers are supplied at build time by the CRAN packages <code>RcppCGAL</code> and <code>BH</code> (via <code>LinkingTo</code>), so there is no system CGAL to install; CGAL is header-only here and nothing is linked (no GMP: the exact-predicates kernel is enough).</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>laridae needs the CGAL (&gt;= 6.0) and Boost headers; CGAL is header-only so nothing is linked (no GMP: the exact-predicates kernel is enough).</p>
-<ul>
-<li>macOS: <code>brew install cgal</code>
-</li>
-<li>Linux: distributions with CGAL 6 (<code>libcgal-dev</code>), or download the <a href="https://github.com/CGAL/cgal/releases" class="external-link">CGAL release</a> “library” tarball and set <code>CGAL_INCLUDE_DIR</code> to its <code>include/</code> directory; Boost from <code>libboost-dev</code>
-</li>
-<li>anywhere: <code>install.packages(c("RcppCGAL", "BH"))</code> and the configure script finds their headers</li>
-</ul>
+<p>The header dependencies (<code>RcppCGAL</code>, <code>BH</code>, <code>Rcpp</code>, <code>cpp11</code>) come from CRAN automatically; no system CGAL is required.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"hypertidy/laridae"</span><span class="op">)</span></span></code></pre></div>
 </div>
