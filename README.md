@@ -35,6 +35,15 @@ headers are supplied at build time by the CRAN packages `RcppCGAL` and `BH`
 (via `LinkingTo`), so there is no system CGAL to install; CGAL is header-only
 here and nothing is linked (no GMP: the exact-predicates kernel is enough).
 
+## Learn more
+
+* [Getting started with laridae](https://hypertidy.github.io/laridae/articles/laridae.html)
+  — a tour of the persistent handle, refinement, sizing fields, attribute
+  interpolation and the contract tables (also `vignette("laridae")`).
+* [Triangulation in context](https://mdsumner.github.io/trianglewins/context/)
+  — the bigger picture: where laridae sits alongside cdtr, RTriangle, GEOS
+  and earcut, and why the triangles are only part of the story.
+
 ## Installation
 
 The header dependencies (`RcppCGAL`, `BH`, `Rcpp`, `cpp11`) come from CRAN
