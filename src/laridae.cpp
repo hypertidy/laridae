@@ -33,6 +33,10 @@
 #include <utility>
 #include <vector>
 
+// stringize CGAL_VERSION (an unquoted token such as 6.1)
+#define LARI_STR2(x) #x
+#define LARI_STR(x) LARI_STR2(x)
+
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
@@ -993,6 +997,11 @@ list lari_tables_cpp(SEXP xp, int domain) {
 }
 
 [[cpp11::register]]
+std::string lari_cgal_version_cpp() {
+  return std::string(LARI_STR(CGAL_VERSION));
+}
+
+[[cpp11::register]]
 list lari_counts_cpp(SEXP xp) {
   Mesh* m = get_mesh(xp);
   int by_origin[3] = {0, 0, 0};
@@ -1009,6 +1018,7 @@ list lari_counts_cpp(SEXP xp) {
     "input"_nm = by_origin[0], "crossing"_nm = by_origin[1], "steiner"_nm = by_origin[2],
     "faces"_nm = (int)m->cdt.number_of_faces(), "segments"_nm = nseg, "edges"_nm = nsub,
     "refined"_nm = (bool)u.set, "mesher_alive"_nm = (bool)(m->mesher != nullptr),
+    "min_edge_length"_nm = (u.set ? m->settings.min_edge_length : NA_REAL),
     "unrefined"_nm = unref});
 }
 

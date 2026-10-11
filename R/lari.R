@@ -17,6 +17,32 @@ check_mesh <- function(m) {
   invisible(m)
 }
 
+## one-row provenance report for the tables: backend, package and CGAL
+## versions, the edge floor, the erase region, and the last refinement's
+## unrefined counts (NA when the mesh has not been refined)
+lari_report <- function(m, erase) {
+  cnt <- lari_counts_cpp(m)
+  u <- cnt$unrefined
+  refined <- isTRUE(cnt$refined)
+  na_i <- function(x) if (refined) as.integer(x) else NA_integer_
+  data.frame(
+    backend = "laridae",
+    package = as.character(utils::packageVersion("laridae")),
+    cgal = lari_cgal_version_cpp(),
+    erase = erase,
+    refined = refined,
+    min_edge_length = if (refined) cnt$min_edge_length else NA_real_,
+    bad = na_i(u[["bad"]]),
+    short_edge = na_i(u[["shortEdges"]]),
+    sharp_corner = na_i(u[["sharpFixedCorner"]]),
+    outside = na_i(u[["circumcenterOutside"]]),
+    inserted = na_i(u[["inserted"]]),
+    budget_hit = if (refined) as.logical(u[["budgetHit"]]) else NA,
+    stalled = if (refined) as.logical(u[["stalled"]]) else NA,
+    stringsAsFactors = FALSE
+  )
+}
+
 #' Create a mesh handle
 #'
 #' A laridae mesh is a persistent constrained Delaunay triangulation (CGAL's
@@ -318,6 +344,13 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #' ignores the `count` weighting. For nested rings odd is inside and even is a
 #' hole; for a coverage it orders regions by distance from the boundary.
 #'
+#' `lari_tables()` also returns a one-row `report` data frame recording the
+#' provenance of the tables: `backend` ("laridae"), the laridae `package` and
+#' `cgal` versions, the `erase` region, whether the mesh was `refined`, the
+#' `min_edge_length` floor, and the last refinement's unrefined counts (`bad`,
+#' `short_edge`, `sharp_corner`, `outside`, `inserted`, `budget_hit`,
+#' `stalled`), all NA when the mesh has not been refined.
+#'
 #' Row indices are only valid for one snapshot of the tables: use `id` to
 #' follow vertices across edits.
 #'
@@ -325,8 +358,8 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #' @param erase which triangles to return: "outer" (depth > 0, what
 #'   Triangle's `-p` keeps), "holes" (odd depth), "hull" (all). With no
 #'   segments every triangle is returned.
-#' @return a data frame; `lari_tables()` returns all three in a list,
-#'   `lari_depth()` the depth column of the triangles
+#' @return a data frame; `lari_tables()` returns the three tables and the
+#'   `report` in a list, `lari_depth()` the depth column of the triangles
 #' @export
 #' @examples
 #' m <- lari_new(c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25),
@@ -336,8 +369,10 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #' lari_segments(m)
 lari_tables <- function(m, erase = c("outer", "holes", "hull")) {
   check_mesh(m)
-  out <- lari_tables_cpp(m, erase_code(match.arg(erase)))
+  erase <- match.arg(erase)
+  out <- lari_tables_cpp(m, erase_code(erase))
   out$vertices$origin <- c("input", "crossing", "steiner")[out$vertices$origin + 1L]
+  out$report <- lari_report(m, erase)
   out
 }
 
@@ -411,8 +446,9 @@ default_min_edge_length <- function(x, y, s0, s1, max_area = NULL,
 #' @inheritParams lari_new
 #' @inheritParams lari_refine
 #' @param ... passed to [lari_refine()] (`size`, `max_steiner`, `seeds`)
-#' @return a list with `vertices`, `triangles`, `segments`, `unrefined`
-#'   (NULL when no refinement was asked for) and `min_edge_length`
+#' @return a list with `vertices`, `triangles`, `segments`, a one-row
+#'   provenance `report` (see [lari_tables()]), `unrefined` (NULL when no
+#'   refinement was asked for) and `min_edge_length`
 #' @export
 #' @examples
 #' r <- lari_triangulate(c(0, 1, 1, 0), c(0, 0, 1, 1), 1:4, c(2, 3, 4, 1), max_area = 0.05)

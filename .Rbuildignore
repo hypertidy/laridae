@@ -10,3 +10,5 @@
 ^inst/benchmarks$
 ^CRAN-PREP-NOTES\.md$
 ^\.posit/assistant$
+^_pkgdown\.yml$
+^docs$

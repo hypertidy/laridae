@@ -58,6 +58,13 @@ extern "C" SEXP _laridae_lari_tables_cpp(SEXP xp, SEXP domain) {
   END_CPP11
 }
 // laridae.cpp
+std::string lari_cgal_version_cpp();
+extern "C" SEXP _laridae_lari_cgal_version_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(lari_cgal_version_cpp());
+  END_CPP11
+}
+// laridae.cpp
 list lari_counts_cpp(SEXP xp);
 extern "C" SEXP _laridae_lari_counts_cpp(SEXP xp) {
   BEGIN_CPP11
@@ -91,6 +98,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_laridae_lari_add_points_cpp",      (DL_FUNC) &_laridae_lari_add_points_cpp,       4},
     {"_laridae_lari_add_segments_cpp",    (DL_FUNC) &_laridae_lari_add_segments_cpp,     3},
     {"_laridae_lari_attr_names_cpp",      (DL_FUNC) &_laridae_lari_attr_names_cpp,       1},
+    {"_laridae_lari_cgal_version_cpp",    (DL_FUNC) &_laridae_lari_cgal_version_cpp,     0},
     {"_laridae_lari_counts_cpp",          (DL_FUNC) &_laridae_lari_counts_cpp,           1},
     {"_laridae_lari_input_segments_cpp",  (DL_FUNC) &_laridae_lari_input_segments_cpp,   1},
     {"_laridae_lari_new_cpp",             (DL_FUNC) &_laridae_lari_new_cpp,              1},

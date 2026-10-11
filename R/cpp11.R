@@ -28,6 +28,10 @@ lari_tables_cpp <- function(xp, domain) {
   .Call(`_laridae_lari_tables_cpp`, xp, domain)
 }
 
+lari_cgal_version_cpp <- function() {
+  .Call(`_laridae_lari_cgal_version_cpp`)
+}
+
 lari_counts_cpp <- function(xp) {
   .Call(`_laridae_lari_counts_cpp`, xp)
 }

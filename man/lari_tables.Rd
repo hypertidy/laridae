@@ -26,8 +26,8 @@ Triangle's \code{-p} keeps), "holes" (odd depth), "hull" (all). With no
 segments every triangle is returned.}
 }
 \value{
-a data frame; \code{lari_tables()} returns all three in a list,
-\code{lari_depth()} the depth column of the triangles
+a data frame; \code{lari_tables()} returns the three tables and the
+\code{report} in a list, \code{lari_depth()} the depth column of the triangles
 }
 \description{
 The three output tables of the shared contract.
@@ -49,6 +49,13 @@ segments k times. \code{depth_distinct} is the same count but a doubled boundary
 (an edge covered by several coincident segments) is crossed once, so it
 ignores the \code{count} weighting. For nested rings odd is inside and even is a
 hole; for a coverage it orders regions by distance from the boundary.
+
+\code{lari_tables()} also returns a one-row \code{report} data frame recording the
+provenance of the tables: \code{backend} ("laridae"), the laridae \code{package} and
+\code{cgal} versions, the \code{erase} region, whether the mesh was \code{refined}, the
+\code{min_edge_length} floor, and the last refinement's unrefined counts (\code{bad},
+\code{short_edge}, \code{sharp_corner}, \code{outside}, \code{inserted}, \code{budget_hit},
+\code{stalled}), all NA when the mesh has not been refined.
 
 Row indices are only valid for one snapshot of the tables: use \code{id} to
 follow vertices across edits.

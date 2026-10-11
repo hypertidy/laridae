@@ -27,6 +27,27 @@ test_that("erase modes differ as expected", {
   expect_equal(sum(tri_area(hull$vertices, hull$triangles)), 1)
 })
 
+test_that("tables carry a one-row provenance report", {
+  d <- sq()
+  r <- lari_triangulate(d$x, d$y, d$s0, d$s1, max_area = 0.01, erase = "outer")
+  rep <- r$report
+  expect_s3_class(rep, "data.frame")
+  expect_equal(nrow(rep), 1L)
+  expect_equal(rep$backend, "laridae")
+  expect_equal(rep$erase, "outer")
+  expect_true(rep$refined)
+  expect_equal(rep$min_edge_length, r$min_edge_length)
+  expect_match(rep$cgal, "^[0-9]")          # a version like 6.1
+  expect_false(is.na(rep$bad))              # unrefined counts present when refined
+  ## a handle that was never refined: report present, counts NA
+  m <- lari_new(d$x, d$y, d$s0, d$s1)
+  rep0 <- lari_tables(m)$report
+  expect_false(rep0$refined)
+  expect_true(is.na(rep0$min_edge_length))
+  expect_true(is.na(rep0$bad))
+  expect_equal(rep0$backend, "laridae")
+})
+
 test_that("depth_distinct counts a doubled boundary once", {
   ## outer ring plus an inner ring given twice (a doubled boundary)
   x <- c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25)

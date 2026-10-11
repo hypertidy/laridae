@@ -17,6 +17,9 @@
 * `lari_triangles()` (and `lari_tables()`) gain a `depth_distinct` column: the
   constraint depth with a doubled boundary counted once, matching `cdtr`'s
   `depth_distinct`.
+* `lari_tables()` and `lari_triangulate()` now return a one-row `report` with
+  the backend, laridae and CGAL versions, the erase region, the edge floor,
+  and the last refinement's unrefined counts.
 * Licence is now GPL (>= 3), as required by CGAL's Mesh_2.
 * CGAL (>= 6.0) and Boost headers are supplied by the CRAN packages
   `RcppCGAL` and `BH` via `LinkingTo`, so no system CGAL is required and the

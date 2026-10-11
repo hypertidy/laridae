@@ -1,0 +1,36 @@
+url: https://hypertidy.github.io/laridae/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Create and edit a mesh
+  desc: >
+    A persistent handle: build it, then insert or remove points and
+    constraint segments in place (vertex ids stay stable).
+  contents:
+  - lari_new
+  - lari_add_points
+- title: Refine
+  desc: Delaunay refinement, step-by-step refinement, and the edge-length floor.
+  contents:
+  - lari_refine
+  - lari_step
+  - default_min_edge_length
+- title: Output and inspection
+  desc: >
+    The vertices / segments / triangles contract, mesh counts, and the
+    one-row provenance report.
+  contents:
+  - lari_tables
+  - lari_counts
+- title: One-shot
+  desc: Build and optionally refine in a single call.
+  contents:
+  - lari_triangulate
+
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - laridae

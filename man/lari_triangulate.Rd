@@ -46,8 +46,9 @@ outermost constraints, depth > 0), "holes" (odd depth only), or "hull"}
 \item{...}{passed to \code{\link[=lari_refine]{lari_refine()}} (\code{size}, \code{max_steiner}, \code{seeds})}
 }
 \value{
-a list with \code{vertices}, \code{triangles}, \code{segments}, \code{unrefined}
-(NULL when no refinement was asked for) and \code{min_edge_length}
+a list with \code{vertices}, \code{triangles}, \code{segments}, a one-row
+provenance \code{report} (see \code{\link[=lari_tables]{lari_tables()}}), \code{unrefined} (NULL when no
+refinement was asked for) and \code{min_edge_length}
 }
 \description{
 Build a mesh, optionally refine it, and return the tables: the
