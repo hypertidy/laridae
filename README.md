@@ -1,247 +1,132 @@
+# laridae
 
 <!-- badges: start -->
-
-[![R-CMD-check](https://github.com/hypertidy/laridae/workflows/R-CMD-check/badge.svg)](https://github.com/hypertidy/laridae/actions)
+[![R-CMD-check](https://github.com/hypertidy/laridae/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hypertidy/laridae/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+Constrained Delaunay triangulation and meshing for R with
+[CGAL](https://www.cgal.org/): a persistent mesh handle you can edit and
+refine, with the same vertices / segments / triangles contract as
+[cdtr](https://github.com/hypertidy/cdtr).
 
-Work in progress to get constrained and conforming Delaunay
-triangulation for shapes in R with CGAL. We have
+laridae is the CGAL-backed member of the hypertidy meshing stack. cdtr is the
+header-only, builds-anywhere baseline; laridae is the ceiling: everything
+CGAL's 2D constrained triangulations and Mesh_2 can do, exposed in the same
+shape so the backend is a choice, not a rewrite.
 
--   point-only triangulation in `tri_xy()` - it’s fast
--   segment-input constraints in `insert_mesh()` - only returns the
-    vertices, which might include new points
--   constrained and conformal triangulations in-progress …
+* fully dynamic: points and constraints can be inserted and removed at any
+  time (`Constrained_triangulation_plus_2` over a constrained Delaunay
+  triangulation with exact predicates), vertex ids are stable for the life of
+  the handle
+* crossing constraints are resolved by inserting the crossing, and every
+  output edge maps back to the input segment it came from
+* `depth` per triangle: constraint crossings from the outside, computed
+  topologically (odd inside, even hole for nested rings; matches cdtr)
+* refinement by minimum angle and maximum area with CGAL's
+  `Delaunay_mesher_2`, an edge-length floor, and a report of what could not
+  be refined
+* step-by-step refinement, and re-refinement after an edit that only touches
+  the edited neighbourhood
+* sizing fields: the local maximum triangle area as a function of position
+  or a grid
 
-We need:
-
--   export of new vertex pool and its edge- or triangle-based indices
--   proper inputs of nested polygon shapes
--   robust dealing with segment and polygon soups, so that numeric
-    insertions are robust (and c.)
-
-We can now hit this more easily thanks to
-[cgal4h](https://CRAN.R-project.org/package=cgal4h) thanks to Ahmadou
-Dicko.
-
-`laridae` came out of a need for constrained triangulation for a
-topology-in-R project. That effort has moved on somewhat, proving the
-case by using `RTriangle` and then bedding down the normalization model
-in the `hypertidy/silicate` package.
-
-R now has [cgal4h](https://cran.r-project.org/package=cgal4h) providing
-the library infrastructure for CGAL and
-[euclid](https:://github.com/thomasp85/euclid) providing numerically
-robust geometric primitives (it’s unclear if laridae or whatever it
-becomes will use euclid).
-
-RTriangle is really fast, but it’s not as fast as CGAL. CGAL can also be
-used to update a triangulation, which means (I think) that we could
-build an unconstrained triangulation from all the coordinates, and then
-add in any segments, even unclosed linear paths. At any rate, being able
-to update a mesh has a lot of applications, especially for neighbouring
-shapes, and for on-demand (extent or zoom dependent level of detail)
-tasks.
-
-The interest (which seems miniscule …) in constrained triangulations is
-discussed here along with the overall landscape in R.
-
-<https://github.com/r-spatial/discuss/issues/6>
+laridae is not aimed at CRAN: CGAL's Mesh_2 is GPL and the toolchain is
+heavy, so it optimises for capability and correctness.
 
 ## Installation
 
-``` r
+laridae needs the CGAL (>= 6.0) and Boost headers; CGAL is header-only so
+nothing is linked (no GMP: the exact-predicates kernel is enough).
+
+* macOS: `brew install cgal`
+* Linux: distributions with CGAL 6 (`libcgal-dev`), or download the
+  [CGAL release](https://github.com/CGAL/cgal/releases) "library" tarball and
+  set `CGAL_INCLUDE_DIR` to its `include/` directory; Boost from
+  `libboost-dev`
+* anywhere: `install.packages(c("RcppCGAL", "BH"))` and the configure script
+  finds their headers
+
+```r
 remotes::install_github("hypertidy/laridae")
-## not universe ready yet
-#install.packages("laridae", repos = "https://hypertidy.r-universe.dev")
 ```
 
-## Triangulation
+## Usage
 
-Triangulate with CGAL via
-[laridae](https://github.com/hypertidy/laridae). The function `tri_xy`
-performs an exact Delaunay triangulation on all vertices, returning a
-triplet-index for each triangle (zero-based in CGAL).
-
-The variants `tri_xy1()` and `tri_xy2()` work slightly differently
-illustrating CGAL usage in C++ (thanks to Mark Padgham). ‘xy1’ order is
-not trivial … but we ignore that for now.
-
-``` r
+```r
 library(laridae)
-x <- c(0, 0, 1)
-y <- c(0, 1, 1)
-plot(x, y, pch = "+")
-(idx0 <- tri_xy(x, y))
-#> [1] 3 2 1
-(idx1 <- tri_xy1(x, y))
-#> [1] 2 3 1
-(idx2 <- tri_xy2(x, y))
-#> [1] 3 2 1
+## a square with a square hole: two closed rings of segments
+x <- c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25)
+y <- c(0, 0, 1, 1, 0.25, 0.25, 0.75, 0.75)
+m <- lari_new(x, y, s0 = 1:8, s1 = c(2, 3, 4, 1, 6, 7, 8, 5))
+table(lari_depth(m))        # 1 = in the outer ring, 2 = in the hole
 
-polygon(cbind(x, y)[idx0, ])
+lari_refine(m, max_area = 0.01, min_angle = 25)
+lari_counts(m)
+
+## edit and re-refine: only the neighbourhood of the edit is touched
+ids <- lari_add_points(m, c(0.1, 0.15), c(0.1, 0.12))
+lari_add_segments(m, ids[1], ids[2])
+lari_refine(m, max_area = 0.01, min_angle = 25)
+
+## or one point at a time
+lari_step(m, n = 10)
+
+## a sizing field: local maximum area as a function of position
+m2 <- lari_new(c(0, 1, 1, 0), c(0, 0, 1, 1), 1:4, c(2, 3, 4, 1))
+lari_refine(m2, size = function(x, y) 0.0005 + 0.01 * x)
+
+## the contract tables
+lari_vertices(m)    # x, y, attributes, origin (input/crossing/steiner), id
+lari_triangles(m)   # v0, v1, v2 (rows of the vertices table), depth
+lari_segments(m)    # v0, v1, input segment id, count of covering segments
 ```
 
-<img src="man/figures/README-triangle-1.png" width="100%" />
+`lari_triangulate()` is the one-shot form, returning the three tables like
+cdtr's `cdt_triangulate()`. Per-vertex attributes (`PA = cbind(z_ = z)`) ride
+along: crossings and Steiner points get linearly interpolated values.
 
-``` r
-x    <- c(2.3,3.0,7.0,1.0,3.0,8.0)
-y    <- c(2.3,3.0,2.0,5.0,8.0,9.0)
-idx <- tri_xy(x, y)
-plot(x, y, pch = "+", cex = 1.5)
-polygon(cbind(x, y)[rbind(matrix(idx, 3L), NA), ], lty = 3)
-```
+## API
 
-<img src="man/figures/README-triangle-2.png" width="100%" />
+| function | |
+|---|---|
+| `lari_new(x, y, s0, s1, PA)` | create a handle (empty with no arguments) |
+| `lari_add_points(m, x, y, PA)` | insert points, returns stable ids |
+| `lari_add_segments(m, s0, s1)` | insert constraints between ids, crossings inserted |
+| `lari_remove_points(m, ids)` | remove vertices and the segments ending at them |
+| `lari_remove_segments(m, s0, s1, id)` | remove constraints (and crossings left without one) |
+| `lari_refine(m, min_angle, max_area, size, max_steiner, min_edge_length, seeds, erase)` | Mesh_2 refinement |
+| `lari_step(m, n)` | step-by-step refinement with the last criteria |
+| `lari_vertices`, `lari_triangles`, `lari_segments`, `lari_depth`, `lari_tables` | output tables |
+| `lari_counts(m)` | counts by origin and the unrefined report |
 
-Some timings, to show we aren’t wildly off-base and that CGAL wins for
-raw unconstrained Delaunay triangulation.
+## Benchmarks
 
-``` r
-set.seed(90)
-x <- rnorm(1e3, sd = 4)
-y <- rnorm(1e3, sd = 2)
-library(laridae)
+`inst/benchmarks/` runs laridae against cdtr and RTriangle on sf's North
+Carolina counties and anglr's Tasmanian contours and cadastre
+(`results.txt` holds the last full run). On one Linux core (CGAL 6.1,
+R 4.3), nc at max_area = A/5000 with min_angle = 20:
 
-# plot a matrix xy as points
-# and add the triangulation indexed
-# by structural triplet row-identifiers
-poly_index <- function(xy, index, ...) {
-  plot(xy, ...)
-  ## assume index is 0,1,2,0,1,2,0,1,...
-  ii <- c(rbind(matrix(index, nrow = 3), NA_integer_))
-  ## have forgetten why polypath fails, so just use polygon
-  polygon(xy[ii, 1], xy[ii, 2])
-}
+| | median |
+|---|---|
+| RTriangle (Triangle) | 5.8 ms |
+| laridae | 15 ms |
+| cdtr | 19 ms |
 
+Constrained-only output (no refinement) is identical across the three on
+all cases. For bare points (`points.R`) CGAL is the fastest: a million normal
+points triangulate in 1.9 s including table extraction, against 2.5 s for
+cdtr and 3.5 s for RTriangle.
 
-ps <- RTriangle::pslg(P = cbind(x, y))
-
-microbenchmark::microbenchmark(
-  ind_t <- tri_xy(x, y), 
-  ind_t1 <- tri_xy1(x, y), 
-  ind_t2 <- tri_xy2(x, y), 
-  RT <- RTriangle::triangulate(ps)
-)
-#> Unit: microseconds
-#>                              expr      min       lq     mean   median       uq
-#>             ind_t <- tri_xy(x, y)  958.795 1127.766 1184.248 1202.551 1244.693
-#>           ind_t1 <- tri_xy1(x, y)  964.334 1111.205 1180.227 1187.096 1239.847
-#>           ind_t2 <- tri_xy2(x, y)  968.167 1116.894 1177.740 1199.422 1242.877
-#>  RT <- RTriangle::triangulate(ps) 1677.312 1972.573 2076.233 2078.806 2194.787
-#>       max neval cld
-#>  1412.635   100  a 
-#>  1489.043   100  a 
-#>  1408.256   100  a 
-#>  2371.038   100   b
-length(ind_t)
-#> [1] 5961
-length(ind_t1)
-#> [1] 5961
-length(ind_t2)
-#> [1] 5961
-length(RT$T)
-#> [1] 5961
-
-
-p <- par(mfrow = c(2, 2), mar = rep(0, 4))
-poly_index(cbind(x, y), ind_t, pch = ".")
-## can't work as order is not aligned, but still fun
-poly_index(cbind(x, y), ind_t1, pch = ".")  
-poly_index(cbind(x, y), ind_t2, pch = ".")
-plot(RT)
-```
-
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
-
-``` r
-par(p)
-```
-
-## Constrained triangulation
-
-Currently laridae only has vertex-output and “reporting” of the result.
-I can’t yet see how to
-
--   get the vertex pool (it may have expanded given mesh properties,
-    overlapping segments, etc.)
--   get the triangle index
-
-The only other implementation in R is in RTriangle, so we use that for
-comparison.
-
-``` r
-sfx <- silicate::inlandwaters
-sc <- silicate::SC(sfx)
-X <- sc$vertex$x_
-Y <- sc$vertex$y_
-i0 <- match(sc$edge$.vx0, sc$vertex$vertex_)
-i1 <- match(sc$edge$.vx1, sc$vertex$vertex_)
-
-system.time(insert_constraint(X, Y, i0 , i1))
-#> Number of vertices before: 30835
-#> Number of vertices after: 31079
-#>    user  system elapsed 
-#>   0.368   0.000   0.367
-system.time(segment_constraint(sc))
-#> The number of resulting constrained edges is: 30843
-#>    user  system elapsed 
-#>   0.392   0.000   0.393
-
-## insert_mesh actually returns the vertices (which might include new ones)
-system.time(xy_out <- insert_mesh(X, Y, i0 , i1))
-#> Number of vertices before: 30835
-#> Number of vertices after: 31079
-#>    user  system elapsed 
-#>   0.075   0.000   0.075
-plot(xy_out, pch = ".")
-```
-
-<img src="man/figures/README-mesh-input-1.png" width="100%" />
-
-``` r
-## compare RTriangle, it's fast if we don't include pslg() time
-ps <- RTriangle::pslg(cbind(X, Y), S = cbind(i0, i1))
-system.time({
-  tr <- RTriangle::triangulate(ps, D = TRUE)
-})
-#>    user  system elapsed 
-#>   0.079   0.000   0.079
-
-
-plot(tr$P, pch= ".")
-segments(tr$P[tr$E[,1],1], tr$P[tr$E[,1],2], 
-         tr$P[tr$E[,2],1], tr$P[tr$E[,2],2])
-```
-
-<img src="man/figures/README-mesh-input-2.png" width="100%" />
-
-``` r
-str(tr)
-#> List of 12
-#>  $ P : num [1:31778, 1:2] -681074 -680885 -680821 -680474 -680376 ...
-#>  $ PB: int [1:31778, 1] 1 1 1 1 1 1 1 1 1 1 ...
-#>  $ PA: num[1:31778, 0 ] 
-#>  $ T : int [1:43051, 1:3] 4455 4455 4510 4542 4510 4410 4376 4380 4397 4390 ...
-#>  $ S : int [1:31786, 1:2] 24305 24316 24328 24328 24326 24321 24343 24354 24349 24349 ...
-#>  $ SB: int [1:31786, 1] 0 0 0 0 0 0 0 0 0 0 ...
-#>  $ E : int [1:74679, 1:2] 4455 4456 4492 4492 4542 4510 4492 4542 4562 4492 ...
-#>  $ EB: int [1:74679, 1] 1 1 0 0 0 1 0 1 0 1 ...
-#>  $ VP: num [1:43051, 1:2] 51155 52903 52733 54473 52163 ...
-#>  $ VE: int [1:74679, 1:2] 1 1 1 2 2 3 3 4 4 5 ...
-#>  $ VN: num [1:43051, 1:2] -2148 -124 0 0 0 ...
-#>  $ VA: num[1:43051, 0 ] 
-#>  - attr(*, "class")= chr "triangulation"
-```
+After a small edit (a short new constraint) a second refine of the refined
+nc mesh takes 3 ms and inserts 6 vertices, against 16 ms for a rebuild.
 
 ## History
 
-Was originally called `cgalgris`.
+The original laridae (2017-2022, Rcpp and cgalh experiments with
+point triangulation and segment insertion) is preserved on the
+[`legacy-rcpp`](https://github.com/hypertidy/laridae/tree/legacy-rcpp)
+branch.
 
-## Code of Conduct
+## Licence
 
-Please note that the laridae project is released with a [Contributor
-Code of
-Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html).
-By contributing to this project, you agree to abide by its terms.
+GPL (>= 3), as required by CGAL's 2D meshing package.
