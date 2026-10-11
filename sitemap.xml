@@ -1,19 +1,19 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>/404.html</loc></url>
-<url><loc>/articles/index.html</loc></url>
-<url><loc>/articles/laridae.html</loc></url>
-<url><loc>/authors.html</loc></url>
-<url><loc>/index.html</loc></url>
-<url><loc>/news/index.html</loc></url>
-<url><loc>/reference/default_min_edge_length.html</loc></url>
-<url><loc>/reference/index.html</loc></url>
-<url><loc>/reference/lari_add_points.html</loc></url>
-<url><loc>/reference/lari_counts.html</loc></url>
-<url><loc>/reference/lari_new.html</loc></url>
-<url><loc>/reference/lari_refine.html</loc></url>
-<url><loc>/reference/lari_step.html</loc></url>
-<url><loc>/reference/lari_tables.html</loc></url>
-<url><loc>/reference/lari_triangulate.html</loc></url>
-<url><loc>/reference/laridae-package.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/404.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/articles/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/articles/laridae.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/authors.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/news/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/default_min_edge_length.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/index.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_add_points.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_counts.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_new.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_refine.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_step.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_tables.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_triangulate.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/laridae-package.html</loc></url>
 </urlset>
 

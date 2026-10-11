@@ -1,0 +1,216 @@
+# laridae
+
+Constrained Delaunay triangulation and meshing for R with
+[CGAL](https://www.cgal.org/): a persistent mesh handle you can edit and
+refine, with the same vertices / segments / triangles contract as
+[cdtr](https://github.com/hypertidy/cdtr).
+
+laridae is the CGAL-backed member of the hypertidy meshing stack. cdtr
+is the header-only, builds-anywhere baseline; laridae is the ceiling:
+everything CGAL’s 2D constrained triangulations and Mesh_2 can do,
+exposed in the same shape so the backend is a choice, not a rewrite.
+
+- fully dynamic: points and constraints can be inserted and removed at
+  any time (`Constrained_triangulation_plus_2` over a constrained
+  Delaunay triangulation with exact predicates), vertex ids are stable
+  for the life of the handle
+- crossing constraints are resolved by inserting the crossing, and every
+  output edge maps back to the input segment it came from
+- `depth` per triangle: constraint crossings from the outside, computed
+  topologically (odd inside, even hole for nested rings; matches cdtr)
+- refinement by minimum angle and maximum area with CGAL’s
+  `Delaunay_mesher_2`, an edge-length floor, and a report of what could
+  not be refined
+- step-by-step refinement, and re-refinement after an edit that only
+  touches the edited neighbourhood
+- sizing fields: the local maximum triangle area as a function of
+  position or a grid
+
+laridae uses CGAL’s `Delaunay_mesher_2` (GPL). The CGAL (\>= 6.0) and
+Boost headers are supplied at build time by the CRAN packages `RcppCGAL`
+and `BH` (via `LinkingTo`), so there is no system CGAL to install; CGAL
+is header-only here and nothing is linked (no GMP: the exact-predicates
+kernel is enough).
+
+## Learn more
+
+- [Getting started with
+  laridae](https://hypertidy.github.io/laridae/articles/laridae.html) —
+  a tour of the persistent handle, refinement, sizing fields, attribute
+  interpolation and the contract tables (also
+  [`vignette("laridae")`](https://hypertidy.github.io/laridae/articles/laridae.md)).
+- [Triangulation in
+  context](https://mdsumner.github.io/trianglewins/context/) — the
+  bigger picture: where laridae sits alongside cdtr, RTriangle, GEOS and
+  earcut, and why the triangles are only part of the story.
+
+## Installation
+
+The header dependencies (`RcppCGAL`, `BH`, `Rcpp`, `cpp11`) come from
+CRAN automatically; no system CGAL is required.
+
+``` r
+
+remotes::install_github("hypertidy/laridae")
+```
+
+### Building against stock CGAL headers (development only)
+
+RcppCGAL ships *patched* CGAL headers: it rewrites CGAL’s `std::cout` /
+`std::cerr` / `abort` / `exit` calls so the compiled code is clean under
+`R CMD check --as-cran`. That patched build is the default and the only
+CRAN-acceptable route.
+
+For development you can instead build against pristine upstream CGAL
+(\>= 6.0) headers by setting `CGAL_INCLUDE_DIR` before install;
+`configure` then uses them in preference to RcppCGAL (Boost still comes
+from `BOOST_INCLUDE_DIR`, the system, or `BH`):
+
+``` sh
+# a CGAL "library" release tarball, or brew install cgal (macOS)
+export CGAL_INCLUDE_DIR=/path/to/CGAL-6.1/include
+R CMD INSTALL .
+```
+
+Stock headers build and run, but `R CMD check` reports a
+`checking compiled code ... WARNING` (references to
+`std::cout`/`abort`/etc.), so this route is for local development only
+and is **not** the CRAN build.
+
+## Usage
+
+``` r
+
+library(laridae)
+## a square with a square hole: two closed rings of segments
+x <- c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25)
+y <- c(0, 0, 1, 1, 0.25, 0.25, 0.75, 0.75)
+m <- lari_new(x, y, s0 = 1:8, s1 = c(2, 3, 4, 1, 6, 7, 8, 5))
+table(lari_depth(m))        # 1 = in the outer ring, 2 = in the hole
+
+lari_refine(m, max_area = 0.01, min_angle = 25)
+lari_counts(m)
+
+## edit and re-refine: only the neighbourhood of the edit is touched
+ids <- lari_add_points(m, c(0.1, 0.15), c(0.1, 0.12))
+lari_add_segments(m, ids[1], ids[2])
+lari_refine(m, max_area = 0.01, min_angle = 25)
+
+## or one point at a time
+lari_step(m, n = 10)
+
+## a sizing field: local maximum area as a function of position
+m2 <- lari_new(c(0, 1, 1, 0), c(0, 0, 1, 1), 1:4, c(2, 3, 4, 1))
+lari_refine(m2, size = function(x, y) 0.0005 + 0.01 * x)
+
+## the contract tables
+lari_vertices(m)    # x, y, attributes, origin (input/crossing/steiner), id
+lari_triangles(m)   # v0, v1, v2 (rows of the vertices table), depth
+lari_segments(m)    # v0, v1, input segment id, count of covering segments
+```
+
+[`lari_triangulate()`](https://hypertidy.github.io/laridae/reference/lari_triangulate.md)
+is the one-shot form, returning the three tables like cdtr’s
+`cdt_triangulate()`. Per-vertex attributes (`PA = cbind(z_ = z)`) ride
+along: crossings and Steiner points get linearly interpolated values.
+
+## API
+
+| function |  |
+|----|----|
+| `lari_new(x, y, s0, s1, PA)` | create a handle (empty with no arguments) |
+| `lari_add_points(m, x, y, PA)` | insert points, returns stable ids |
+| `lari_add_segments(m, s0, s1)` | insert constraints between ids, crossings inserted |
+| `lari_remove_points(m, ids)` | remove vertices and the segments ending at them |
+| `lari_remove_segments(m, s0, s1, id)` | remove constraints (and crossings left without one) |
+| `lari_refine(m, min_angle, max_area, size, max_steiner, min_edge_length, seeds, erase)` | Mesh_2 refinement |
+| `lari_step(m, n)` | step-by-step refinement with the last criteria |
+| `lari_vertices`, `lari_triangles`, `lari_segments`, `lari_depth`, `lari_tables` | output tables |
+| `lari_counts(m)` | counts by origin and the unrefined report |
+
+## Benchmarks
+
+`inst/benchmarks/` runs laridae against cdtr and RTriangle on sf’s North
+Carolina counties and anglr’s Tasmanian contours and cadastre
+(`results.txt` holds the last full run). On one Linux core (CGAL 6.1, R
+4.3), nc at max_area = A/5000 with min_angle = 20:
+
+|                      | median |
+|----------------------|--------|
+| RTriangle (Triangle) | 5.8 ms |
+| laridae              | 15 ms  |
+| cdtr                 | 19 ms  |
+
+Constrained-only output (no refinement) is identical across the three on
+all cases. For bare points (`points.R`) CGAL is the fastest: a million
+normal points triangulate in 1.9 s including table extraction, against
+2.5 s for cdtr and 3.5 s for RTriangle.
+
+After a small edit (a short new constraint) a second refine of the
+refined nc mesh takes 3 ms and inserts 6 vertices, against 16 ms for a
+rebuild.
+
+## History
+
+The original laridae (2017-2022, Rcpp and cgalh experiments with point
+triangulation and segment insertion) is preserved on the
+[`legacy-rcpp`](https://github.com/hypertidy/laridae/tree/legacy-rcpp)
+branch.
+
+## Licence
+
+GPL (\>= 3), as required by CGAL’s 2D meshing package.
+
+# Package index
+
+## Create and edit a mesh
+
+A persistent handle: build it, then insert or remove points and
+constraint segments in place (vertex ids stay stable).
+
+- [`lari_new()`](https://hypertidy.github.io/laridae/reference/lari_new.md)
+  : Create a mesh handle
+- [`lari_add_points()`](https://hypertidy.github.io/laridae/reference/lari_add_points.md)
+  [`lari_add_segments()`](https://hypertidy.github.io/laridae/reference/lari_add_points.md)
+  [`lari_remove_points()`](https://hypertidy.github.io/laridae/reference/lari_add_points.md)
+  [`lari_remove_segments()`](https://hypertidy.github.io/laridae/reference/lari_add_points.md)
+  : Edit a mesh
+
+## Refine
+
+Delaunay refinement, step-by-step refinement, and the edge-length floor.
+
+- [`lari_refine()`](https://hypertidy.github.io/laridae/reference/lari_refine.md)
+  : Refine a mesh
+- [`lari_step()`](https://hypertidy.github.io/laridae/reference/lari_step.md)
+  : Step the mesher
+- [`default_min_edge_length()`](https://hypertidy.github.io/laridae/reference/default_min_edge_length.md)
+  : Default refinement edge-length floor
+
+## Output and inspection
+
+The vertices / segments / triangles contract, mesh counts, and the
+one-row provenance report.
+
+- [`lari_tables()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  [`lari_vertices()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  [`lari_triangles()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  [`lari_segments()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  [`lari_depth()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  : Mesh tables
+- [`lari_counts()`](https://hypertidy.github.io/laridae/reference/lari_counts.md)
+  : Mesh counts
+
+## One-shot
+
+Build and optionally refine in a single call.
+
+- [`lari_triangulate()`](https://hypertidy.github.io/laridae/reference/lari_triangulate.md)
+  : One-shot constrained triangulation
+
+# Articles
+
+### Get started
+
+- [Getting started with
+  laridae](https://hypertidy.github.io/laridae/articles/laridae.md):
