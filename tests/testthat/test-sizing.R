@@ -50,6 +50,18 @@ test_that("the default edge floor honours a sizing field (no min_edge_length)", 
   expect_gt(nrow(lari_triangles(mg)), 500L)
 })
 
+test_that("lari_triangulate honours a sizing field with the default floor", {
+  x <- c(0, 1, 1, 0); y <- c(0, 0, 1, 1)
+  size <- function(x, y) 0.0005 + 0.01 * x
+  ## lari_triangulate pre-computes the floor; it must be size-aware too
+  r <- lari_triangulate(x, y, 1:4, c(2, 3, 4, 1), size = size)
+  cx <- (r$vertices$x[r$triangles$v0] + r$vertices$x[r$triangles$v1] + r$vertices$x[r$triangles$v2]) / 3
+  cy <- (r$vertices$y[r$triangles$v0] + r$vertices$y[r$triangles$v1] + r$vertices$y[r$triangles$v2]) / 3
+  a <- tri_area(r$vertices, r$triangles)
+  expect_gt(nrow(r$triangles), 200L)
+  expect_true(all(a <= size(cx, cy) * (1 + 1e-9)))
+})
+
 test_that("refine needs a criterion", {
   m <- lari_new(c(0, 1, 0), c(0, 0, 1))
   expect_error(lari_refine(m), "at least one")

@@ -207,16 +207,12 @@ lari_refine <- function(m, min_angle = NULL, max_area = NULL, size = NULL,
     stop("give at least one of min_angle, max_area, size")
   }
   if (is.null(min_edge_length)) {
-    ## from the input segments, not their (possibly split) edges
+    ## from the input segments, not their (possibly split) edges; size-aware so
+    ## a sizing field is not capped at the coarse input-edge scale
     s <- lari_input_segments_cpp(m)
     n <- nrow(s)
-    vx <- c(s[, 1], s[, 3]); vy <- c(s[, 2], s[, 4])
-    ## the floor must allow the smallest area the sizing field asks for,
-    ## otherwise refinement stalls at the coarse input-edge scale
-    area_cap <- max_area
-    smin <- size_min_area(size, vx, vy)
-    if (!is.null(smin)) area_cap <- min(c(area_cap, smin))
-    min_edge_length <- default_min_edge_length(vx, vy, seq_len(n), n + seq_len(n), area_cap)
+    min_edge_length <- default_floor(c(s[, 1], s[, 3]), c(s[, 2], s[, 4]),
+                                     seq_len(n), n + seq_len(n), max_area, size)
   }
   fun <- NULL
   gx <- gy <- gz <- double(0)
@@ -265,6 +261,16 @@ size_min_area <- function(size, x, y) {
   if (is.null(v)) return(NULL)
   v <- v[is.finite(v) & v > 0]
   if (length(v)) min(v) else NULL
+}
+
+## Default edge-length floor, size-aware: the smaller of the input-edge floor
+## and the floor implied by the sizing field's finest requested area, so a
+## sizing field drives refinement instead of being capped.
+default_floor <- function(x, y, s0, s1, max_area, size) {
+  area_cap <- max_area
+  smin <- size_min_area(size, x, y)
+  if (!is.null(smin)) area_cap <- min(c(area_cap, smin))
+  default_min_edge_length(x, y, s0, s1, area_cap)
 }
 
 #' Step the mesher
@@ -419,7 +425,7 @@ lari_triangulate <- function(x, y, s0 = NULL, s1 = NULL, PA = NULL,
   unref <- NULL
   if (refining) {
     if (is.null(min_edge_length)) {
-      min_edge_length <- default_min_edge_length(x, y, s0, s1, max_area)
+      min_edge_length <- default_floor(x, y, s0, s1, max_area, dots$size)
     }
     unref <- lari_refine(m, min_angle = min_angle, max_area = max_area,
                          min_edge_length = min_edge_length, erase = erase, ...)
