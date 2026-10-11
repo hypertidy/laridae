@@ -81,7 +81,7 @@
 <li>step-by-step refinement, and re-refinement after an edit that only touches the edited neighbourhood</li>
 <li>sizing fields: the local maximum triangle area as a function of position or a grid</li>
 </ul>
-<p>laridae is not aimed at CRAN: CGAL’s Mesh_2 is GPL and the toolchain is heavy, so it optimises for capability and correctness.</p>
+<p>laridae uses CGAL’s <code>Delaunay_mesher_2</code> (GPL) and needs the CGAL (&gt;= 6.0) and Boost headers at build time, declared via <code>SystemRequirements</code>. A CRAN release is pending confirmation that CRAN’s build machines provide CGAL 6; until then install from GitHub (see Installation).</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
