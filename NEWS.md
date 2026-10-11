@@ -9,4 +9,9 @@
 * Sizing fields: `lari_refine(size = )` takes a function of position or a
   grid giving the local maximum triangle area.
 * Licence is now GPL (>= 3), as required by CGAL's Mesh_2.
+* CGAL (>= 6.0) and Boost headers are supplied by the CRAN packages
+  `RcppCGAL` and `BH` via `LinkingTo`, so no system CGAL is required and the
+  compiled code passes `R CMD check --as-cran`. For development, set
+  `CGAL_INCLUDE_DIR` to build against stock CGAL headers instead (see
+  README; that route is not CRAN-clean).
 * The previous Rcpp/cgalh code is preserved on the `legacy-rcpp` branch.

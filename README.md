@@ -44,6 +44,28 @@ automatically; no system CGAL is required.
 remotes::install_github("hypertidy/laridae")
 ```
 
+### Building against stock CGAL headers (development only)
+
+RcppCGAL ships *patched* CGAL headers: it rewrites CGAL's `std::cout` /
+`std::cerr` / `abort` / `exit` calls so the compiled code is clean under
+`R CMD check --as-cran`. That patched build is the default and the only
+CRAN-acceptable route.
+
+For development you can instead build against pristine upstream CGAL (>= 6.0)
+headers by setting `CGAL_INCLUDE_DIR` before install; `configure` then uses
+them in preference to RcppCGAL (Boost still comes from `BOOST_INCLUDE_DIR`,
+the system, or `BH`):
+
+```sh
+# a CGAL "library" release tarball, or brew install cgal (macOS)
+export CGAL_INCLUDE_DIR=/path/to/CGAL-6.1/include
+R CMD INSTALL .
+```
+
+Stock headers build and run, but `R CMD check` reports a `checking compiled
+code ... WARNING` (references to `std::cout`/`abort`/etc.), so this route is
+for local development only and is **not** the CRAN build.
+
 ## Usage
 
 ```r
