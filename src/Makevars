@@ -1,4 +1,0 @@
-# CGAL (RcppCGAL) and Boost (BH) headers come from LinkingTo; CGAL is
-# header-only here (Epick kernel, no GMP/MPFR linked).
-CXX_STD = CXX17
-PKG_CPPFLAGS = -DCGAL_HEADER_ONLY -DCGAL_DISABLE_GMP=1 -DNDEBUG -DCGAL_NDEBUG

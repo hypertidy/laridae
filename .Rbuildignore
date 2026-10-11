@@ -4,5 +4,9 @@
 ^dev$
 ^README\.Rmd$
 ^LICENSE\.md$
+^src/Makevars$
+^config\.log$
+^cleanup$
 ^inst/benchmarks$
 ^CRAN-PREP-NOTES\.md$
+^\.posit/assistant$

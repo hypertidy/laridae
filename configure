@@ -1,0 +1,85 @@
+#!/bin/sh
+# Locate CGAL (>= 6.0) and Boost headers and write src/Makevars from Makevars.in.
+#
+# Default / CRAN route: RcppCGAL's *patched* CGAL headers (also supplied via
+# LinkingTo). These are the only CGAL headers that pass R CMD check --as-cran,
+# because RcppCGAL rewrites CGAL's std::cout / std::cerr / abort / exit calls.
+#
+# Development route: set CGAL_INCLUDE_DIR to a stock CGAL >= 6 release (or the
+# system / brew headers). Stock headers build and run, but make R CMD check
+# report a 'compiled code' WARNING, so this route is for development only and is
+# NOT the CRAN build.
+
+: ${R_HOME=`R RHOME`}
+CXX=`"${R_HOME}/bin/R" CMD config CXX17`
+CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXX17FLAGS`
+RSCRIPT="${R_HOME}/bin/Rscript"
+
+CGAL_CPPFLAGS=""
+BOOST_CPPFLAGS=""
+
+try_cgal() {
+  cat > conftest.cpp <<EOT
+#include <CGAL/version.h>
+#if CGAL_VERSION_NR < 1060000000
+#error CGAL is older than 6.0
+#endif
+int main() { return 0; }
+EOT
+  ${CXX} ${CXXFLAGS} $1 -c conftest.cpp -o conftest.o >/dev/null 2>&1
+  status=$?
+  rm -f conftest.cpp conftest.o
+  return $status
+}
+
+try_boost() {
+  cat > conftest.cpp <<EOT
+#include <boost/version.hpp>
+int main() { return 0; }
+EOT
+  ${CXX} ${CXXFLAGS} $1 -c conftest.cpp -o conftest.o >/dev/null 2>&1
+  status=$?
+  rm -f conftest.cpp conftest.o
+  return $status
+}
+
+# CGAL: developer-pinned stock headers only when CGAL_INCLUDE_DIR is set;
+# otherwise RcppCGAL (the CRAN-clean default).
+if [ -n "${CGAL_INCLUDE_DIR}" ] && try_cgal "-I${CGAL_INCLUDE_DIR}"; then
+  CGAL_CPPFLAGS="-I${CGAL_INCLUDE_DIR}"
+  echo "laridae: using stock CGAL headers from CGAL_INCLUDE_DIR (development route;"
+  echo "         expect a 'compiled code' WARNING under R CMD check -- not CRAN-clean)"
+else
+  RCPPCGAL=`"${RSCRIPT}" -e 'cat(system.file("include", package = "RcppCGAL"))' 2>/dev/null`
+  if [ -n "${RCPPCGAL}" ] && try_cgal "-I${RCPPCGAL}"; then
+    CGAL_CPPFLAGS="-I${RCPPCGAL}"
+    echo "laridae: using RcppCGAL headers (${RCPPCGAL})"
+  else
+    echo "------------------------------------------------------------------"
+    echo "laridae needs CGAL (>= 6.0) headers. Either:"
+    echo "  * install.packages('RcppCGAL')   # recommended, CRAN-clean"
+    echo "  * set CGAL_INCLUDE_DIR to a CGAL >= 6 release include/ (development)"
+    echo "------------------------------------------------------------------"
+    exit 1
+  fi
+fi
+
+# Boost: explicit dir, else alongside CGAL / on the system path, else BH.
+if [ -n "${BOOST_INCLUDE_DIR}" ] && try_boost "-I${BOOST_INCLUDE_DIR}"; then
+  BOOST_CPPFLAGS="-I${BOOST_INCLUDE_DIR}"
+elif try_boost "${CGAL_CPPFLAGS}"; then
+  BOOST_CPPFLAGS=""
+else
+  BH=`"${RSCRIPT}" -e 'cat(system.file("include", package = "BH"))' 2>/dev/null`
+  if [ -n "${BH}" ] && try_boost "-I${BH}"; then
+    BOOST_CPPFLAGS="-I${BH}"
+  else
+    echo "laridae needs the Boost headers: install.packages('BH'), apt install libboost-dev, or brew install boost"
+    exit 1
+  fi
+fi
+
+echo "laridae: CGAL flags '${CGAL_CPPFLAGS}', Boost flags '${BOOST_CPPFLAGS}'"
+sed -e "s|@CGAL_CPPFLAGS@|${CGAL_CPPFLAGS}|" -e "s|@BOOST_CPPFLAGS@|${BOOST_CPPFLAGS}|" \
+  src/Makevars.in > src/Makevars
+exit 0

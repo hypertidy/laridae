@@ -21,6 +21,9 @@ LinkingTo:
     Rcpp,
     RcppCGAL,
     BH
+Imports:
+    Rcpp
+SystemRequirements: C++17
 Suggests:
     bench,
     sf,
