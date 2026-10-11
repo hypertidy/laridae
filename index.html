@@ -88,11 +88,21 @@
 <p>The header dependencies (<code>RcppCGAL</code>, <code>BH</code>, <code>Rcpp</code>, <code>cpp11</code>) come from CRAN automatically; no system CGAL is required.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"hypertidy/laridae"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="building-against-stock-cgal-headers-development-only">Building against stock CGAL headers (development only)<a class="anchor" aria-label="anchor" href="#building-against-stock-cgal-headers-development-only"></a>
+</h3>
+<p>RcppCGAL ships <em>patched</em> CGAL headers: it rewrites CGAL’s <code>std::cout</code> / <code>std::cerr</code> / <code>abort</code> / <code>exit</code> calls so the compiled code is clean under <code>R CMD check --as-cran</code>. That patched build is the default and the only CRAN-acceptable route.</p>
+<p>For development you can instead build against pristine upstream CGAL (&gt;= 6.0) headers by setting <code>CGAL_INCLUDE_DIR</code> before install; <code>configure</code> then uses them in preference to RcppCGAL (Boost still comes from <code>BOOST_INCLUDE_DIR</code>, the system, or <code>BH</code>):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># a CGAL "library" release tarball, or brew install cgal (macOS)</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">export</span> <span class="va">CGAL_INCLUDE_DIR</span><span class="op">=</span>/path/to/CGAL-6.1/include</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span></code></pre></div>
+<p>Stock headers build and run, but <code>R CMD check</code> reports a <code>checking compiled code ... WARNING</code> (references to <code>std::cout</code>/<code>abort</code>/etc.), so this route is for local development only and is <strong>not</strong> the CRAN build.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hypertidy/laridae" class="external-link">laridae</a></span><span class="op">)</span></span>
 <span><span class="co">## a square with a square hole: two closed rings of segments</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0.25</span>, <span class="fl">0.75</span>, <span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span></span>
