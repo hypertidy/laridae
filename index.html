@@ -40,6 +40,9 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="articles/laridae.html">Get started</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li>
@@ -82,6 +85,16 @@
 <li>sizing fields: the local maximum triangle area as a function of position or a grid</li>
 </ul>
 <p>laridae uses CGAL’s <code>Delaunay_mesher_2</code> (GPL). The CGAL (&gt;= 6.0) and Boost headers are supplied at build time by the CRAN packages <code>RcppCGAL</code> and <code>BH</code> (via <code>LinkingTo</code>), so there is no system CGAL to install; CGAL is header-only here and nothing is linked (no GMP: the exact-predicates kernel is enough).</p>
+<div class="section level2">
+<h2 id="learn-more">Learn more<a class="anchor" aria-label="anchor" href="#learn-more"></a>
+</h2>
+<ul>
+<li>
+<a href="https://hypertidy.github.io/laridae/articles/laridae.html" class="external-link">Getting started with laridae</a> — a tour of the persistent handle, refinement, sizing fields, attribute interpolation and the contract tables (also <code><a href="articles/laridae.html">vignette("laridae")</a></code>).</li>
+<li>
+<a href="https://mdsumner.github.io/trianglewins/context/" class="external-link">Triangulation in context</a> — the bigger picture: where laridae sits alongside cdtr, RTriangle, GEOS and earcut, and why the triangles are only part of the story.</li>
+</ul>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
