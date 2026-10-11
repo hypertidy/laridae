@@ -54,6 +54,7 @@
 <li>Hull-edge Steiner points created during refinement now get attributes interpolated along the nearest hull edge, rather than copied from the single nearest vertex (fixes attribute error at map scale).</li>
 <li>Licence is now GPL (&gt;= 3), as required by CGAL’s Mesh_2.</li>
 <li>CGAL (&gt;= 6.0) and Boost headers are supplied by the CRAN packages <code>RcppCGAL</code> and <code>BH</code> via <code>LinkingTo</code>, so no system CGAL is required and the compiled code passes <code>R CMD check --as-cran</code>. For development, set <code>CGAL_INCLUDE_DIR</code> to build against stock CGAL headers instead (see README; that route is not CRAN-clean).</li>
+<li>Builds on macOS and Windows: CGAL 6’s <code>Constrained_triangulation_plus_2</code> includes <code>boost/stl_interfaces/iterator_interface.hpp</code>, which BH does not ship, so the three Boost.STLInterfaces headers it needs are vendored in <code>src/boost-extra</code> (Boost Software License). Linux only built before because the system Boost filled the gap. Windows also gets a <code>src/Makevars.win</code>.</li>
 <li>The previous Rcpp/cgalh code is preserved on the <code>legacy-rcpp</code> branch.</li>
 </ul></div>
   </div>
