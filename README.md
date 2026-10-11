@@ -30,8 +30,10 @@ shape so the backend is a choice, not a rewrite.
 * sizing fields: the local maximum triangle area as a function of position
   or a grid
 
-laridae is not aimed at CRAN: CGAL's Mesh_2 is GPL and the toolchain is
-heavy, so it optimises for capability and correctness.
+laridae uses CGAL's `Delaunay_mesher_2` (GPL) and needs the CGAL (>= 6.0)
+and Boost headers at build time, declared via `SystemRequirements`. A CRAN
+release is pending confirmation that CRAN's build machines provide CGAL 6;
+until then install from GitHub (see Installation).
 
 ## Installation
 
