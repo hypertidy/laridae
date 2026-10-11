@@ -30,23 +30,15 @@ shape so the backend is a choice, not a rewrite.
 * sizing fields: the local maximum triangle area as a function of position
   or a grid
 
-laridae uses CGAL's `Delaunay_mesher_2` (GPL) and needs the CGAL (>= 6.0)
-and Boost headers at build time, declared via `SystemRequirements`. A CRAN
-release is pending confirmation that CRAN's build machines provide CGAL 6;
-until then install from GitHub (see Installation).
+laridae uses CGAL's `Delaunay_mesher_2` (GPL). The CGAL (>= 6.0) and Boost
+headers are supplied at build time by the CRAN packages `RcppCGAL` and `BH`
+(via `LinkingTo`), so there is no system CGAL to install; CGAL is header-only
+here and nothing is linked (no GMP: the exact-predicates kernel is enough).
 
 ## Installation
 
-laridae needs the CGAL (>= 6.0) and Boost headers; CGAL is header-only so
-nothing is linked (no GMP: the exact-predicates kernel is enough).
-
-* macOS: `brew install cgal`
-* Linux: distributions with CGAL 6 (`libcgal-dev`), or download the
-  [CGAL release](https://github.com/CGAL/cgal/releases) "library" tarball and
-  set `CGAL_INCLUDE_DIR` to its `include/` directory; Boost from
-  `libboost-dev`
-* anywhere: `install.packages(c("RcppCGAL", "BH"))` and the configure script
-  finds their headers
+The header dependencies (`RcppCGAL`, `BH`, `Rcpp`, `cpp11`) come from CRAN
+automatically; no system CGAL is required.
 
 ```r
 remotes::install_github("hypertidy/laridae")
