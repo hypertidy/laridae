@@ -41,3 +41,8 @@ jobs:
         with:
           args: 'c("--no-manual", "--as-cran")'
           error-on: '"error"'
+
+      - name: Show install log on failure
+        if: failure()
+        shell: bash
+        run: find check -name 00install.out -exec cat {} \; || true

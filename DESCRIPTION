@@ -4,7 +4,9 @@ Title: Constrained Triangulation and Meshing with CGAL
 Version: 0.1.0
 Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
-    person("Mark", "Padgham", role = "ctb"))
+    person("Mark", "Padgham", role = "ctb"),
+    person("T. Zachary", "Laine", role = "cph",
+           comment = "Boost.STLInterfaces headers in src/boost-extra"))
 Description: A persistent constrained Delaunay triangulation handle backed by
     CGAL's 'Constrained_triangulation_plus_2' and 'Delaunay_mesher_2'. Points
     and constraint segments can be inserted and removed at any time, crossing
