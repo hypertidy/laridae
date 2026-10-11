@@ -27,6 +27,26 @@ test_that("erase modes differ as expected", {
   expect_equal(sum(tri_area(hull$vertices, hull$triangles)), 1)
 })
 
+test_that("depth_distinct counts a doubled boundary once", {
+  ## outer ring plus an inner ring given twice (a doubled boundary)
+  x <- c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25)
+  y <- c(0, 0, 1, 1, 0.25, 0.25, 0.75, 0.75)
+  s0 <- c(1, 2, 3, 4, 5, 6, 7, 8, 5, 6, 7, 8)
+  s1 <- c(2, 3, 4, 1, 6, 7, 8, 5, 6, 7, 8, 5)
+  r <- lari_triangulate(x, y, s0, s1, erase = "hull")
+  expect_true("depth_distinct" %in% names(r$triangles))
+  cx <- (r$vertices$x[r$triangles$v0] + r$vertices$x[r$triangles$v1] + r$vertices$x[r$triangles$v2]) / 3
+  cy <- (r$vertices$y[r$triangles$v0] + r$vertices$y[r$triangles$v1] + r$vertices$y[r$triangles$v2]) / 3
+  inner <- cx > 0.25 & cx < 0.75 & cy > 0.25 & cy < 0.75
+  ## inside the doubled inner ring: weighted depth counts it twice, distinct once
+  expect_equal(unique(r$triangles$depth[inner]), 3L)
+  expect_equal(unique(r$triangles$depth_distinct[inner]), 2L)
+  ## the annulus is depth 1 either way
+  expect_equal(unique(r$triangles$depth[!inner]), 1L)
+  expect_equal(unique(r$triangles$depth_distinct[!inner]), 1L)
+  expect_true(all(r$triangles$depth_distinct <= r$triangles$depth))
+})
+
 test_that("area refinement honours the bound and reports min_edge_length", {
   d <- sq()
   r <- lari_triangulate(d$x, d$y, d$s0, d$s1, max_area = 0.01)

@@ -305,16 +305,18 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #'
 #' * vertices: `x`, `y`, the attribute columns, `origin` ("input",
 #'   "crossing", "steiner") and the stable vertex `id`
-#' * triangles: `v0`, `v1`, `v2` (1-based rows of the vertices table) and
-#'   `depth`
+#' * triangles: `v0`, `v1`, `v2` (1-based rows of the vertices table),
+#'   `depth` and `depth_distinct`
 #' * segments: constraint edges `v0`, `v1` (rows of the vertices table), the
 #'   input `segment` id they came from (the lowest, when several coincide)
 #'   and `count`, the number of input segments covering the edge
 #'
 #' `depth` is the constraint layer: the number of constraint crossings on the
 #' way in from outside the convex hull, counting an edge covered by k input
-#' segments k times. For nested rings odd is inside and even is a hole; for a
-#' coverage it orders regions by distance from the boundary.
+#' segments k times. `depth_distinct` is the same count but a doubled boundary
+#' (an edge covered by several coincident segments) is crossed once, so it
+#' ignores the `count` weighting. For nested rings odd is inside and even is a
+#' hole; for a coverage it orders regions by distance from the boundary.
 #'
 #' Row indices are only valid for one snapshot of the tables: use `id` to
 #' follow vertices across edits.

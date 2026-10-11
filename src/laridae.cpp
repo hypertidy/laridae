@@ -455,21 +455,27 @@ int hidden_count(const Mesh& m, Vertex_handle va, Vertex_handle vb) {
 // refinement splits hull edges at points that, with inexact constructions,
 // sit a hair inside the original hull edge, leaving flat triangles between
 // the polyline and the hull. Hidden constraints never add to depth.
-void compute_depth(Mesh& m) {
+// Dijkstra depth from the outside, written into `out` keyed by face. When
+// `distinct` is false each crossed boundary costs the number of input segments
+// covering it (matching CDT); when true it costs 1, so a doubled boundary is
+// counted once (depth_distinct).
+void depth_walk(Mesh& m, bool distinct, std::map<Face_handle, int>& out) {
   CDTP& cdt = m.cdt;
   const int inf = std::numeric_limits<int>::max();
-  for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f) f->info() = inf;
+  out.clear();
+  for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f)
+    out[Face_handle(f)] = inf;
   if (cdt.dimension() < 2) return;
   typedef std::pair<int, Face_handle> QE;
   auto cmp = [](const QE& a, const QE& b) { return a.first > b.first; };
   std::priority_queue<QE, std::vector<QE>, decltype(cmp)> q(cmp);
   for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f) {
-    if (cdt.is_infinite(f)) { f->info() = 0; q.push(QE(0, f)); }
+    if (cdt.is_infinite(f)) { out[Face_handle(f)] = 0; q.push(QE(0, Face_handle(f))); }
   }
   while (!q.empty()) {
     QE top = q.top(); q.pop();
     Face_handle f = top.second;
-    if (top.first > f->info()) continue;
+    if (top.first > out[f]) continue;
     for (int i = 0; i < 3; ++i) {
       Face_handle n = f->neighbor(i);
       int w = 0;
@@ -477,16 +483,17 @@ void compute_depth(Mesh& m) {
         Vertex_handle va = f->vertex(CDTP::cw(i)), vb = f->vertex(CDTP::ccw(i));
         w = (int)cdt.number_of_enclosing_constraints(va, vb) - hidden_count(m, va, vb);
         if (w < 0) w = 0;
+        if (distinct && w > 0) w = 1;
       }
       const int d = top.first + w;
-      if (d < n->info()) { n->info() = d; q.push(QE(d, n)); }
+      if (d < out[n]) { out[n] = d; q.push(QE(d, n)); }
     }
   }
   if (m.hidden.empty()) return;
   // flood from the infinite faces without crossing a hidden constraint
   std::vector<Face_handle> stack;
   for (CDTP::All_faces_iterator f = cdt.all_faces_begin(); f != cdt.all_faces_end(); ++f) {
-    if (cdt.is_infinite(f)) stack.push_back(f);
+    if (cdt.is_infinite(f)) stack.push_back(Face_handle(f));
   }
   std::set<Face_handle> seen(stack.begin(), stack.end());
   while (!stack.empty()) {
@@ -497,10 +504,16 @@ void compute_depth(Mesh& m) {
       if (f->is_constrained(i) &&
           hidden_count(m, f->vertex(CDTP::cw(i)), f->vertex(CDTP::ccw(i))) > 0) continue;
       seen.insert(n);
-      if (!cdt.is_infinite(n)) n->info() = -1;
+      if (!cdt.is_infinite(n)) out[n] = -1;
       stack.push_back(n);
     }
   }
+}
+
+void compute_depth(Mesh& m) {
+  std::map<Face_handle, int> d;
+  depth_walk(m, false, d);
+  for (const auto& kv : d) kv.first->info() = kv.second;
 }
 
 bool keep_face(int depth, int domain) {
@@ -706,9 +719,11 @@ writable::data_frame vertex_table(const Mesh& m, std::vector<int>& row_of) {
 
 writable::data_frame triangle_table(Mesh& m, const std::vector<int>& row_of, int domain) {
   CDTP& cdt = m.cdt;
-  compute_depth(m);
+  compute_depth(m);                              // weighted depth -> f->info()
+  std::map<Face_handle, int> ddist;
+  depth_walk(m, true, ddist);                    // distinct depth (per face)
   domain = effective_domain(m, domain);
-  std::vector<int> v0, v1, v2, dep;
+  std::vector<int> v0, v1, v2, dep, depd;
   if (cdt.dimension() == 2) {
     for (CDTP::Finite_faces_iterator f = cdt.finite_faces_begin(); f != cdt.finite_faces_end(); ++f) {
       if (!keep_face(f->info(), domain)) continue;
@@ -716,11 +731,13 @@ writable::data_frame triangle_table(Mesh& m, const std::vector<int>& row_of, int
       v1.push_back(row_of[f->vertex(1)->info()]);
       v2.push_back(row_of[f->vertex(2)->info()]);
       dep.push_back(f->info());
+      depd.push_back(ddist[Face_handle(f)]);
     }
   }
   writable::integers a(v0.begin(), v0.end()), b(v1.begin(), v1.end()), c(v2.begin(), v2.end()),
-    d(dep.begin(), dep.end());
-  return writable::data_frame({"v0"_nm = a, "v1"_nm = b, "v2"_nm = c, "depth"_nm = d});
+    d(dep.begin(), dep.end()), dd(depd.begin(), depd.end());
+  return writable::data_frame({"v0"_nm = a, "v1"_nm = b, "v2"_nm = c,
+                               "depth"_nm = d, "depth_distinct"_nm = dd});
 }
 
 writable::data_frame segment_table(const Mesh& m, const std::vector<int>& row_of) {

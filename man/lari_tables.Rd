@@ -36,8 +36,8 @@ The three output tables of the shared contract.
 \itemize{
 \item vertices: \code{x}, \code{y}, the attribute columns, \code{origin} ("input",
 "crossing", "steiner") and the stable vertex \code{id}
-\item triangles: \code{v0}, \code{v1}, \code{v2} (1-based rows of the vertices table) and
-\code{depth}
+\item triangles: \code{v0}, \code{v1}, \code{v2} (1-based rows of the vertices table),
+\code{depth} and \code{depth_distinct}
 \item segments: constraint edges \code{v0}, \code{v1} (rows of the vertices table), the
 input \code{segment} id they came from (the lowest, when several coincide)
 and \code{count}, the number of input segments covering the edge
@@ -45,8 +45,10 @@ and \code{count}, the number of input segments covering the edge
 
 \code{depth} is the constraint layer: the number of constraint crossings on the
 way in from outside the convex hull, counting an edge covered by k input
-segments k times. For nested rings odd is inside and even is a hole; for a
-coverage it orders regions by distance from the boundary.
+segments k times. \code{depth_distinct} is the same count but a doubled boundary
+(an edge covered by several coincident segments) is crossed once, so it
+ignores the \code{count} weighting. For nested rings odd is inside and even is a
+hole; for a coverage it orders regions by distance from the boundary.
 
 Row indices are only valid for one snapshot of the tables: use \code{id} to
 follow vertices across edits.

@@ -29,6 +29,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Mark Padgham [contributor]
+  \item T. Zachary Laine (Boost.STLInterfaces headers in src/boost-extra) [copyright holder]
 }
 
 }

@@ -14,6 +14,9 @@
 * Hull-edge Steiner points created during refinement now get attributes
   interpolated along the nearest hull edge, rather than copied from the
   single nearest vertex (fixes attribute error at map scale).
+* `lari_triangles()` (and `lari_tables()`) gain a `depth_distinct` column: the
+  constraint depth with a doubled boundary counted once, matching `cdtr`'s
+  `depth_distinct`.
 * Licence is now GPL (>= 3), as required by CGAL's Mesh_2.
 * CGAL (>= 6.0) and Boost headers are supplied by the CRAN packages
   `RcppCGAL` and `BH` via `LinkingTo`, so no system CGAL is required and the
