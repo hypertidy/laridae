@@ -7,3 +7,5 @@
 ^src/Makevars$
 ^config\.log$
 ^cleanup$
+^inst/benchmarks$
+^CRAN-PREP-NOTES\.md$

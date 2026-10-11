@@ -1,4 +1,4 @@
-# laridae 0.1.0.9000
+# laridae 0.1.0
 
 * Rebuilt from scratch on CGAL 6 (`Constrained_triangulation_plus_2` with
   exact predicates and `Delaunay_mesher_2`) behind a persistent cpp11 handle:

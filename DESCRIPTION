@@ -1,7 +1,7 @@
 Package: laridae
 Type: Package
 Title: Constrained Triangulation and Meshing with CGAL
-Version: 0.1.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
     person("Mark", "Padgham", role = "ctb"))
@@ -14,6 +14,7 @@ Description: A persistent constrained Delaunay triangulation handle backed by
     triangles contract shared with 'cdtr', including per-triangle constraint
     depth.
 License: GPL (>= 3)
+Language: en-US
 Encoding: UTF-8
 LinkingTo: cpp11
 SystemRequirements: CGAL (>= 6.0) headers, Boost headers, C++17
