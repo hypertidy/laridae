@@ -1,0 +1,4 @@
+src/boost-extra/boost/stl_interfaces/{config,fwd,iterator_interface}.hpp
+are copied unchanged from Boost.STLInterfaces (Boost 1.90.0),
+Copyright (C) 2019-2020 T. Zachary Laine, distributed under the
+Boost Software License, Version 1.0 (src/boost-extra/LICENSE_1_0.txt).

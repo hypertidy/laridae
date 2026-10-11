@@ -20,4 +20,9 @@
   compiled code passes `R CMD check --as-cran`. For development, set
   `CGAL_INCLUDE_DIR` to build against stock CGAL headers instead (see
   README; that route is not CRAN-clean).
+* Builds on macOS and Windows: CGAL 6's `Constrained_triangulation_plus_2`
+  includes `boost/stl_interfaces/iterator_interface.hpp`, which BH does not
+  ship, so the three Boost.STLInterfaces headers it needs are vendored in
+  `src/boost-extra` (Boost Software License). Linux only built before because
+  the system Boost filled the gap. Windows also gets a `src/Makevars.win`.
 * The previous Rcpp/cgalh code is preserved on the `legacy-rcpp` branch.
