@@ -33,8 +33,10 @@ unbounded). Combined with \code{max_area} by taking the smaller bound.}
 \item{max_steiner}{budget of new vertices for this call (\code{Inf} for none)}
 
 \item{min_edge_length}{the edge-length floor; NULL chooses
-\code{\link[=default_min_edge_length]{default_min_edge_length()}} from the current segments and \code{max_area}, 0
-never gives up}
+\code{\link[=default_min_edge_length]{default_min_edge_length()}} from the current segments and the area bound,
+taking the smaller of \code{max_area} and the finest area the sizing field
+asks for so a sizing field is honoured rather than capped; 0 never gives
+up}
 
 \item{seeds}{optional points (two-column matrix or list with x, y) marking
 regions NOT to mesh, CGAL style; when given they replace \code{erase}}

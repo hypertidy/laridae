@@ -180,8 +180,10 @@ lari_remove_segments <- function(m, s0 = NULL, s1 = NULL, id = NULL) {
 #'   unbounded). Combined with `max_area` by taking the smaller bound.
 #' @param max_steiner budget of new vertices for this call (`Inf` for none)
 #' @param min_edge_length the edge-length floor; NULL chooses
-#'   [default_min_edge_length()] from the current segments and `max_area`, 0
-#'   never gives up
+#'   [default_min_edge_length()] from the current segments and the area bound,
+#'   taking the smaller of `max_area` and the finest area the sizing field
+#'   asks for so a sizing field is honoured rather than capped; 0 never gives
+#'   up
 #' @param seeds optional points (two-column matrix or list with x, y) marking
 #'   regions NOT to mesh, CGAL style; when given they replace `erase`
 #' @param erase which region is meshed: "outer" (everything inside the
@@ -208,8 +210,13 @@ lari_refine <- function(m, min_angle = NULL, max_area = NULL, size = NULL,
     ## from the input segments, not their (possibly split) edges
     s <- lari_input_segments_cpp(m)
     n <- nrow(s)
-    min_edge_length <- default_min_edge_length(c(s[, 1], s[, 3]), c(s[, 2], s[, 4]),
-                                               seq_len(n), n + seq_len(n), max_area)
+    vx <- c(s[, 1], s[, 3]); vy <- c(s[, 2], s[, 4])
+    ## the floor must allow the smallest area the sizing field asks for,
+    ## otherwise refinement stalls at the coarse input-edge scale
+    area_cap <- max_area
+    smin <- size_min_area(size, vx, vy)
+    if (!is.null(smin)) area_cap <- min(c(area_cap, smin))
+    min_edge_length <- default_min_edge_length(vx, vy, seq_len(n), n + seq_len(n), area_cap)
   }
   fun <- NULL
   gx <- gy <- gz <- double(0)
@@ -233,6 +240,31 @@ lari_refine <- function(m, min_angle = NULL, max_area = NULL, size = NULL,
                   as.double(min_edge_length), fun, gx, gy, gz,
                   erase_code(erase), sx, sy, as.double(max_steiner))
   invisible(unrefined_frame(m, min_edge_length))
+}
+
+## Smallest local max-area a sizing field requests, used to lower the default
+## edge-length floor so a sizing field is not capped at the input-edge scale.
+## x, y are sample coordinates (input vertices) for a function field; a grid
+## field (list x, y, z) is read straight from z. NULL when there is no field.
+size_min_area <- function(size, x, y) {
+  if (is.null(size)) return(NULL)
+  if (!is.function(size)) {
+    z <- as.double(size$z)
+    z <- z[is.finite(z) & z > 0]
+    return(if (length(z)) min(z) else NULL)
+  }
+  if (length(x) == 0L) return(NULL)
+  ## sample the field on a grid over the input bbox plus the input vertices;
+  ## size() is documented to take scalars, so evaluate element-wise
+  rx <- range(x); ry <- range(y)
+  g <- expand.grid(x = seq(rx[1], rx[2], length.out = 32L),
+                   y = seq(ry[1], ry[2], length.out = 32L))
+  sx <- c(g$x, x); sy <- c(g$y, y)
+  v <- tryCatch(vapply(seq_along(sx), function(i) as.double(size(sx[i], sy[i])), double(1)),
+                error = function(e) NULL)
+  if (is.null(v)) return(NULL)
+  v <- v[is.finite(v) & v > 0]
+  if (length(v)) min(v) else NULL
 }
 
 #' Step the mesher

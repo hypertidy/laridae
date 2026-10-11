@@ -27,6 +27,29 @@ test_that("a sizing grid works and combines with max_area", {
   expect_error(lari_refine(m, size = list(x = 1:2, y = 1:3, z = 1)), "length")
 })
 
+test_that("the default edge floor honours a sizing field (no min_edge_length)", {
+  x <- c(0, 1, 1, 0); y <- c(0, 0, 1, 1)
+  size <- function(x, y) 0.0005 + 0.01 * x
+  ## default floor must not cap size-driven refinement at the input-edge scale
+  m0 <- lari_new(x, y, 1:4, c(2, 3, 4, 1))
+  lari_refine(m0, size = size, min_edge_length = 0)
+  m <- lari_new(x, y, 1:4, c(2, 3, 4, 1))
+  lari_refine(m, size = size)
+  V <- lari_vertices(m); T <- lari_triangles(m)
+  a <- tri_area(V, T); cen <- centroids(V, T)
+  expect_gt(nrow(T), 200L)
+  ## the default now matches the explicit no-floor mesh
+  expect_equal(nrow(T), nrow(lari_triangles(m0)))
+  ## and still respects the local area bound
+  expect_true(all(a <= size(cen[, "x"], cen[, "y"]) * (1 + 1e-9)))
+  ## a grid field, too
+  g <- list(x = seq(0.05, 0.95, by = 0.1), y = seq(0.05, 0.95, by = 0.1))
+  g$z <- outer(g$x, g$y, function(x, y) ifelse(y < 0.5, 0.0005, 0.05))
+  mg <- lari_new(x, y, 1:4, c(2, 3, 4, 1))
+  lari_refine(mg, size = g)
+  expect_gt(nrow(lari_triangles(mg)), 500L)
+})
+
 test_that("refine needs a criterion", {
   m <- lari_new(c(0, 1, 0), c(0, 0, 1))
   expect_error(lari_refine(m), "at least one")

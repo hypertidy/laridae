@@ -7,7 +7,13 @@
   `lari_step()`, and the contract tables `lari_vertices()`,
   `lari_triangles()`, `lari_segments()`, `lari_depth()`, `lari_counts()`.
 * Sizing fields: `lari_refine(size = )` takes a function of position or a
-  grid giving the local maximum triangle area.
+  grid giving the local maximum triangle area. The default edge-length floor
+  now accounts for the sizing field, so a `size` argument is honoured instead
+  of being capped at the coarse input-edge scale when `min_edge_length` is
+  left at its default.
+* Hull-edge Steiner points created during refinement now get attributes
+  interpolated along the nearest hull edge, rather than copied from the
+  single nearest vertex (fixes attribute error at map scale).
 * Licence is now GPL (>= 3), as required by CGAL's Mesh_2.
 * CGAL (>= 6.0) and Boost headers are supplied by the CRAN packages
   `RcppCGAL` and `BH` via `LinkingTo`, so no system CGAL is required and the
