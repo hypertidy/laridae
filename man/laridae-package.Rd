@@ -19,16 +19,17 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Michael D. Sumner \email{mdsumner@gmail.com}
+\strong{Maintainer}: Michael D. Sumner \email{mdsumner@gmail.com} [copyright holder]
 
 Authors:
 \itemize{
-  \item Michael D. Sumner \email{mdsumner@gmail.com}
+  \item Michael D. Sumner \email{mdsumner@gmail.com} [copyright holder]
 }
 
 Other contributors:
 \itemize{
   \item Mark Padgham [contributor]
+  \item The CGAL Project [copyright holder]
 }
 
 }

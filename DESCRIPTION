@@ -6,15 +6,15 @@ Authors@R: c(
     person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre", "cph")),
     person("Mark", "Padgham", role = "ctb"), person("The CGAL Project", role = "cph") )
 Description: A persistent constrained Delaunay triangulation handle backed by
-    the 'CGAL' library's 'Constrained_triangulation_plus_2' and
-    'Delaunay_mesher_2' (The CGAL Project (2026)
-    <https://doc.cgal.org/6.2.1/Manual/packages.html>). Points and
-    constraint segments can be inserted and removed at any time, crossing
-    constraints are resolved by inserting the crossing, and the mesh can be
-    refined by minimum angle, maximum area, or a sizing field that varies
-    with position. Input and output follow the vertices / segments /
-    triangles contract shared with 'cdtr', including per-triangle constraint
-    depth.
+    the 'CGAL' (Computational Geometry Algorithms Library) classes
+    'Constrained_triangulation_plus_2' and 'Delaunay_mesher_2' (The CGAL
+    Project (2026) <https://doc.cgal.org/6.2.1/Manual/packages.html>).
+    Points and constraint segments can be inserted and removed at any time,
+    crossing constraints are resolved by inserting the crossing, and the
+    mesh can be refined by minimum angle, maximum area, or a sizing field
+    that varies with position. Input and output follow the vertices /
+    segments / triangles contract shared with 'cdtr', including
+    per-triangle constraint depth.
 License: GPL (>= 3)
 Language: en-US
 Encoding: UTF-8

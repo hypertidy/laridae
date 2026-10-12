@@ -36,3 +36,15 @@ target (a triangle of area A has edges of order sqrt(A)). With no
 segments only the area cap applies; with neither, 0. Identical to
 \code{cdtr::default_min_edge_length()}.
 }
+\examples{
+x <- c(0, 1, 1, 0)
+y <- c(0, 0, 1, 1)
+s0 <- 1:4
+s1 <- c(2:4, 1)
+## 0.3 times the median segment length
+default_min_edge_length(x, y, s0, s1)
+## a small area target caps the floor at 0.25 * sqrt(max_area)
+default_min_edge_length(x, y, s0, s1, max_area = 0.01)
+## no segments and no area target: no floor
+default_min_edge_length(x, y, integer(0), integer(0))
+}

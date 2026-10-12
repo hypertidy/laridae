@@ -404,6 +404,14 @@ lari_depth <- function(m, erase = c("outer", "holes", "hull")) lari_triangles(m,
 #' @param m a mesh from [lari_new()]
 #' @return a list
 #' @export
+#' @examples
+#' ## a square with a square hole: two closed rings of segments
+#' x <- c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25)
+#' y <- c(0, 0, 1, 1, 0.25, 0.25, 0.75, 0.75)
+#' m <- lari_new(x, y, s0 = 1:8, s1 = c(2, 3, 4, 1, 6, 7, 8, 5))
+#' lari_counts(m)$steiner
+#' lari_refine(m, max_area = 0.01, min_angle = 25)
+#' lari_counts(m)$steiner
 lari_counts <- function(m) {
   check_mesh(m)
   lari_counts_cpp(m)
@@ -425,6 +433,17 @@ lari_counts <- function(m) {
 #' @param area_edge_frac fraction of `sqrt(max_area)`
 #' @return a single number
 #' @export
+#' @examples
+#' x <- c(0, 1, 1, 0)
+#' y <- c(0, 0, 1, 1)
+#' s0 <- 1:4
+#' s1 <- c(2:4, 1)
+#' ## 0.3 times the median segment length
+#' default_min_edge_length(x, y, s0, s1)
+#' ## a small area target caps the floor at 0.25 * sqrt(max_area)
+#' default_min_edge_length(x, y, s0, s1, max_area = 0.01)
+#' ## no segments and no area target: no floor
+#' default_min_edge_length(x, y, integer(0), integer(0))
 default_min_edge_length <- function(x, y, s0, s1, max_area = NULL,
                                     min_edge_frac = 0.3, area_edge_frac = 0.25) {
   seg <- Inf

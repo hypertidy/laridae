@@ -7,3 +7,4 @@ src/*.dll
 src/Makevars
 config.log
 .posit/assistant
+inst/doc
