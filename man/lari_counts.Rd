@@ -25,7 +25,7 @@ mesher stopped making progress; should be 0).
 x <- c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25)
 y <- c(0, 0, 1, 1, 0.25, 0.25, 0.75, 0.75)
 m <- lari_new(x, y, s0 = 1:8, s1 = c(2, 3, 4, 1, 6, 7, 8, 5))
-lari_counts(m)
+lari_counts(m)$steiner
 lari_refine(m, max_area = 0.01, min_angle = 25)
-lari_counts(m)
+lari_counts(m)$steiner
 }

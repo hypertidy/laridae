@@ -12,3 +12,5 @@
 ^\.posit/assistant$
 ^_pkgdown\.yml$
 ^docs$
+^cran-comments\.md$
+^\.posit$
