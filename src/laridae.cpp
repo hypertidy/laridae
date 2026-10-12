@@ -7,8 +7,6 @@
 // are exact, constructions (crossing points, circumcentres) are doubles, so
 // no GMP is needed.
 
-#include <cpp11.hpp>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
@@ -21,6 +19,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
+
+#include <cpp11.hpp>
 
 #include <cmath>
 #include <functional>

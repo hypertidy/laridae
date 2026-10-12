@@ -2,4 +2,4 @@
 # come from LinkingTo. boost-extra supplies Boost.STLInterfaces, which CGAL 6
 # needs and BH does not ship.
 CXX_STD = CXX17
-PKG_CPPFLAGS = -Iboost-extra -DCGAL_HEADER_ONLY -DCGAL_DISABLE_GMP=1 -DNDEBUG -DCGAL_NDEBUG
+PKG_CPPFLAGS = -Iboost-extra -DBOOST_NO_AUTO_PTR -DCGAL_HEADER_ONLY -DCGAL_DISABLE_GMP=1 -DNDEBUG -DCGAL_NDEBUG
