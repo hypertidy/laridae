@@ -46,3 +46,21 @@ default_min_edge_length(
 ## Value
 
 a single number
+
+## Examples
+
+``` r
+x <- c(0, 1, 1, 0)
+y <- c(0, 0, 1, 1)
+s0 <- 1:4
+s1 <- c(2:4, 1)
+## 0.3 times the median segment length
+default_min_edge_length(x, y, s0, s1)
+#> [1] 0.3
+## a small area target caps the floor at 0.25 * sqrt(max_area)
+default_min_edge_length(x, y, s0, s1, max_area = 0.01)
+#> [1] 0.025
+## no segments and no area target: no floor
+default_min_edge_length(x, y, integer(0), integer(0))
+#> [1] 0
+```

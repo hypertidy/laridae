@@ -17,12 +17,15 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Michael D. Sumner <mdsumner@gmail.com>
+**Maintainer**: Michael D. Sumner <mdsumner@gmail.com> \[copyright
+holder\]
 
 Authors:
 
-- Michael D. Sumner <mdsumner@gmail.com>
+- Michael D. Sumner <mdsumner@gmail.com> \[copyright holder\]
 
 Other contributors:
 
 - Mark Padgham \[contributor\]
+
+- The CGAL Project \[copyright holder\]
