@@ -1,0 +1,49 @@
+bibentry(
+  bibtype   = "Manual",
+  key       = "laridae",
+  title     = "{laridae}: Constrained Triangulation and Meshing with {CGAL}",
+  author    = c(person("Michael D.", "Sumner"), person("Mark", "Padgham")),
+  year      = "2026",
+  note      = paste("R package version", meta$Version),
+  url       = "https://github.com/hypertidy/laridae",
+  textVersion = paste0(
+    "Sumner MD, Padgham M (2026). laridae: Constrained Triangulation and ",
+    "Meshing with CGAL. R package version ", meta$Version, ". ",
+    "https://github.com/hypertidy/laridae")
+)
+
+bibentry(
+  bibtype   = "Book",
+  key       = "cgal:eb-26b",
+  title     = "{CGAL} User and Reference Manual",
+  author    = person("The CGAL Project"),
+  publisher = "CGAL Editorial Board",
+  edition   = "6.2.1",
+  year      = "2026",
+  url       = "https://doc.cgal.org/6.2.1/Manual/packages.html",
+  header    = "laridae is built on CGAL; please also cite:"
+)
+
+bibentry(
+  bibtype   = "InCollection",
+  key       = "cgal:y-t2-26b",
+  title     = "2D Triangulations",
+  author    = person("Mariette", "Yvinec"),
+  booktitle = "{CGAL} User and Reference Manual",
+  publisher = "CGAL Editorial Board",
+  edition   = "6.2.1",
+  year      = "2026",
+  url       = "https://doc.cgal.org/6.2.1/Manual/packages.html#PkgTriangulation2"
+)
+
+bibentry(
+  bibtype   = "InCollection",
+  key       = "cgal:r-ctm2-26b",
+  title     = "2D Conforming Triangulations and Meshes",
+  author    = person("Laurent", "Rineau"),
+  booktitle = "{CGAL} User and Reference Manual",
+  publisher = "CGAL Editorial Board",
+  edition   = "6.2.1",
+  year      = "2026",
+  url       = "https://doc.cgal.org/6.2.1/Manual/packages.html#PkgMesh2"
+)

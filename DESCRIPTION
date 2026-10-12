@@ -3,11 +3,13 @@ Type: Package
 Title: Constrained Triangulation and Meshing with CGAL
 Version: 0.1.0
 Authors@R: c(
-    person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre")),
-    person("Mark", "Padgham", role = "ctb"))
+    person("Michael D.", "Sumner", , "mdsumner@gmail.com", c("aut", "cre", "cph")),
+    person("Mark", "Padgham", role = "ctb"), person("The CGAL Project", role = "cph") )
 Description: A persistent constrained Delaunay triangulation handle backed by
-    CGAL's 'Constrained_triangulation_plus_2' and 'Delaunay_mesher_2'. Points
-    and constraint segments can be inserted and removed at any time, crossing
+    the 'CGAL' library's 'Constrained_triangulation_plus_2' and
+    'Delaunay_mesher_2' (The CGAL Project (2026)
+    <https://doc.cgal.org/6.2.1/Manual/packages.html>). Points and
+    constraint segments can be inserted and removed at any time, crossing
     constraints are resolved by inserting the crossing, and the mesh can be
     refined by minimum angle, maximum area, or a sizing field that varies
     with position. Input and output follow the vertices / segments /
