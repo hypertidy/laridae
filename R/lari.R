@@ -495,3 +495,24 @@ lari_triangulate <- function(x, y, s0 = NULL, s1 = NULL, PA = NULL,
   out$ids <- attr(m, "ids")
   out
 }
+
+#' Constrained triangulation with exact crossings
+#'
+#' Triangulate points and constraint segments once, without refinement, on
+#' either CGAL's exact-constructions kernel (Epeck) or the inexact one the
+#' persistent handle uses (Epick). With `exact = TRUE` a crossing of two
+#' constraints is an exact rational, returned as its nearest double in `x`,
+#' `y` and exactly as numerator and denominator strings in `x_num`, `x_den`,
+#' `y_num`, `y_den`. With `exact = FALSE` those columns are `NA`.
+#'
+#' This is a prototype of the "exact" rung of vertex identity: the exact value
+#' lives in the table, not behind a pointer.
+#'
+#' @param x,y input coordinates
+#' @param s0,s1 1-based constraint segment endpoints
+#' @param exact use exact constructions
+#' @return list of data frames `vertices`, `triangles`, `segments`, 1-based
+#' @export
+lari_cdt <- function(x, y, s0 = integer(), s1 = integer(), exact = TRUE) {
+  lari_cdt_cpp(as.double(x), as.double(y), as.integer(s0), as.integer(s1), isTRUE(exact))
+}
