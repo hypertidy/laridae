@@ -4,9 +4,10 @@
 // crossing of two constraints is constructed in double. Here the same
 // Constrained_triangulation_plus_2 is instantiated on Epeck with
 // Exact_intersections_tag, so a crossing is an exact rational. Each vertex is
-// returned as its nearest double plus the exact value as numerator and
-// denominator strings, which is how an exact coordinate can live in a table
-// (and travel to another CGAL-backed package) without an external pointer.
+// returned as its nearest double (correctly rounded, ties to even) plus the
+// exact value as numerator and denominator strings, which is how an exact
+// coordinate can live in a table (and travel to another CGAL-backed package)
+// without an external pointer.
 //
 // With CGAL_DISABLE_GMP the exact number type is Boost.Multiprecision's
 // rational, so this needs no system GMP.
@@ -21,6 +22,9 @@
 
 #include <cpp11.hpp>
 
+#include <cmath>
+#include <cstdint>
+#include <cstring>
 #include <map>
 #include <sstream>
 #include <string>
@@ -52,6 +56,43 @@ void decompose(const FT& v, std::string& num, std::string& den) {
   num = sn.str();
   den = sd.str();
 }
+
+// Nearest double to an exact number, ties to even. CGAL::to_double() on a lazy
+// exact value returns an approximation that can be an ulp or more away, so
+// start there and step to the neighbouring double while that is closer,
+// measuring the error exactly.
+template <class ET>
+double nearest_double(const ET& q) {
+  double c = CGAL::to_double(q);
+  if (!std::isfinite(c)) return c;
+  auto err = [&q](double d) {
+    ET t = q - ET(d);
+    if (t < 0) t = -t;
+    return t;
+  };
+  ET ec = err(c);
+  for (;;) {
+    const double up = std::nextafter(c, HUGE_VAL), dn = std::nextafter(c, -HUGE_VAL);
+    const ET eu = err(up), ed = err(dn);
+    if (eu < ec) { c = up; ec = eu; }
+    else if (ed < ec) { c = dn; ec = ed; }
+    else {
+      // a tie with a neighbour: take the one with an even significand
+      std::uint64_t bits;
+      std::memcpy(&bits, &c, sizeof bits);
+      if (bits & 1u) {
+        if (eu == ec) return up;
+        if (ed == ec) return dn;
+      }
+      return c;
+    }
+  }
+}
+
+template <class FT>
+double to_nearest(const FT& v, std::true_type) { return nearest_double(CGAL::exact(v)); }
+template <class FT>
+double to_nearest(const FT& v, std::false_type) { return CGAL::to_double(v); }
 
 template <class K, class Itag, bool Exact>
 list run_cdt(doubles x, doubles y, integers s0, integers s1) {
@@ -87,8 +128,8 @@ list run_cdt(doubles x, doubles y, integers s0, integers s1) {
   for (int r = 0; r < nv; ++r) {
     Vertex_handle v = order[r];
     row[v] = r + 1;
-    X[r] = CGAL::to_double(v->point().x());
-    Y[r] = CGAL::to_double(v->point().y());
+    X[r] = to_nearest(v->point().x(), std::integral_constant<bool, Exact>());
+    Y[r] = to_nearest(v->point().y(), std::integral_constant<bool, Exact>());
     org[r] = v->info() == 0 ? "crossing" : "input";
     if constexpr (Exact) {
       std::string a, b;
