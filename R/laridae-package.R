@@ -1,6 +1,7 @@
 #' laridae: constrained triangulation and meshing with CGAL
 #'
-#' A persistent constrained Delaunay triangulation handle backed by CGAL.
+#' A persistent constrained Delaunay triangulation handle backed by CGAL (the
+#' Computational Geometry Algorithms Library).
 #' See [lari_new()] for the handle API and [lari_triangulate()] for the
 #' one-shot form.
 #'

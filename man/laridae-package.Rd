@@ -6,7 +6,8 @@
 \alias{laridae-package}
 \title{laridae: constrained triangulation and meshing with CGAL}
 \description{
-A persistent constrained Delaunay triangulation handle backed by CGAL.
+A persistent constrained Delaunay triangulation handle backed by CGAL (the
+Computational Geometry Algorithms Library).
 See \code{\link[=lari_new]{lari_new()}} for the handle API and \code{\link[=lari_triangulate]{lari_triangulate()}} for the
 one-shot form.
 }
@@ -14,6 +15,7 @@ one-shot form.
 Useful links:
 \itemize{
   \item \url{https://github.com/hypertidy/laridae}
+  \item \url{https://hypertidy.github.io/laridae/}
   \item Report bugs at \url{https://github.com/hypertidy/laridae/issues}
 }
 

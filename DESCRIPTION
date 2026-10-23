@@ -35,6 +35,6 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/hypertidy/laridae
+URL: https://github.com/hypertidy/laridae, https://hypertidy.github.io/laridae/
 BugReports: https://github.com/hypertidy/laridae/issues
 Config/roxygen2/version: 8.1.0
