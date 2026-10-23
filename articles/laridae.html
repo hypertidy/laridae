@@ -61,11 +61,12 @@
     
     
 <p>laridae is the CGAL-backed member of the hypertidy meshing stack. It
-wraps CGAL’s 2D constrained Delaunay triangulation and
-<code>Delaunay_mesher_2</code> behind a <em>persistent handle</em> you
-can edit and refine incrementally, and it returns the same vertices /
-segments / triangles contract as <a href="https://github.com/hypertidy/cdtr" class="external-link">cdtr</a> so the backend is a
-choice, not a rewrite.</p>
+wraps CGAL (the Computational Geometry Algorithms Library) — its 2D
+constrained Delaunay triangulation and <code>Delaunay_mesher_2</code> —
+behind a <em>persistent handle</em> you can edit and refine
+incrementally, and it returns the same vertices / segments / triangles
+contract as <a href="https://github.com/hypertidy/cdtr" class="external-link">cdtr</a> so the
+backend is a choice, not a rewrite.</p>
 <p>For the bigger picture — where laridae sits among cdtr, RTriangle,
 GEOS and earcut, and why the triangles are only part of the story — see
 <a href="https://mdsumner.github.io/trianglewins/context/" class="external-link">Triangulation

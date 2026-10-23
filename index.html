@@ -52,7 +52,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Constrained Delaunay triangulation and meshing for R with <a href="https://www.cgal.org/" class="external-link">CGAL</a>: a persistent mesh handle you can edit and refine, with the same vertices / segments / triangles contract as <a href="https://github.com/hypertidy/cdtr" class="external-link">cdtr</a>.</p>
+<p>Constrained Delaunay triangulation and meshing for R with <a href="https://www.cgal.org/" class="external-link">CGAL</a> (the Computational Geometry Algorithms Library): a persistent mesh handle you can edit and refine, with the same vertices / segments / triangles contract as <a href="https://github.com/hypertidy/cdtr" class="external-link">cdtr</a>.</p>
 <p>laridae is the CGAL-backed member of the hypertidy meshing stack. cdtr is the header-only, builds-anywhere baseline; laridae is the ceiling: everything CGAL’s 2D constrained triangulations and Mesh_2 can do, exposed in the same shape so the backend is a choice, not a rewrite.</p>
 <ul>
 <li>fully dynamic: points and constraints can be inserted and removed at any time (<code>Constrained_triangulation_plus_2</code> over a constrained Delaunay triangulation with exact predicates), vertex ids are stable for the life of the handle</li>

@@ -1,8 +1,9 @@
 # laridae
 
 Constrained Delaunay triangulation and meshing for R with
-[CGAL](https://www.cgal.org/): a persistent mesh handle you can edit and
-refine, with the same vertices / segments / triangles contract as
+[CGAL](https://www.cgal.org/) (the Computational Geometry Algorithms
+Library): a persistent mesh handle you can edit and refine, with the
+same vertices / segments / triangles contract as
 [cdtr](https://github.com/hypertidy/cdtr).
 
 laridae is the CGAL-backed member of the hypertidy meshing stack. cdtr
