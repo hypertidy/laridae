@@ -28,6 +28,7 @@ Imports:
 SystemRequirements: C++17
 Suggests:
     bench,
+    cdtr,
     knitr,
     rmarkdown,
     sf,
