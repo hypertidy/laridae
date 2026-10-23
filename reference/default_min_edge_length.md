@@ -5,7 +5,7 @@ the refiner from cascading into sharp input corners, capped at
 `area_edge_frac * sqrt(max_area)` so the floor never blocks the area
 target (a triangle of area A has edges of order sqrt(A)). With no
 segments only the area cap applies; with neither, 0. Identical to
-`cdtr::default_min_edge_length()`.
+[`cdtr::default_min_edge_length()`](https://hypertidy.github.io/cdtr/reference/default_min_edge_length.html).
 
 ## Usage
 
