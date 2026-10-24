@@ -117,7 +117,9 @@ plot_tri(r, col = "grey20", border = "grey60")
 ring ids, so outlines from other tools mesh as they are. The output of
 `string2path::string2path()` (columns `glyph_id`, `path_id`) and of
 `systemfonts::glyph_outline()` (`glyph`, `contour`) are recognised, and a
-ring may repeat its first vertex or not.
+ring may repeat its first vertex or not. (string2path is not currently on
+CRAN; it installs from <https://yutannihilation.r-universe.dev>, and the
+chunk below only runs when it is installed.)
 
 ```{r string2path, eval = has_fonts && requireNamespace("string2path", quietly = TRUE)}
 font <- systemfonts::match_fonts("serif")$path

@@ -32,7 +32,6 @@ Suggests:
     knitr,
     rmarkdown,
     sf,
-    string2path,
     systemfonts (>= 1.2.0),
     testthat (>= 3.0.0),
     textshaping

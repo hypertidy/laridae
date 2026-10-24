@@ -3,8 +3,8 @@
 * Meshed text: `lari_text()` shapes a string in any installed font and meshes
   its glyphs as polygons with holes; `lari_text_outline()` returns the glyph
   rings (via 'textshaping' and 'systemfonts', both in Suggests) and
-  `lari_glyphs()` meshes rings from any source, including
-  `string2path::string2path()`. New article "Meshed text".
+  `lari_glyphs()` meshes rings from any source, including the output of
+  the 'string2path' package. New article "Meshed text".
 
 # laridae 0.1.0
 
