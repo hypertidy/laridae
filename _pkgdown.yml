@@ -28,9 +28,19 @@ reference:
   desc: Build and optionally refine in a single call.
   contents:
   - lari_triangulate
+- title: Text
+  desc: Glyph outlines from installed fonts, meshed as polygons with holes.
+  contents:
+  - lari_text
+  - lari_text_outline
+  - lari_glyphs
 
 articles:
 - title: Get started
   navbar: ~
   contents:
   - laridae
+- title: Design
+  navbar: Design
+  contents:
+  - articles/meshed-text
