@@ -44,3 +44,14 @@ Build and optionally refine in a single call.
 
 - [`lari_triangulate()`](https://hypertidy.github.io/laridae/reference/lari_triangulate.md)
   : One-shot constrained triangulation
+
+## Text
+
+Glyph outlines from installed fonts, meshed as polygons with holes.
+
+- [`lari_text()`](https://hypertidy.github.io/laridae/reference/lari_text.md)
+  : Meshed text
+- [`lari_text_outline()`](https://hypertidy.github.io/laridae/reference/lari_text_outline.md)
+  : Text as polygon outlines
+- [`lari_glyphs()`](https://hypertidy.github.io/laridae/reference/lari_glyphs.md)
+  : Mesh glyph outlines

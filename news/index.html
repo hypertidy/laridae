@@ -17,6 +17,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/laridae.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Design</h6></li>
+    <li><a class="dropdown-item" href="../articles/meshed-text.html">Meshed text</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -34,6 +40,10 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="laridae-development-version">laridae (development version)<a class="anchor" aria-label="anchor" href="#laridae-development-version"></a></h2>
+<ul><li>Meshed text: <code><a href="../reference/lari_text.html">lari_text()</a></code> shapes a string in any installed font and meshes its glyphs as polygons with holes; <code><a href="../reference/lari_text_outline.html">lari_text_outline()</a></code> returns the glyph rings (via ‘textshaping’ and ‘systemfonts’, both in Suggests) and <code><a href="../reference/lari_glyphs.html">lari_glyphs()</a></code> meshes rings from any source, including the output of the ‘string2path’ package. New article “Meshed text”.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="laridae-010">laridae 0.1.0<a class="anchor" aria-label="anchor" href="#laridae-010"></a></h2>
 <ul><li>Rebuilt from scratch on CGAL 6 (<code>Constrained_triangulation_plus_2</code> with exact predicates and <code>Delaunay_mesher_2</code>) behind a persistent cpp11 handle: <code><a href="../reference/lari_new.html">lari_new()</a></code>, <code><a href="../reference/lari_add_points.html">lari_add_points()</a></code>, <code><a href="../reference/lari_add_points.html">lari_add_segments()</a></code>, <code><a href="../reference/lari_add_points.html">lari_remove_points()</a></code>, <code><a href="../reference/lari_add_points.html">lari_remove_segments()</a></code>, <code><a href="../reference/lari_refine.html">lari_refine()</a></code>, <code><a href="../reference/lari_step.html">lari_step()</a></code>, and the contract tables <code><a href="../reference/lari_tables.html">lari_vertices()</a></code>, <code><a href="../reference/lari_tables.html">lari_triangles()</a></code>, <code><a href="../reference/lari_tables.html">lari_segments()</a></code>, <code><a href="../reference/lari_tables.html">lari_depth()</a></code>, <code><a href="../reference/lari_counts.html">lari_counts()</a></code>.</li>
 <li>Sizing fields: <code>lari_refine(size = )</code> takes a function of position or a grid giving the local maximum triangle area. The default edge-length floor now accounts for the sizing field, so a <code>size</code> argument is honoured instead of being capped at the coarse input-edge scale when <code>min_edge_length</code> is left at its default.</li>
@@ -47,7 +57,8 @@
 <li>Builds on macOS and Windows: CGAL 6’s <code>Constrained_triangulation_plus_2</code> includes <code>boost/stl_interfaces/iterator_interface.hpp</code>, which BH does not ship, so the three Boost.STLInterfaces headers it needs are vendored in <code>src/boost-extra</code> (Boost Software License). Linux only built before because the system Boost filled the gap. Windows also gets a <code>src/Makevars.win</code>.</li>
 <li>The previous Rcpp/cgalh code is preserved on the <code>legacy-rcpp</code> branch.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

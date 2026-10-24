@@ -2,6 +2,7 @@
 <url><loc>https://hypertidy.github.io/laridae/404.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/articles/index.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/articles/laridae.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/articles/meshed-text.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/authors.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/index.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/news/index.html</loc></url>
@@ -9,10 +10,13 @@
 <url><loc>https://hypertidy.github.io/laridae/reference/index.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_add_points.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_counts.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_glyphs.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_new.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_refine.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_step.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_tables.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_text.html</loc></url>
+<url><loc>https://hypertidy.github.io/laridae/reference/lari_text_outline.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/lari_triangulate.html</loc></url>
 <url><loc>https://hypertidy.github.io/laridae/reference/laridae-package.html</loc></url>
 </urlset>

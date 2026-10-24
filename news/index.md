@@ -1,5 +1,18 @@
 # Changelog
 
+## laridae (development version)
+
+- Meshed text:
+  [`lari_text()`](https://hypertidy.github.io/laridae/reference/lari_text.md)
+  shapes a string in any installed font and meshes its glyphs as
+  polygons with holes;
+  [`lari_text_outline()`](https://hypertidy.github.io/laridae/reference/lari_text_outline.md)
+  returns the glyph rings (via ‘textshaping’ and ‘systemfonts’, both in
+  Suggests) and
+  [`lari_glyphs()`](https://hypertidy.github.io/laridae/reference/lari_glyphs.md)
+  meshes rings from any source, including the output of the
+  ‘string2path’ package. New article “Meshed text”.
+
 ## laridae 0.1.0
 
 - Rebuilt from scratch on CGAL 6 (`Constrained_triangulation_plus_2`
