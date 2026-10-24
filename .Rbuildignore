@@ -14,3 +14,4 @@
 ^docs$
 ^cran-comments\.md$
 ^\.posit$
+^vignettes/articles$

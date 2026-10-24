@@ -32,7 +32,10 @@ Suggests:
     knitr,
     rmarkdown,
     sf,
-    testthat (>= 3.0.0)
+    string2path,
+    systemfonts (>= 1.2.0),
+    testthat (>= 3.0.0),
+    textshaping
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
