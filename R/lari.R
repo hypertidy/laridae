@@ -336,6 +336,13 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #' * segments: constraint edges `v0`, `v1` (rows of the vertices table), the
 #'   input `segment` id they came from (the lowest, when several coincide)
 #'   and `count`, the number of input segments covering the edge
+#' * edge_sources (mesh spec v0.2): one row per constraint edge and input
+#'   segment covering it, `edge` (row of the segments table), `segment` (the
+#'   input segment id) and `forward` (TRUE when the input segment runs from
+#'   the edge's `v0` to its `v1`), sorted by `edge` then `segment`. Every
+#'   covering segment has its own row, through crossings, coincident and
+#'   collinear overlaps and refinement, so `count` is the number of rows per
+#'   edge and `segment` the lowest of them.
 #'
 #' `depth` is the constraint layer: the number of constraint crossings on the
 #' way in from outside the convex hull, counting an edge covered by k input
@@ -358,8 +365,8 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #' @param erase which triangles to return: "outer" (depth > 0, what
 #'   Triangle's `-p` keeps), "holes" (odd depth), "hull" (all). With no
 #'   segments every triangle is returned.
-#' @return a data frame; `lari_tables()` returns the three tables and the
-#'   `report` in a list, `lari_depth()` the depth column of the triangles
+#' @return a data frame; `lari_tables()` returns the three tables,
+#'   `edge_sources` and the `report` in a list, `lari_depth()` the depth column of the triangles
 #' @export
 #' @examples
 #' m <- lari_new(c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25),
@@ -367,6 +374,7 @@ unrefined_frame <- function(m, min_edge_length = NA_real_) {
 #'               1:8, c(2, 3, 4, 1, 6, 7, 8, 5))
 #' table(lari_depth(m))
 #' lari_segments(m)
+#' lari_edge_sources(m)
 lari_tables <- function(m, erase = c("outer", "holes", "hull")) {
   check_mesh(m)
   erase <- match.arg(erase)
@@ -387,6 +395,10 @@ lari_triangles <- function(m, erase = c("outer", "holes", "hull")) lari_tables(m
 #' @rdname lari_tables
 #' @export
 lari_segments <- function(m) lari_tables(m)$segments
+
+#' @rdname lari_tables
+#' @export
+lari_edge_sources <- function(m) lari_tables(m)$edge_sources
 
 #' @rdname lari_tables
 #' @export
@@ -465,7 +477,7 @@ default_min_edge_length <- function(x, y, s0, s1, max_area = NULL,
 #' @inheritParams lari_new
 #' @inheritParams lari_refine
 #' @param ... passed to [lari_refine()] (`size`, `max_steiner`, `seeds`)
-#' @return a list with `vertices`, `triangles`, `segments`, a one-row
+#' @return a list with `vertices`, `triangles`, `segments`, `edge_sources`, a one-row
 #'   provenance `report` (see [lari_tables()]), `unrefined` (NULL when no
 #'   refinement was asked for) and `min_edge_length`
 #' @export

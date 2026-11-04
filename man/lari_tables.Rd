@@ -5,6 +5,7 @@
 \alias{lari_vertices}
 \alias{lari_triangles}
 \alias{lari_segments}
+\alias{lari_edge_sources}
 \alias{lari_depth}
 \title{Mesh tables}
 \usage{
@@ -16,6 +17,8 @@ lari_triangles(m, erase = c("outer", "holes", "hull"))
 
 lari_segments(m)
 
+lari_edge_sources(m)
+
 lari_depth(m, erase = c("outer", "holes", "hull"))
 }
 \arguments{
@@ -26,8 +29,8 @@ Triangle's \code{-p} keeps), "holes" (odd depth), "hull" (all). With no
 segments every triangle is returned.}
 }
 \value{
-a data frame; \code{lari_tables()} returns the three tables and the
-\code{report} in a list, \code{lari_depth()} the depth column of the triangles
+a data frame; \code{lari_tables()} returns the three tables,
+\code{edge_sources} and the \code{report} in a list, \code{lari_depth()} the depth column of the triangles
 }
 \description{
 The three output tables of the shared contract.
@@ -41,6 +44,13 @@ The three output tables of the shared contract.
 \item segments: constraint edges \code{v0}, \code{v1} (rows of the vertices table), the
 input \code{segment} id they came from (the lowest, when several coincide)
 and \code{count}, the number of input segments covering the edge
+\item edge_sources (mesh spec v0.2): one row per constraint edge and input
+segment covering it, \code{edge} (row of the segments table), \code{segment} (the
+input segment id) and \code{forward} (TRUE when the input segment runs from
+the edge's \code{v0} to its \code{v1}), sorted by \code{edge} then \code{segment}. Every
+covering segment has its own row, through crossings, coincident and
+collinear overlaps and refinement, so \code{count} is the number of rows per
+edge and \code{segment} the lowest of them.
 }
 
 \code{depth} is the constraint layer: the number of constraint crossings on the
@@ -66,4 +76,5 @@ m <- lari_new(c(0, 1, 1, 0, 0.25, 0.75, 0.75, 0.25),
               1:8, c(2, 3, 4, 1, 6, 7, 8, 5))
 table(lari_depth(m))
 lari_segments(m)
+lari_edge_sources(m)
 }

@@ -7,6 +7,7 @@
 // are exact, constructions (crossing points, circumcentres) are doubles, so
 // no GMP is needed.
 
+#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
@@ -744,19 +745,32 @@ writable::data_frame triangle_table(Mesh& m, const std::vector<int>& row_of, int
                                "depth"_nm = d, "depth_distinct"_nm = dd});
 }
 
-writable::data_frame segment_table(const Mesh& m, const std::vector<int>& row_of) {
+// The constraint edge table, and with it `edge_sources` (mesh spec v0.2): one
+// row per (edge, covering input segment), `edge` the row of the edge table,
+// `segment` the input segment id, `forward` TRUE when that segment runs from
+// the edge's v0 to its v1. CGAL keeps every enclosing constraint of an edge
+// in its contexts, in the order the constraint was inserted (s0 to s1), so a
+// context runs forward when its current vertex is the edge's v0.
+writable::data_frame segment_table(const Mesh& m, const std::vector<int>& row_of,
+                                   writable::data_frame* edge_sources = nullptr) {
   const CDTP& cdt = m.cdt;
   std::vector<int> v0, v1, sid, cnt;
+  std::vector<int> es_edge, es_seg, es_fwd;
+  std::vector<std::pair<int, int> > here;
   for (CDTP::Finite_edges_iterator e = cdt.finite_edges_begin(); e != cdt.finite_edges_end(); ++e) {
     if (!cdt.is_constrained(*e)) continue;
     Vertex_handle va = e->first->vertex(CDTP::cw(e->second));
     Vertex_handle vb = e->first->vertex(CDTP::ccw(e->second));
     if (va->info() > vb->info()) std::swap(va, vb);
     int lowest = std::numeric_limits<int>::max(), n = 0;
+    here.clear();
     for (auto ctx = cdt.contexts_begin(va, vb); ctx != cdt.contexts_end(va, vb); ++ctx) {
       if (m.hidden.count(ctx->id())) continue;
       auto it = m.seg_of.find(ctx->id());
-      if (it != m.seg_of.end() && it->second < lowest) lowest = it->second;
+      if (it != m.seg_of.end()) {
+        if (it->second < lowest) lowest = it->second;
+        here.push_back(std::make_pair(it->second, *ctx->current() == va ? 1 : 0));
+      }
       ++n;
     }
     if (n == 0) continue;  // only hidden hull constraints here
@@ -764,6 +778,20 @@ writable::data_frame segment_table(const Mesh& m, const std::vector<int>& row_of
     v1.push_back(row_of[vb->info()]);
     sid.push_back(lowest == std::numeric_limits<int>::max() ? NA_INTEGER : lowest);
     cnt.push_back(n);
+    if (edge_sources) {
+      std::sort(here.begin(), here.end());
+      for (const auto& h : here) {
+        es_edge.push_back((int)v0.size());
+        es_seg.push_back(h.first);
+        es_fwd.push_back(h.second);
+      }
+    }
+  }
+  if (edge_sources) {
+    writable::integers ee(es_edge.begin(), es_edge.end()), ss(es_seg.begin(), es_seg.end());
+    writable::logicals ff(es_fwd.size());
+    for (std::size_t i = 0; i < es_fwd.size(); ++i) ff[i] = es_fwd[i] ? TRUE : FALSE;
+    *edge_sources = writable::data_frame({"edge"_nm = ee, "segment"_nm = ss, "forward"_nm = ff});
   }
   writable::integers a(v0.begin(), v0.end()), b(v1.begin(), v1.end()),
     s(sid.begin(), sid.end()), c(cnt.begin(), cnt.end());
@@ -992,8 +1020,11 @@ list lari_tables_cpp(SEXP xp, int domain) {
   std::vector<int> row_of;
   writable::data_frame v = vertex_table(*m, row_of);
   writable::data_frame t = triangle_table(*m, row_of, domain);
-  writable::data_frame s = segment_table(*m, row_of);
-  return writable::list({"vertices"_nm = v, "triangles"_nm = t, "segments"_nm = s});
+  writable::data_frame es({"edge"_nm = writable::integers(), "segment"_nm = writable::integers(),
+                           "forward"_nm = writable::logicals()});
+  writable::data_frame s = segment_table(*m, row_of, &es);
+  return writable::list({"vertices"_nm = v, "triangles"_nm = t, "segments"_nm = s,
+                         "edge_sources"_nm = es});
 }
 
 [[cpp11::register]]
