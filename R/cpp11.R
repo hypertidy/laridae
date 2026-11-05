@@ -28,6 +28,10 @@ lari_tables_cpp <- function(xp, domain) {
   .Call(`_laridae_lari_tables_cpp`, xp, domain)
 }
 
+lari_cdt_cpp <- function(x, y, s0, s1, exact) {
+  .Call(`_laridae_lari_cdt_cpp`, x, y, s0, s1, exact)
+}
+
 lari_cgal_version_cpp <- function() {
   .Call(`_laridae_lari_cgal_version_cpp`)
 }
