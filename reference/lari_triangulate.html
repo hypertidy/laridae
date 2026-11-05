@@ -112,7 +112,7 @@ outermost constraints, depth &gt; 0), "holes" (odd depth only), or "hull"</p></d
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a list with <code>vertices</code>, <code>triangles</code>, <code>segments</code>, a one-row
+    <p>a list with <code>vertices</code>, <code>triangles</code>, <code>segments</code>, <code>edge_sources</code>, a one-row
 provenance <code>report</code> (see <code><a href="lari_tables.html">lari_tables()</a></code>), <code>unrefined</code> (NULL when no
 refinement was asked for) and <code>min_edge_length</code></p>
     </div>
@@ -121,7 +121,7 @@ refinement was asked for) and <code>min_edge_length</code></p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">lari_triangulate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span><span class="op">)</span>, max_area <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ vertices       :'data.frame':	25 obs. of  4 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x     : num [1:25] 0 1 1 0 0 0.5 1 0.5 0.5 0.25 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ y     : num [1:25] 0 0 1 1 0.5 0 0.5 1 0.5 0 ...</span>
@@ -138,6 +138,10 @@ refinement was asked for) and <code>min_edge_length</code></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ v1     : int [1:16] 13 15 17 10 14 11 16 12 12 10 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ segment: int [1:16] 4 1 3 1 2 4 2 3 3 1 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ count  : int [1:16] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ edge_sources   :'data.frame':	16 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ edge   : int [1:16] 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ segment: int [1:16] 4 1 3 1 2 4 2 3 3 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ forward: logi [1:16] TRUE TRUE TRUE TRUE TRUE TRUE ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ report         :'data.frame':	1 obs. of  13 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ backend        : chr "laridae"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ package        : chr "0.1.0"</span>

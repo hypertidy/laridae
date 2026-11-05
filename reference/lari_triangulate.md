@@ -69,8 +69,8 @@ lari_triangulate(
 
 ## Value
 
-a list with `vertices`, `triangles`, `segments`, a one-row provenance
-`report` (see
+a list with `vertices`, `triangles`, `segments`, `edge_sources`, a
+one-row provenance `report` (see
 [`lari_tables()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)),
 `unrefined` (NULL when no refinement was asked for) and
 `min_edge_length`
@@ -80,7 +80,7 @@ a list with `vertices`, `triangles`, `segments`, a one-row provenance
 ``` r
 r <- lari_triangulate(c(0, 1, 1, 0), c(0, 0, 1, 1), 1:4, c(2, 3, 4, 1), max_area = 0.05)
 str(r)
-#> List of 7
+#> List of 8
 #>  $ vertices       :'data.frame': 25 obs. of  4 variables:
 #>   ..$ x     : num [1:25] 0 1 1 0 0 0.5 1 0.5 0.5 0.25 ...
 #>   ..$ y     : num [1:25] 0 0 1 1 0.5 0 0.5 1 0.5 0 ...
@@ -97,6 +97,10 @@ str(r)
 #>   ..$ v1     : int [1:16] 13 15 17 10 14 11 16 12 12 10 ...
 #>   ..$ segment: int [1:16] 4 1 3 1 2 4 2 3 3 1 ...
 #>   ..$ count  : int [1:16] 1 1 1 1 1 1 1 1 1 1 ...
+#>  $ edge_sources   :'data.frame': 16 obs. of  3 variables:
+#>   ..$ edge   : int [1:16] 1 2 3 4 5 6 7 8 9 10 ...
+#>   ..$ segment: int [1:16] 4 1 3 1 2 4 2 3 3 1 ...
+#>   ..$ forward: logi [1:16] TRUE TRUE TRUE TRUE TRUE TRUE ...
 #>  $ report         :'data.frame': 1 obs. of  13 variables:
 #>   ..$ backend        : chr "laridae"
 #>   ..$ package        : chr "0.1.0"

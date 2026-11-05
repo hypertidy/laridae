@@ -54,6 +54,8 @@
 <span></span>
 <span><span class="fu">lari_segments</span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">lari_edge_sources</span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">lari_depth</span><span class="op">(</span><span class="va">m</span>, erase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"outer"</span>, <span class="st">"holes"</span>, <span class="st">"hull"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -73,8 +75,8 @@ segments every triangle is returned.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a data frame; <code>lari_tables()</code> returns the three tables and the
-<code>report</code> in a list, <code>lari_depth()</code> the depth column of the triangles</p>
+    <p>a data frame; <code>lari_tables()</code> returns the three tables,
+<code>edge_sources</code> and the <code>report</code> in a list, <code>lari_depth()</code> the depth column of the triangles</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -86,6 +88,13 @@ segments every triangle is returned.</p></dd>
 <li><p>segments: constraint edges <code>v0</code>, <code>v1</code> (rows of the vertices table), the
 input <code>segment</code> id they came from (the lowest, when several coincide)
 and <code>count</code>, the number of input segments covering the edge</p></li>
+<li><p>edge_sources (mesh spec v0.2): one row per constraint edge and input
+segment covering it, <code>edge</code> (row of the segments table), <code>segment</code> (the
+input segment id) and <code>forward</code> (TRUE when the input segment runs from
+the edge's <code>v0</code> to its <code>v1</code>), sorted by <code>edge</code> then <code>segment</code>. Every
+covering segment has its own row, through crossings, coincident and
+collinear overlaps and refinement, so <code>count</code> is the number of rows per
+edge and <code>segment</code> the lowest of them.</p></li>
 </ul><p><code>depth</code> is the constraint layer: the number of constraint crossings on the
 way in from outside the convex hull, counting an edge covered by k input
 segments k times. <code>depth_distinct</code> is the same count but a doubled boundary
@@ -121,6 +130,16 @@ follow vertices across edits.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  5  6       5     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  2  3       2     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8  6  7       6     1</span>
+<span class="r-in"><span><span class="fu">lari_edge_sources</span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   edge segment forward</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       4   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2       8   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3       3    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4       1    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5       7    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6       5    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7       2    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8       6    TRUE</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

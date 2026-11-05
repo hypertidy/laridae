@@ -13,6 +13,8 @@ lari_triangles(m, erase = c("outer", "holes", "hull"))
 
 lari_segments(m)
 
+lari_edge_sources(m)
+
 lari_depth(m, erase = c("outer", "holes", "hull"))
 ```
 
@@ -31,8 +33,9 @@ lari_depth(m, erase = c("outer", "holes", "hull"))
 
 ## Value
 
-a data frame; `lari_tables()` returns the three tables and the `report`
-in a list, `lari_depth()` the depth column of the triangles
+a data frame; `lari_tables()` returns the three tables, `edge_sources`
+and the `report` in a list, `lari_depth()` the depth column of the
+triangles
 
 ## Details
 
@@ -45,6 +48,14 @@ in a list, `lari_depth()` the depth column of the triangles
 - segments: constraint edges `v0`, `v1` (rows of the vertices table),
   the input `segment` id they came from (the lowest, when several
   coincide) and `count`, the number of input segments covering the edge
+
+- edge_sources (mesh spec v0.2): one row per constraint edge and input
+  segment covering it, `edge` (row of the segments table), `segment`
+  (the input segment id) and `forward` (TRUE when the input segment runs
+  from the edge's `v0` to its `v1`), sorted by `edge` then `segment`.
+  Every covering segment has its own row, through crossings, coincident
+  and collinear overlaps and refinement, so `count` is the number of
+  rows per edge and `segment` the lowest of them.
 
 `depth` is the constraint layer: the number of constraint crossings on
 the way in from outside the convex hull, counting an edge covered by k
@@ -84,4 +95,14 @@ lari_segments(m)
 #> 6  5  6       5     1
 #> 7  2  3       2     1
 #> 8  6  7       6     1
+lari_edge_sources(m)
+#>   edge segment forward
+#> 1    1       4   FALSE
+#> 2    2       8   FALSE
+#> 3    3       3    TRUE
+#> 4    4       1    TRUE
+#> 5    5       7    TRUE
+#> 6    6       5    TRUE
+#> 7    7       2    TRUE
+#> 8    8       6    TRUE
 ```

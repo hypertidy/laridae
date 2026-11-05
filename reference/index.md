@@ -33,6 +33,7 @@ one-row provenance report.
   [`lari_vertices()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
   [`lari_triangles()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
   [`lari_segments()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  [`lari_edge_sources()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
   [`lari_depth()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
   : Mesh tables
 - [`lari_counts()`](https://hypertidy.github.io/laridae/reference/lari_counts.md)

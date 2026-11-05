@@ -2,6 +2,17 @@
 
 ## laridae (development version)
 
+- [`lari_tables()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  and
+  [`lari_triangulate()`](https://hypertidy.github.io/laridae/reference/lari_triangulate.md)
+  return `edge_sources` (mesh spec v0.2), and
+  [`lari_edge_sources()`](https://hypertidy.github.io/laridae/reference/lari_tables.md)
+  returns it alone: one row per constraint edge and covering input
+  segment (`edge`, `segment`, `forward`), from CGAL’s constraint
+  contexts, so every coincident or collinear input is listed with its
+  direction. `segments$segment` and `segments$count` are the lowest and
+  the number of these rows.
+
 - Meshed text:
   [`lari_text()`](https://hypertidy.github.io/laridae/reference/lari_text.md)
   shapes a string in any installed font and meshes its glyphs as
