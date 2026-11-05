@@ -2,17 +2,16 @@
 // clang-format off
 
 #include <cpp11/R.hpp>
-#define RCPP_NO_R_HEADERS_CHECK
 #include <Rcpp.h>
 using namespace Rcpp;
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
 // exact.cpp
-list lari_cdt_cpp(doubles x, doubles y, integers s0, integers s1, bool exact);
-extern "C" SEXP _laridae_lari_cdt_cpp(SEXP x, SEXP y, SEXP s0, SEXP s1, SEXP exact) {
+list lari_cdt_cpp(doubles x, doubles y, integers s0, integers s1, bool exact, int domain);
+extern "C" SEXP _laridae_lari_cdt_cpp(SEXP x, SEXP y, SEXP s0, SEXP s1, SEXP exact, SEXP domain) {
   BEGIN_CPP11
-    return cpp11::as_sexp(lari_cdt_cpp(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<doubles>>(y), cpp11::as_cpp<cpp11::decay_t<integers>>(s0), cpp11::as_cpp<cpp11::decay_t<integers>>(s1), cpp11::as_cpp<cpp11::decay_t<bool>>(exact)));
+    return cpp11::as_sexp(lari_cdt_cpp(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<doubles>>(y), cpp11::as_cpp<cpp11::decay_t<integers>>(s0), cpp11::as_cpp<cpp11::decay_t<integers>>(s1), cpp11::as_cpp<cpp11::decay_t<bool>>(exact), cpp11::as_cpp<cpp11::decay_t<int>>(domain)));
   END_CPP11
 }
 // laridae.cpp
@@ -105,7 +104,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_laridae_lari_add_points_cpp",      (DL_FUNC) &_laridae_lari_add_points_cpp,       4},
     {"_laridae_lari_add_segments_cpp",    (DL_FUNC) &_laridae_lari_add_segments_cpp,     3},
     {"_laridae_lari_attr_names_cpp",      (DL_FUNC) &_laridae_lari_attr_names_cpp,       1},
-    {"_laridae_lari_cdt_cpp",             (DL_FUNC) &_laridae_lari_cdt_cpp,              5},
+    {"_laridae_lari_cdt_cpp",             (DL_FUNC) &_laridae_lari_cdt_cpp,              6},
     {"_laridae_lari_cgal_version_cpp",    (DL_FUNC) &_laridae_lari_cgal_version_cpp,     0},
     {"_laridae_lari_counts_cpp",          (DL_FUNC) &_laridae_lari_counts_cpp,           1},
     {"_laridae_lari_input_segments_cpp",  (DL_FUNC) &_laridae_lari_input_segments_cpp,   1},
