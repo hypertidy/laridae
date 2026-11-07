@@ -507,3 +507,44 @@ lari_triangulate <- function(x, y, s0 = NULL, s1 = NULL, PA = NULL,
   out$ids <- attr(m, "ids")
   out
 }
+
+#' Constrained triangulation with exact crossings
+#'
+#' Triangulate points and constraint segments once, without refinement, on
+#' either CGAL's exact-constructions kernel (Epeck) or the inexact one the
+#' persistent handle uses (Epick). With `exact = TRUE` a crossing of two
+#' constraints is an exact rational, returned as its nearest double in `x`,
+#' `y` and exactly as numerator and denominator strings in `x_num`, `x_den`,
+#' `y_num`, `y_den`. With `exact = FALSE` those columns are `NA`.
+#'
+#' The tables follow [lari_tables()]: triangles carry `depth` and
+#' `depth_distinct`, segments carry the lowest covering input `segment` and
+#' `count`, and `edge_sources` lists every input segment covering each
+#' constraint edge with its direction (mesh spec v0.2). None of these use
+#' coordinates, so on the exact kernel they are exact too.
+#'
+#' This is a prototype of the "exact" rung of vertex identity: the exact value
+#' lives in the table, not behind a pointer.
+#'
+#' @param x,y input coordinates
+#' @param s0,s1 1-based constraint segment endpoints
+#' @param exact use exact constructions
+#' @param erase which triangles to return: "hull" (all, the default, as
+#'   before), "outer" (depth > 0) or "holes" (odd depth). With no segments
+#'   every triangle is returned.
+#' @return list of data frames `vertices`, `triangles`, `segments` and
+#'   `edge_sources`, 1-based
+#' @export
+#' @examples
+#' ## two crossing squares: the crossings are exact rationals
+#' x <- c(0, 2, 2, 0, 1, 3, 3, 1) / 3
+#' y <- c(0, 0, 2, 2, 1, 1, 3, 3) / 7
+#' r <- lari_cdt(x, y, 1:8, c(2, 3, 4, 1, 6, 7, 8, 5))
+#' r$vertices[r$vertices$origin == "crossing", ]
+#' head(r$edge_sources)
+lari_cdt <- function(x, y, s0 = integer(), s1 = integer(), exact = TRUE,
+                     erase = c("hull", "outer", "holes")) {
+  erase <- match.arg(erase)
+  lari_cdt_cpp(as.double(x), as.double(y), as.integer(s0), as.integer(s1), isTRUE(exact),
+               erase_code(erase))
+}

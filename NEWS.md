@@ -1,5 +1,11 @@
 # laridae (development version)
 
+* New `lari_cdt()`: a one-shot constrained triangulation on CGAL's exact
+  kernel (or the inexact one), returning each vertex as its nearest double
+  plus exact numerator and denominator strings. It returns the same tables as
+  `lari_tables()`: triangle `depth` and `depth_distinct`, segment `segment`
+  and `count`, and `edge_sources`, and takes `erase`.
+
 * `lari_tables()` and `lari_triangulate()` return `edge_sources` (mesh spec
   v0.2), and `lari_edge_sources()` returns it alone: one row per constraint
   edge and covering input segment (`edge`, `segment`, `forward`), from CGAL's
