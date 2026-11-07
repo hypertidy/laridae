@@ -171,9 +171,10 @@ list run_cdt(doubles x, doubles y, integers s0, integers s1, int domain) {
   for (auto v = cdt.finite_vertices_begin(); v != cdt.finite_vertices_end(); ++v) {
     if (v->info() == 0) { row[v] = 0; order.push_back(v); }
   }
-  const int nv = order.size();
-  writable::doubles X(nv), Y(nv);
-  writable::strings xn(nv), xd(nv), yn(nv), yd(nv), org(nv);
+  const int nv = static_cast<int>(order.size());
+  const R_xlen_t len = static_cast<R_xlen_t>(nv);
+  writable::doubles X(len), Y(len);
+  writable::strings xn(len), xd(len), yn(len), yd(len), org(len);
   for (int r = 0; r < nv; ++r) {
     Vertex_handle v = order[r];
     row[v] = r + 1;
