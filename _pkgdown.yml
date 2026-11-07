@@ -25,9 +25,12 @@ reference:
   - lari_tables
   - lari_counts
 - title: One-shot
-  desc: Build and optionally refine in a single call.
+  desc: >
+    Build and optionally refine in a single call, or an exact one-shot
+    constrained triangulation with depth and segment provenance.
   contents:
   - lari_triangulate
+  - lari_cdt
 - title: Text
   desc: Glyph outlines from installed fonts, meshed as polygons with holes.
   contents:
